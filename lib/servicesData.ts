@@ -1,0 +1,330 @@
+export interface ServiceData {
+  slug:          string
+  title:         string
+  tagline:       string
+  seoTitle:      string
+  seoDesc:       string
+  icon:          string
+  accentColor:   string
+  heroImage:     string   // swap with real image path later
+  intro:         string
+  whatIsIt:      string
+  benefits:      string[]
+  whoIsItFor:    string[]
+  whatToExpect:  { step: string; desc: string }[]
+  faqs:          { q: string; a: string }[]
+  schema:        object
+}
+
+export const services: ServiceData[] = [
+  {
+    slug:        'tarot-card-reading',
+    title:       'Tarot Card Reading',
+    tagline:     'Clarity for love, career & your destiny',
+    seoTitle:    'Tarot Card Reading Online | Dr. Usha Bhatt | The Cosmic Connect',
+    seoDesc:     'Get accurate tarot card readings from Dr. Usha Bhatt — renowned psychic reader with 20+ years of experience. Online & in-person sessions. Book now.',
+    icon:        '🃏',
+    accentColor: '#4A2C8A',
+    heroImage:   '/images/services/tarot-placeholder.jpg',
+    intro:       'Tarot Card Reading is one of the most powerful tools for self-discovery and guidance. Dr. Usha Bhatt\'s intuitive readings go far beyond predictions — they empower you to understand your current energy, make informed decisions, and align with your highest path.',
+    whatIsIt:    'Tarot is a deck of 78 cards, each carrying deep symbolic meaning. A skilled reader like Dr. Usha Bhatt interprets the cards\' messages in the context of your specific question or life situation — offering guidance on love, career, finances, relationships, and spiritual growth.',
+    benefits: [
+      'Gain clarity on confusing life situations',
+      'Understand hidden patterns in your relationships',
+      'Get guidance on career decisions and financial choices',
+      'Identify energetic blocks holding you back',
+      'Receive practical, actionable spiritual guidance',
+      'Connect with your higher self and intuition',
+    ],
+    whoIsItFor: [
+      'Those facing important life decisions',
+      'People feeling stuck or confused about their path',
+      'Anyone seeking clarity in love and relationships',
+      'Professionals navigating career crossroads',
+      'Those curious about their spiritual journey',
+    ],
+    whatToExpect: [
+      { step: 'Booking', desc: 'Schedule your session via Calendly. You will receive a confirmation with the meeting link or address.' },
+      { step: 'Your Question', desc: 'Come prepared with an open heart and a specific area of life you want guidance on — or let Dr. Bhatt do a general reading.' },
+      { step: 'The Reading', desc: 'Dr. Usha Bhatt shuffles and lays out the cards in a spread tailored to your question. Each card is interpreted with deep intuitive insight.' },
+      { step: 'Guidance', desc: 'You receive clear, practical guidance and remedies if needed. Every session is completely confidential.' },
+      { step: 'Follow Up', desc: 'After the session you are welcome to ask clarifying questions. A recording or notes can be arranged on request.' },
+    ],
+    faqs: [
+      { q: 'How accurate is tarot card reading?', a: 'Accuracy depends on the reader\'s expertise and your openness. Dr. Usha Bhatt\'s 20+ years of experience and intuitive gifts make her readings highly precise and relevant.' },
+      { q: 'Can tarot predict the future?', a: 'Tarot reveals the energy around a situation and likely outcomes based on current trajectory. It empowers you to make better choices — not to create fatalistic predictions.' },
+      { q: 'Is tarot reading done online?', a: 'Yes. Dr. Usha Bhatt offers readings both online via video call and in-person at her studio in New Delhi. Online readings are equally accurate and effective.' },
+      { q: 'How long does a session last?', a: 'A standard tarot reading session lasts 45–60 minutes. Extended sessions of 90 minutes are also available for deeper exploration.' },
+      { q: 'Do I need to prepare anything?', a: 'Come with an open mind and ideally one or two specific questions or areas of life you want explored. The more specific your intention, the deeper the reading.' },
+    ],
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      'name': 'Tarot Card Reading',
+      'provider': { '@type': 'Person', 'name': 'Dr. Usha Bhatt' },
+      'description': 'Accurate tarot card reading sessions by Dr. Usha Bhatt — online and in-person.',
+      'url': 'https://www.thecosmicconnect.com/services/tarot-card-reading',
+      'areaServed': 'India',
+      'serviceType': 'Tarot Reading',
+    },
+  },
+
+  {
+    slug:        'akashic-reading',
+    title:       'Akashic Records Reading',
+    tagline:     "Access your soul's infinite wisdom",
+    seoTitle:    'Akashic Records Reading | Dr. Usha Bhatt | The Cosmic Connect',
+    seoDesc:     'Access your soul\'s journey through Akashic Records Reading with Dr. Usha Bhatt. Understand your soul\'s purpose, past life karma, and life lessons. Book online.',
+    icon:        '📖',
+    accentColor: '#1A5C6B',
+    heroImage:   '/images/services/akashic-placeholder.jpg',
+    intro:       'The Akashic Records are a cosmic library that holds every thought, word, deed, and experience of every soul across all lifetimes. Dr. Usha Bhatt\'s ability to access these records offers you a profound window into your soul\'s true purpose and karmic journey.',
+    whatIsIt:    'The Akashic Records exist in a higher vibrational dimension and contain the complete history of every soul\'s journey. Reading these records provides deep insight into why you are the way you are, what karmic patterns you carry, and what your soul came here to learn and achieve.',
+    benefits: [
+      "Understand your soul's true purpose and mission",
+      'Discover the root cause of recurring life patterns',
+      'Heal karmic wounds from past lives affecting you now',
+      'Gain clarity on your relationships and soul contracts',
+      'Release limiting beliefs encoded at the soul level',
+      'Align your life with your highest spiritual path',
+    ],
+    whoIsItFor: [
+      'Those seeking deep answers about their life purpose',
+      'People experiencing recurring patterns or blocks',
+      'Anyone curious about past life connections',
+      'Those feeling spiritually disconnected or lost',
+      'People wanting to understand their soul contracts',
+    ],
+    whatToExpect: [
+      { step: 'Sacred Opening', desc: 'Dr. Bhatt opens the Akashic Records through a sacred prayer, creating a safe and high-vibrational space for the reading.' },
+      { step: 'Soul Profile', desc: 'Your soul\'s origin, primary life lesson, and energetic blocks are identified and shared with you.' },
+      { step: 'Past Life Exploration', desc: 'Relevant past lives affecting your current situation are explored, bringing profound clarity and healing.' },
+      { step: 'Karmic Patterns', desc: 'Karmic debts, soul contracts, and recurring patterns are identified with guidance on how to clear them.' },
+      { step: 'Sacred Closing', desc: 'The Records are closed with gratitude. You receive integration guidance to help you process and apply the insights.' },
+    ],
+    faqs: [
+      { q: 'What are the Akashic Records?', a: 'The Akashic Records are a universal library of all knowledge — every soul\'s past, present, and future experiences are recorded here in a non-physical dimension.' },
+      { q: 'Can anyone access their Akashic Records?', a: 'While everyone has access, it requires training and spiritual attunement. Dr. Usha Bhatt is a certified Akashic Records reader who can access your records safely and accurately.' },
+      { q: 'Is an Akashic reading different from tarot?', a: 'Yes. Tarot uses cards as a tool to read energy. An Akashic reading accesses your soul\'s actual record directly — it is deeper, more specific to your soul\'s journey, and goes beyond current life.' },
+      { q: 'How should I prepare?', a: 'Come with open, specific questions about your soul\'s purpose, relationships, career, or recurring patterns. Writing them down beforehand helps.' },
+    ],
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      'name': 'Akashic Records Reading',
+      'provider': { '@type': 'Person', 'name': 'Dr. Usha Bhatt' },
+      'description': 'Access your soul\'s journey through Akashic Records Reading with Dr. Usha Bhatt.',
+      'url': 'https://www.thecosmicconnect.com/services/akashic-reading',
+      'areaServed': 'India',
+      'serviceType': 'Akashic Reading',
+    },
+  },
+
+  {
+    slug:        'healing-sessions',
+    title:       'Healing Sessions',
+    tagline:     'Reiki, crystal & energy healing for mind, body and soul',
+    seoTitle:    'Reiki & Energy Healing Sessions | Dr. Usha Bhatt | The Cosmic Connect',
+    seoDesc:     'Experience deep Reiki and crystal energy healing with Dr. Usha Bhatt. Heal emotional wounds, release stress, and restore your energy balance. Book online or in-person.',
+    icon:        '✨',
+    accentColor: '#8B3A52',
+    heroImage:   '/images/services/healing-placeholder.jpg',
+    intro:       'Healing is not just about the physical body — it encompasses the mental, emotional, and spiritual dimensions of your being. Dr. Usha Bhatt\'s healing sessions combine Reiki, crystal therapy, and intuitive energy work to restore your natural balance and vitality.',
+    whatIsIt:    'Energy healing works on the principle that the human body has an energy field (aura) and energy centres (chakras). When these become blocked or imbalanced due to stress, trauma, or negative experiences, illness and emotional disturbances arise. Healing sessions clear these blockages and restore the natural flow of energy.',
+    benefits: [
+      'Deep relaxation and stress relief',
+      'Release of emotional pain and trauma',
+      'Balancing of all 7 chakras',
+      'Strengthening of the aura and energy field',
+      'Improved sleep and mental clarity',
+      'Accelerated physical and emotional healing',
+    ],
+    whoIsItFor: [
+      'Those dealing with stress, anxiety, or depression',
+      'People recovering from emotional trauma or loss',
+      'Anyone feeling energetically drained or depleted',
+      'Those with chronic physical conditions',
+      'People seeking spiritual growth and awakening',
+    ],
+    whatToExpect: [
+      { step: 'Energy Assessment', desc: 'Dr. Bhatt scans your aura and chakras to identify imbalances, blockages, and areas requiring healing.' },
+      { step: 'Chakra Balancing', desc: 'Each of the 7 chakras is assessed and balanced using Reiki energy, crystals, and sacred healing tools.' },
+      { step: 'Reiki Healing', desc: 'Healing energy is channelled through Dr. Bhatt\'s hands to clear blockages and restore your natural energy flow.' },
+      { step: 'Crystal Placement', desc: 'Specific crystals are placed on and around your body to amplify the healing and target specific issues.' },
+      { step: 'Grounding & Integration', desc: 'The session closes with grounding practices and you receive guidance on continuing your healing journey at home.' },
+    ],
+    faqs: [
+      { q: 'What is Reiki healing?', a: 'Reiki is a Japanese energy healing technique where universal life force energy is channelled through the healer\'s hands to promote healing, relaxation, and wellbeing in the recipient.' },
+      { q: 'Is energy healing safe?', a: 'Yes, completely. Energy healing is non-invasive and gentle. It works alongside conventional medicine and has no side effects.' },
+      { q: 'How many sessions do I need?', a: 'It depends on your situation. Some people feel significant shifts after one session. For deeper healing of chronic issues, a series of 3–5 sessions is recommended.' },
+      { q: 'Can healing sessions be done online?', a: 'Yes. Distance healing is just as effective as in-person healing. Energy is not limited by physical space.' },
+    ],
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      'name': 'Energy Healing Sessions',
+      'provider': { '@type': 'Person', 'name': 'Dr. Usha Bhatt' },
+      'description': 'Reiki and crystal energy healing sessions by Dr. Usha Bhatt.',
+      'url': 'https://www.thecosmicconnect.com/services/healing-sessions',
+      'areaServed': 'India',
+      'serviceType': 'Energy Healing',
+    },
+  },
+
+  {
+    slug:        'past-life-healing',
+    title:       'Past Life Healing',
+    tagline:     'Heal the wounds your soul carries across lifetimes',
+    seoTitle:    'Past Life Healing & Regression | Dr. Usha Bhatt | The Cosmic Connect',
+    seoDesc:     'Discover and heal past life traumas affecting your present with Dr. Usha Bhatt. Expert past life healing and regression therapy. Book your session online today.',
+    icon:        '🌀',
+    accentColor: '#2D1B5E',
+    heroImage:   '/images/services/pastlife-placeholder.jpg',
+    intro:       'Many of the fears, phobias, relationship patterns, and inexplicable emotions we carry in this life have their roots in past life experiences. Dr. Usha Bhatt\'s Past Life Healing sessions gently guide you to identify, understand, and permanently heal these karmic wounds.',
+    whatIsIt:    'Past Life Healing is a therapeutic process that helps you access memories and experiences from previous incarnations that are still influencing your current life. By bringing these to conscious awareness and healing them, you can release deep-seated patterns, phobias, and emotional blocks that have no apparent cause in your current life.',
+    benefits: [
+      'Release unexplained fears and phobias',
+      'Heal deep relationship patterns and soul contracts',
+      'Understand and resolve chronic physical symptoms',
+      'Clear karmic debt accumulated across lifetimes',
+      'Gain understanding of your soul\'s overall journey',
+      'Experience profound emotional liberation and peace',
+    ],
+    whoIsItFor: [
+      'Those with unexplained fears or phobias',
+      'People in recurring difficult relationship patterns',
+      'Anyone with chronic conditions without clear cause',
+      'Those who feel a strong connection to certain eras or places',
+      'People seeking deep spiritual healing and liberation',
+    ],
+    whatToExpect: [
+      { step: 'Intake & Intention', desc: 'Dr. Bhatt discusses your current life challenges and sets a clear healing intention for the session.' },
+      { step: 'Deep Relaxation', desc: 'You are guided into a deeply relaxed state through a gentle induction process — you remain fully conscious and in control throughout.' },
+      { step: 'Past Life Journey', desc: 'Dr. Bhatt guides you through relevant past life memories. You observe rather than relive, making this a safe and healing experience.' },
+      { step: 'Healing & Release', desc: 'The root wound is identified and healed using specialised energy healing techniques. Karmic ties are released.' },
+      { step: 'Integration', desc: 'You are gently brought back to full awareness and given time to process. Dr. Bhatt provides guidance for integration over the following days.' },
+    ],
+    faqs: [
+      { q: 'Is past life regression real?', a: 'Thousands of documented cases worldwide show the therapeutic benefits of past life healing. Whether you believe in literal reincarnation or not, the healing process works — the subconscious mind holds these memories and releasing them creates real change.' },
+      { q: 'Will I be hypnotised?', a: 'No. Dr. Bhatt uses a gentle relaxation technique, not hypnosis. You remain fully aware and in control throughout the entire session.' },
+      { q: 'Is it safe?', a: 'Completely safe. Dr. Usha Bhatt is an experienced healer who creates a fully supportive environment. You only access what is ready to be healed.' },
+      { q: 'How long does a session take?', a: 'Past life healing sessions are typically 90 minutes to 2 hours to allow sufficient time for the journey and integration.' },
+    ],
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      'name': 'Past Life Healing',
+      'provider': { '@type': 'Person', 'name': 'Dr. Usha Bhatt' },
+      'description': 'Past life healing and regression therapy by Dr. Usha Bhatt.',
+      'url': 'https://www.thecosmicconnect.com/services/past-life-healing',
+      'areaServed': 'India',
+      'serviceType': 'Past Life Healing',
+    },
+  },
+
+  {
+    slug:        'black-magic-removal',
+    title:       'Black Magic Removal',
+    tagline:     'Powerful protection and cleansing of negative energies',
+    seoTitle:    'Black Magic Removal & Protection | Dr. Usha Bhatt | The Cosmic Connect',
+    seoDesc:     'Expert black magic removal and aura cleansing by Dr. Usha Bhatt. Remove evil eye, negative energies, and psychic attacks. Powerful spiritual protection. Book now.',
+    icon:        '🛡️',
+    accentColor: '#1A3A2A',
+    heroImage:   '/images/services/blackmagic-placeholder.jpg',
+    intro:       'Negative energies, evil eye (nazar), and black magic can profoundly disrupt every area of your life — health, relationships, finances, and mental well-being. Dr. Usha Bhatt\'s powerful removal and protection work has helped thousands reclaim their lives from these dark influences.',
+    whatIsIt:    'Black magic, evil eye, and psychic attacks are real energetic phenomena that can be deliberately or accidentally sent to a person. They attach to the aura and energy field, creating blockages and attracting misfortune. Dr. Usha Bhatt uses her deep spiritual knowledge and powerful healing abilities to identify, remove, and permanently protect against these influences.',
+    benefits: [
+      'Complete removal of black magic and evil eye',
+      'Powerful aura cleansing and strengthening',
+      'Protection from future negative energies',
+      'Restoration of natural luck and positive flow',
+      'Relief from unexplained illness or misfortune',
+      'Peace of mind and spiritual security',
+    ],
+    whoIsItFor: [
+      'Those experiencing sudden unexplained misfortune',
+      'People with persistent bad luck despite efforts',
+      'Those with recurring nightmares or disturbed sleep',
+      'Anyone feeling a heavy, dark presence or energy',
+      'Families or businesses affected by negative energy',
+    ],
+    whatToExpect: [
+      { step: 'Energy Diagnosis', desc: 'Dr. Bhatt performs a thorough spiritual diagnosis to identify the type, source, and severity of the negative influence affecting you.' },
+      { step: 'Aura Cleansing', desc: 'A deep and powerful cleansing of your aura and energy field removes all attached negative energies and entities.' },
+      { step: 'Removal Ritual', desc: 'Specific mantras, sacred tools, and Dr. Bhatt\'s healing power are used to permanently remove the black magic or evil eye.' },
+      { step: 'Protection Shield', desc: 'A powerful energetic protection shield is installed around you to prevent future attacks and attract positive energy.' },
+      { step: 'Remedies & Guidance', desc: 'You receive specific remedies and practices to maintain your protection and strengthen your aura going forward.' },
+    ],
+    faqs: [
+      { q: 'How do I know if I have black magic?', a: 'Common signs include sudden unexplained misfortune, persistent bad luck, recurring illness without medical cause, relationship breakdowns, financial losses, and a feeling of heaviness or darkness around you.' },
+      { q: 'Can black magic be removed completely?', a: 'Yes. With the right knowledge and spiritual power, black magic can be completely removed. Dr. Usha Bhatt has successfully cleared even severe cases with permanent results.' },
+      { q: 'Is this service available online?', a: 'Yes. Energy work is not limited by distance. Dr. Bhatt can perform the removal and protection work remotely with equal effectiveness.' },
+      { q: 'How many sessions are needed?', a: 'Mild cases may be resolved in one session. Severe or long-standing cases may require 2–3 sessions for complete removal and stabilisation.' },
+    ],
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      'name': 'Black Magic Removal',
+      'provider': { '@type': 'Person', 'name': 'Dr. Usha Bhatt' },
+      'description': 'Black magic removal and spiritual protection by Dr. Usha Bhatt.',
+      'url': 'https://www.thecosmicconnect.com/services/black-magic-removal',
+      'areaServed': 'India',
+      'serviceType': 'Black Magic Removal',
+    },
+  },
+
+  {
+    slug:        'psychic-readings',
+    title:       'Psychic Readings',
+    tagline:     'Direct answers from the universe through pure intuition',
+    seoTitle:    'Psychic Readings Online | Dr. Usha Bhatt | The Cosmic Connect',
+    seoDesc:     'Get powerful psychic readings from Dr. Usha Bhatt — renowned psychic healer with extraordinary intuitive gifts. Online and in-person. Book your session today.',
+    icon:        '🔮',
+    accentColor: '#5C3A1E',
+    heroImage:   '/images/services/psychic-placeholder.jpg',
+    intro:       'Dr. Usha Bhatt\'s psychic abilities have been recognised by experts and clients worldwide. Her extraordinary intuitive gifts allow her to perceive information beyond the ordinary five senses — providing you with direct, clear answers about your most pressing life questions.',
+    whatIsIt:    'A psychic reading is the practice of perceiving information through heightened intuitive abilities. Dr. Usha Bhatt combines clairvoyance (clear seeing), clairsentience (clear feeling), and claircognizance (clear knowing) to access information about your past, present, and future that is not available through ordinary means.',
+    benefits: [
+      'Direct answers to your most pressing questions',
+      'Insight into situations others cannot see',
+      'Validation of your own intuitions and feelings',
+      'Clarity on hidden motives in relationships',
+      'Guidance on major life decisions',
+      'Connection with departed loved ones if needed',
+    ],
+    whoIsItFor: [
+      'Those seeking answers that logic cannot provide',
+      'People at major life crossroads',
+      'Anyone who wants direct, unfiltered spiritual insight',
+      'Those who have tried other methods without clarity',
+      'People seeking validation of their own intuition',
+    ],
+    whatToExpect: [
+      { step: 'Connection', desc: 'Dr. Bhatt tunes into your energy field and establishes a clear psychic connection before the reading begins.' },
+      { step: 'Open Reading', desc: 'Without you providing details, Dr. Bhatt shares what she perceives — validating her accuracy before proceeding.' },
+      { step: 'Your Questions', desc: 'You then ask your specific questions. Dr. Bhatt provides direct, honest answers from her psychic perception.' },
+      { step: 'Future Insights', desc: 'Likely future outcomes based on your current energy and choices are shared, along with guidance on how to shift the energy if needed.' },
+      { step: 'Closure', desc: 'The session closes with a summary of the key messages and any recommended actions or remedies.' },
+    ],
+    faqs: [
+      { q: 'How is a psychic reading different from tarot?', a: 'In a tarot reading, cards are used as a tool. In a pure psychic reading, Dr. Bhatt accesses information directly through her intuitive abilities without any tools — making it more spontaneous and direct.' },
+      { q: 'Can Dr. Bhatt really see the future?', a: 'Dr. Bhatt perceives the energy and likely trajectory of situations. The future is not fixed — her readings show you the most probable outcomes based on current energy, empowering you to make better choices.' },
+      { q: 'Are psychic readings confidential?', a: 'Completely. All sessions with Dr. Usha Bhatt are strictly confidential. Your personal information is never shared with anyone.' },
+      { q: 'How do I prepare for a psychic reading?', a: 'Come with an open mind. You may have specific questions ready but it is not necessary. The more relaxed and open you are, the clearer the connection.' },
+    ],
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      'name': 'Psychic Readings',
+      'provider': { '@type': 'Person', 'name': 'Dr. Usha Bhatt' },
+      'description': 'Psychic readings by Dr. Usha Bhatt — renowned psychic healer and intuitive guide.',
+      'url': 'https://www.thecosmicconnect.com/services/psychic-readings',
+      'areaServed': 'India',
+      'serviceType': 'Psychic Reading',
+    },
+  },
+]
+
+export function getServiceBySlug(slug: string): ServiceData | undefined {
+  return services.find(s => s.slug === slug)
+}

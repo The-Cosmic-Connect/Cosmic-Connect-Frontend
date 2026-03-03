@@ -1,0 +1,379 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Raleway:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base ─────────────────────────────────────────────── */
+:root {
+  --cosmic-black:       #0A0708;
+  --cosmic-deep-purple: #1A0A2E;
+  --cosmic-purple:      #2D1B5E;
+  --cosmic-violet:      #4A2C8A;
+  --cosmic-gold:        #C9A84C;
+  --cosmic-light-gold:  #E8C97A;
+  --cosmic-cream:       #F5EDD6;
+  --cosmic-off-white:   #FAF6EE;
+  --cosmic-rose:        #8B3A52;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background-color: var(--cosmic-black);
+  color: var(--cosmic-cream);
+  font-family: 'Raleway', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Custom Scrollbar ──────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cosmic-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--cosmic-gold);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cosmic-light-gold);
+}
+
+/* ─── Typography ────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.05em;
+}
+
+.font-display {
+  font-family: 'Cinzel', serif;
+}
+
+.font-body {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-ui {
+  font-family: 'Raleway', sans-serif;
+}
+
+/* ─── Gold Text Shimmer ─────────────────────────────────── */
+.text-gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--cosmic-gold) 0%,
+    var(--cosmic-light-gold) 40%,
+    #fff8e7 50%,
+    var(--cosmic-light-gold) 60%,
+    var(--cosmic-gold) 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ─── Star Field Background ─────────────────────────────── */
+.star-field {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: starTwinkle var(--duration, 4s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* ─── Section Divider ───────────────────────────────────── */
+.gold-divider {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cosmic-gold), transparent);
+  margin: 0 auto;
+}
+
+.gold-divider-full {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cosmic-gold) 30%, var(--cosmic-gold) 70%, transparent);
+}
+
+/* ─── Buttons ───────────────────────────────────────────── */
+.btn-primary {
+  @apply inline-flex items-center gap-2 px-8 py-3 font-cinzel font-semibold text-sm tracking-widest uppercase;
+  background: linear-gradient(135deg, #C9A84C, #E8C97A, #C9A84C);
+  background-size: 200% auto;
+  color: var(--cosmic-black);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  background-position: right center;
+  box-shadow: 0 0 25px rgba(201, 168, 76, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  @apply inline-flex items-center gap-2 px-8 py-3 font-cinzel font-semibold text-sm tracking-widest uppercase;
+  background: transparent;
+  color: var(--cosmic-gold);
+  border: 1px solid var(--cosmic-gold);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: rgba(201, 168, 76, 0.1);
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ─── Cards ─────────────────────────────────────────────── */
+.cosmic-card {
+  background: linear-gradient(135deg, rgba(45, 27, 94, 0.4), rgba(26, 10, 46, 0.6));
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.cosmic-card:hover {
+  border-color: rgba(201, 168, 76, 0.5);
+  box-shadow: 0 8px 32px rgba(201, 168, 76, 0.15);
+  transform: translateY(-4px);
+}
+
+/* ─── Nav Link ──────────────────────────────────────────── */
+.nav-link {
+  @apply relative font-raleway font-medium text-sm tracking-widest uppercase;
+  color: rgba(245, 237, 214, 0.8);
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--cosmic-gold);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--cosmic-gold);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: var(--cosmic-gold);
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* ─── Section Spacing ───────────────────────────────────── */
+.section {
+  @apply relative py-20 px-4;
+}
+
+.container-cosmic {
+  @apply max-w-6xl mx-auto px-4;
+}
+
+/* ─── Animations ────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes glow {
+  0%   { box-shadow: 0 0 5px #C9A84C44, 0 0 10px #C9A84C22; }
+  100% { box-shadow: 0 0 20px #C9A84C88, 0 0 40px #C9A84C44; }
+}
+
+@keyframes fadeInUp {
+  0%   { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%       { opacity: 1;    transform: scale(1.4); }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+
+/* ─── Utility ───────────────────────────────────────────── */
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--cosmic-gold), var(--cosmic-light-gold));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-cosmic-section {
+  background: linear-gradient(180deg, var(--cosmic-black) 0%, var(--cosmic-deep-purple) 50%, var(--cosmic-black) 100%);
+}
+
+.ornament {
+  font-family: 'Cinzel', serif;
+  color: var(--cosmic-gold);
+  opacity: 0.6;
+  font-size: 1.2em;
+  letter-spacing: 0.3em;
+}
+
+/* ── BLOG CONTENT STYLES ─────────────────────────────────────────────────────
+   Add this block to the bottom of frontend/styles/globals.css
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.blog-content {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  line-height: 1.85;
+  color: rgba(245, 237, 214, 0.75);
+}
+
+.blog-content p {
+  margin-bottom: 1.5rem;
+}
+
+.blog-content p.lead {
+  font-size: 1.3rem;
+  font-style: italic;
+  color: rgba(245, 237, 214, 0.85);
+  border-left: 3px solid #C9A84C;
+  padding-left: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.blog-content h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #F5EDD6;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+}
+
+.blog-content h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #E8C97A;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.blog-content strong {
+  color: #F5EDD6;
+  font-weight: 700;
+}
+
+.blog-content em {
+  color: rgba(245, 237, 214, 0.8);
+  font-style: italic;
+}
+
+.blog-content blockquote {
+  border-left: 3px solid #C9A84C;
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  background: rgba(201, 168, 76, 0.05);
+  font-style: italic;
+  font-size: 1.2rem;
+  color: rgba(245, 237, 214, 0.7);
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.blog-content ul li {
+  list-style: none;
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.blog-content ul li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  color: rgba(201, 168, 76, 0.5);
+  font-size: 0.65rem;
+  top: 0.35rem;
+}
+
+.blog-content ol li {
+  list-style: decimal;
+  margin-bottom: 0.5rem;
+  color: rgba(245, 237, 214, 0.75);
+}
+
+.blog-content a {
+  color: #C9A84C;
+  text-decoration: underline;
+  text-decoration-color: rgba(201, 168, 76, 0.3);
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.blog-content a:hover {
+  color: #E8C97A;
+  text-decoration-color: rgba(232, 201, 122, 0.6);
+}
+
+.blog-content img {
+  width: 100%;
+  height: auto;
+  margin: 2rem 0;
+  border: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.blog-content hr {
+  border: none;
+  border-top: 1px solid rgba(201, 168, 76, 0.2);
+  margin: 2.5rem 0;
+}
