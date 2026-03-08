@@ -47,7 +47,6 @@ jobs:
           vercel build ${{ env.PROD_FLAG }} --token=${{ secrets.VERCEL_TOKEN }}
           vercel deploy --prebuilt ${{ env.PROD_FLAG }} --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          API_URL: ${{ env.API_URL }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_FRONTEND }}
           NEXT_PUBLIC_API_URL: ${{ env.API_URL }}
