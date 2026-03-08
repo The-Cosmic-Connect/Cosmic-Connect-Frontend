@@ -5,6 +5,9 @@ const nextConfig = {
     domains: [
       'static.wixstatic.com',
       'thecosmicconnect-assets.s3.ap-south-1.amazonaws.com',
+      'thecosmicconnect-images-dev.s3.ap-south-1.amazonaws.com',
+      'thecosmicconnect-images-staging.s3.ap-south-1.amazonaws.com',
+      'thecosmicconnect-images.s3.ap-south-1.amazonaws.com',
     ],
     formats: ['image/avif', 'image/webp'],
   },

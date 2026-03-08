@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Image from 'next/image'
+
 import { ArrowLeft, Lock, CreditCard, Globe } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import { useCart } from '@/context/CartContext'
@@ -250,7 +250,7 @@ export default function CheckoutPage() {
                     <div key={item.id} className="flex gap-3 items-center">
                       <div className="relative w-12 h-12 rounded-sm overflow-hidden shrink-0 border border-cosmic-gold/15">
                         {item.image && !item.image.includes('placeholder') ? (
-                          <Image src={item.image} alt={item.name} fill className="object-cover" />
+                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-cosmic-black/30 text-xl">
                             💎

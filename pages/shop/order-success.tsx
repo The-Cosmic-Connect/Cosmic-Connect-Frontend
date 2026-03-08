@@ -9,7 +9,7 @@ type Status = 'verifying' | 'success' | 'failed' | 'unknown'
 
 export default function OrderSuccessPage() {
   const router = useRouter()
-  const { dispatch } = useCart()
+  const { clearCart } = useCart()
   const { orderId, gateway } = router.query
 
   const [status, setStatus] = useState<Status>('verifying')
@@ -30,7 +30,7 @@ export default function OrderSuccessPage() {
 
           if (data.state === 'COMPLETED') {
             setStatus('success')
-            dispatch({ type: 'CLEAR' })
+            clearCart()
           } else if (data.state === 'FAILED' || data.state === 'CANCELLED') {
             setStatus('failed')
           } else if (attempts < 5) {
@@ -39,20 +39,20 @@ export default function OrderSuccessPage() {
           } else {
             // After 5 attempts still pending — show unknown, don't fail the customer
             setStatus('unknown')
-            dispatch({ type: 'CLEAR' })
+            clearCart()
           }
         } catch {
           setStatus('unknown')
-          dispatch({ type: 'CLEAR' })
+          clearCart()
         }
       }
       check()
     } else {
       // PayPal — captured server-side before redirect, trust the redirect
       setStatus('success')
-      dispatch({ type: 'CLEAR' })
+      clearCart()
     }
-  }, [orderId, gateway, dispatch])
+  }, [orderId, gateway, clearCart])
 
   return (
     <Layout title="Order Confirmation | The Cosmic Connect" canonical="/shop/order-success">
