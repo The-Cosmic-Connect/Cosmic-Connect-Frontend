@@ -6,7 +6,7 @@ import Layout from '@/components/layout/Layout'
 import CartDrawer from '@/components/shop/CartDrawer'
 import { useCart } from '@/context/CartContext'
 import { useGeo } from '@/context/GeoContext'
-import type { Product } from '../index'
+import type { Product } from '@/types/product'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 const PAGE_SIZE = 48

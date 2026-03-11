@@ -5,6 +5,10 @@ import Layout from '@/components/layout/Layout'
 import CartDrawer from '@/components/shop/CartDrawer'
 import { useCart } from '@/context/CartContext'
 import { useRouter } from 'next/router'
+// Remove the Product interface definition, replace with:
+import type { Product } from '@/types/product'
+// Keep the export for backwards compat:
+export type { Product }
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
