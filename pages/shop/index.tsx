@@ -171,13 +171,24 @@ export default function ShopPage() {
       .catch(() => setLoading(false))
   }, [])
 
-  // Derive collections from products (sorted alphabetically)
+  // Replace the fetch in useEffect with this:
   useEffect(() => {
-    if (!products.length) return
-    const seen = new Set<string>()
-    products.forEach(p => p.collections?.forEach(c => seen.add(c)))
-    setCollections(['All Products', ...Array.from(seen).sort()])
-  }, [products])
+    let allProducts: Product[] = []
+    
+    async function fetchAll(lastKey?: string) {
+      const url = `${API}/products${lastKey ? `?last_key=${encodeURIComponent(lastKey)}` : ''}`
+      const data = await fetch(url).then(r => r.json())
+      allProducts = [...allProducts, ...(data.products || [])]
+      setProducts([...allProducts])
+      if (data.nextKey) {
+        await fetchAll(JSON.stringify(data.nextKey))
+      } else {
+        setLoading(false)
+      }
+    }
+
+    fetchAll().catch(() => setLoading(false))
+  }, [])
 
   // Filter + sort
   const filtered = sortProducts(
