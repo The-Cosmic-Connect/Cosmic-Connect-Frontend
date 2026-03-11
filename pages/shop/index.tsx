@@ -1,379 +1,333 @@
-import { useState, useEffect } from 'react'
-import { Search, SlidersHorizontal, X, ShoppingCart } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { Search, ShoppingCart, X } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import CartDrawer from '@/components/shop/CartDrawer'
 import { useCart } from '@/context/CartContext'
-import { useGeo } from '@/context/GeoContext'
+import { useRouter } from 'next/router'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-// ── Product type matching new DynamoDB schema ─────────────────────────────
-export interface Product {
-  id:               string
-  name:             string
-  slug:             string
-  sku:              string
-  description:      string
-  collections:      string[]   // array e.g. ["Bracelets", "Therapy"]
-  priceINR:         number
-  priceUSD:         number
-  originalPriceINR: number
-  originalPriceUSD: number
-  discountValue:    number
-  ribbon:           string
-  images:           string[]
-  specs:            { title: string; value: string }[]
-  inStock:          boolean
-  published:        boolean
-  featured:         boolean
+// Category icons mapping — emoji fallback
+const CATEGORY_ICONS: Record<string, string> = {
+  'Bracelets': '📿',
+  'Zodiac Bracelets': '♈',
+  'Therapy Bracelets': '💚',
+  'Raw / Rough Stones': '🪨',
+  'Tumble Stones': '💎',
+  'Crystal Clusters': '✨',
+  'Towers, Wands & Pencils': '🔮',
+  'Balls & Spheres': '🔵',
+  'Pyramids': '🔺',
+  'Puffy Hearts': '💜',
+  'Palm Stones': '🖐️',
+  'Crystal Tree': '🌳',
+  'Rollers & Gua Sha': '🌿',
+  'Pendants & Jewellery': '💍',
+  'Angels': '👼',
+  'Idols & Figurines': '🪷',
+  'Evil Eye Products': '🧿',
+  'Jap Mala': '📿',
+  'Rudraksh': '🌰',
+  'Feng Shui': '☯️',
+  'Dowsers': '🌀',
+  'Energy Generator Orgones': '⚡',
+  'Intention Coin': '🪙',
+  'Sage & Incense': '🌿',
+  'Cleansing & Charging': '🌙',
+  'Meditation Essentials': '🧘',
+  'Energized Water': '💧',
+  'Lamp': '🕯️',
 }
 
-const SORT_OPTIONS = [
-  { value: 'default',    label: 'Featured' },
-  { value: 'price-asc',  label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'name-asc',   label: 'Name: A–Z' },
-]
-
-function sortProducts(products: Product[], sort: string, isIndia: boolean): Product[] {
-  return [...products].sort((a, b) => {
-    if (sort === 'price-asc')  return (isIndia ? a.priceINR : a.priceUSD) - (isIndia ? b.priceINR : b.priceUSD)
-    if (sort === 'price-desc') return (isIndia ? b.priceINR : b.priceUSD) - (isIndia ? a.priceINR : a.priceUSD)
-    if (sort === 'name-asc')   return a.name.localeCompare(b.name)
-    // default: featured first, then by name
-    if (a.featured !== b.featured) return a.featured ? -1 : 1
-    return 0
-  })
+interface CategoryData {
+  name: string
+  count: number
+  image: string   // first product image in that collection
+  slug: string
 }
 
-// ── Product Card ──────────────────────────────────────────────────────────
-function ProductCard({ product }: { product: Product }) {
-  const { isIndia, symbol } = useGeo()
-  const { addToCart }       = useCart()
-  const [added, setAdded]   = useState(false)
+function toSlug(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+}
 
-  const price         = isIndia ? product.priceINR         : product.priceUSD
-  const originalPrice = isIndia ? product.originalPriceINR : product.originalPriceUSD
-  const hasDiscount   = originalPrice > 0 && originalPrice > price
-  const discountPct   = hasDiscount ? Math.round((1 - price / originalPrice) * 100) : 0
-  const image         = product.images?.[0] || ''
+function CategoryCard({ cat, index }: { cat: CategoryData; index: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
 
-  function handleAdd(e: React.MouseEvent) {
-    e.preventDefault()
-    e.stopPropagation()
-    addToCart({ ...product, quantity: 1 })
-    setAdded(true)
-    setTimeout(() => setAdded(false), 1800)
-  }
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setVisible(true) },
+      { threshold: 0.1 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  const icon = CATEGORY_ICONS[cat.name] || '✦'
 
   return (
-    <Link href={`/shop/${product.slug}`} className="group block">
-      <div className="cosmic-card overflow-hidden transition-transform duration-300 group-hover:-translate-y-1">
-        {/* Image */}
-        <div className="relative aspect-square bg-cosmic-deepPurple overflow-hidden">
-          {image ? (
-            <img
-              src={image}
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-cosmic-gold text-4xl">✦</div>
-          )}
+    <div
+      ref={ref}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(28px)',
+        transition: `opacity 0.55s ease ${(index % 8) * 0.06}s, transform 0.55s ease ${(index % 8) * 0.06}s`,
+      }}
+    >
+      <Link href={`/shop/collection/${cat.slug}`} className="group block">
+        <div className="relative overflow-hidden rounded-sm border border-cosmic-gold/10 bg-cosmic-deepPurple
+          hover:border-cosmic-gold/40 transition-all duration-400 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(201,168,76,0.12)]">
 
-          {/* Ribbon badge */}
-          {product.ribbon && (
-            <span className="absolute top-2 left-2 bg-cosmic-gold text-cosmic-black text-xs font-bold font-raleway px-2 py-0.5 tracking-wide uppercase">
-              {product.ribbon}
-            </span>
-          )}
-
-          {/* Out of stock overlay */}
-          {!product.inStock && (
-            <div className="absolute inset-0 bg-cosmic-black/60 flex items-center justify-center">
-              <span className="font-raleway text-xs text-cosmic-cream/60 tracking-widest uppercase">Out of Stock</span>
-            </div>
-          )}
-
-          {/* Quick add button */}
-          {product.inStock && (
-            <button
-              onClick={handleAdd}
-              className="absolute bottom-2 left-2 right-2 py-2 bg-cosmic-black/80 backdrop-blur-sm
-                text-cosmic-gold font-raleway text-xs tracking-widest uppercase
-                opacity-0 group-hover:opacity-100 transition-opacity duration-200
-                hover:bg-cosmic-gold hover:text-cosmic-black"
-            >
-              {added ? '✓ Added' : 'Quick Add'}
-            </button>
-          )}
-        </div>
-
-        {/* Info */}
-        <div className="p-3">
-          {/* Collection tag */}
-          {product.collections.length > 0 && (
-            <p className="font-raleway text-cosmic-gold/60 text-xs tracking-widest uppercase mb-1 truncate">
-              {product.collections[0]}
-            </p>
-          )}
-
-          {/* Name */}
-          <h3 className="font-cormorant text-cosmic-cream text-sm leading-snug mb-2 line-clamp-2 group-hover:text-cosmic-gold transition-colors">
-            {product.name}
-          </h3>
-
-          {/* Price */}
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="font-raleway text-cosmic-cream font-semibold text-sm">
-              {symbol}{price.toLocaleString()}
-            </span>
-            {hasDiscount && (
-              <>
-                <span className="font-raleway text-cosmic-cream/30 text-xs line-through">
-                  {symbol}{originalPrice.toLocaleString()}
-                </span>
-                <span className="font-raleway text-cosmic-gold text-xs font-semibold">
-                  {discountPct}% off
-                </span>
-              </>
+          {/* Image */}
+          <div className="relative aspect-[4/3] overflow-hidden">
+            {cat.image ? (
+              <img
+                src={cat.image}
+                alt={cat.name}
+                className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-108"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-5xl"
+                style={{ background: 'linear-gradient(135deg, rgba(74,44,138,0.4), rgba(10,7,8,0.8))' }}>
+                {icon}
+              </div>
             )}
+
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-cosmic-black/80 via-cosmic-black/20 to-transparent" />
+
+            {/* Product count badge */}
+            <div className="absolute top-3 right-3 bg-cosmic-black/60 backdrop-blur-sm border border-cosmic-gold/30
+              px-2 py-0.5 rounded-sm">
+              <span className="font-raleway text-cosmic-gold text-xs tracking-widest">{cat.count}</span>
+            </div>
+
+            {/* Category name overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-4">
+              <p className="font-raleway text-cosmic-gold/70 text-xs tracking-[0.2em] uppercase mb-1">
+                {icon} Collection
+              </p>
+              <h3 className="font-cinzel text-cosmic-cream font-semibold text-sm leading-snug
+                group-hover:text-cosmic-gold transition-colors duration-300">
+                {cat.name}
+              </h3>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="px-4 py-3 flex items-center justify-between border-t border-cosmic-gold/10">
+            <span className="font-cormorant text-cosmic-cream/50 text-sm italic">
+              {cat.count} products
+            </span>
+            <span className="font-raleway text-cosmic-gold text-xs tracking-widest uppercase
+              opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Shop →
+            </span>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   )
 }
 
-// ── Main page ──────────────────────────────────────────────────────────────
 export default function ShopPage() {
-  const { totalItems }  = useCart()
-  const { isIndia, loading: geoLoading } = useGeo()
+  const { totalItems } = useCart()
+  const router = useRouter()
+  const [categories, setCategories]   = useState<CategoryData[]>([])
+  const [loading,    setLoading]      = useState(true)
+  const [search,     setSearch]       = useState('')
+  const [cartOpen,   setCartOpen]     = useState(false)
 
-  const [products,        setProducts]        = useState<Product[]>([])
-  const [collections,     setCollections]     = useState<string[]>([])
-  const [loading,         setLoading]         = useState(true)
-  const [activeCollection,setActiveCollection]= useState('all')
-  const [search,          setSearch]          = useState('')
-  const [sort,            setSort]            = useState('default')
-  const [cartOpen,        setCartOpen]        = useState(false)
-  const [showFilters,     setShowFilters]     = useState(false)
-
-  // Fetch products
   useEffect(() => {
-    fetch(`${API}/products`)
-      .then(r => r.json())
-      .then(data => {
-        setProducts(data.products || [])
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [])
+    // Fetch collections + first batch of products to build category tiles
+    async function load() {
+      try {
+        // Get collections list
+        const colRes  = await fetch(`${API}/collections`)
+        const colData = await colRes.json()
+        const cols: string[] = colData.collections || []
 
-  // Replace the fetch in useEffect with this:
-  useEffect(() => {
-    let allProducts: Product[] = []
-    
-    async function fetchAll(lastKey?: string) {
-      const url = `${API}/products${lastKey ? `?last_key=${encodeURIComponent(lastKey)}` : ''}`
-      const data = await fetch(url).then(r => r.json())
-      allProducts = [...allProducts, ...(data.products || [])]
-      setProducts([...allProducts])
-      if (data.nextKey) {
-        await fetchAll(JSON.stringify(data.nextKey))
-      } else {
+        // Get first page of products to extract images per collection
+        const prodRes  = await fetch(`${API}/products?limit=200`)
+        const prodData = await prodRes.json()
+        const products = prodData.products || []
+
+        // Build category data
+        const catMap: Record<string, { count: number; image: string }> = {}
+
+        // Count all products per collection using total scan
+        // We use the products we have to get images, and collections API for names
+        products.forEach((p: any) => {
+          p.collections?.forEach((col: string) => {
+            if (!catMap[col]) catMap[col] = { count: 0, image: '' }
+            catMap[col].count++
+            if (!catMap[col].image && p.images?.[0]) {
+              catMap[col].image = p.images[0]
+            }
+          })
+        })
+
+        // Merge with full collections list
+        const cats: CategoryData[] = cols
+          .filter(c => catMap[c])
+          .map(name => ({
+            name,
+            count: catMap[name]?.count || 0,
+            image: catMap[name]?.image || '',
+            slug:  toSlug(name),
+          }))
+          .sort((a, b) => b.count - a.count)
+
+        setCategories(cats)
+      } catch (e) {
+        console.error(e)
+      } finally {
         setLoading(false)
       }
     }
-
-    fetchAll().catch(() => setLoading(false))
+    load()
   }, [])
 
-  // Filter + sort
-  const filtered = sortProducts(
-    products.filter(p => {
-      const matchCollection = activeCollection === 'all' ||
-        p.collections?.some(c => c.toLowerCase() === activeCollection.toLowerCase())
-      const matchSearch = !search ||
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.description?.toLowerCase().includes(search.toLowerCase())
-      return matchCollection && matchSearch
-    }),
-    sort,
-    isIndia
-  )
+  const filtered = search
+    ? categories.filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
+    : categories
 
-  const activeLabel = activeCollection === 'all'
-    ? 'All Products'
-    : collections.find(c => c.toLowerCase() === activeCollection.toLowerCase()) || activeCollection
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault()
+    // If search matches exactly one category, go there
+    if (filtered.length === 1) {
+      router.push(`/shop/collection/${filtered[0].slug}`)
+    }
+  }
 
   return (
     <>
       <Layout
         title="Crystal & Healing Products Shop | The Cosmic Connect"
-        description="Shop 100% authentic crystals, healing bracelets, malas, yantras and spiritual tools. Cleansed and energized by Reiki Grand Masters."
+        description="Shop 100% authentic crystals, healing bracelets, malas, yantras and spiritual tools. Cleansed and energized by Reiki Grand Masters. Free shipping above ₹1999."
         canonical="/shop"
       >
         {/* Hero */}
-        <section className="relative pt-36 pb-10 px-4 bg-cosmic-gradient overflow-hidden">
+        <section className="relative pt-36 pb-16 px-4 overflow-hidden"
+          style={{ background: 'linear-gradient(180deg, #1A0A2E 0%, #0A0708 100%)' }}>
+          {/* Radial glow */}
           <div className="absolute inset-0 pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(74,44,138,0.2), transparent 70%)' }}
-          />
+            style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(201,168,76,0.07), transparent 70%)' }} />
+
+          {/* Decorative corner lines */}
+          <div className="absolute top-24 left-8 w-16 h-16 border-l border-t border-cosmic-gold/20 hidden lg:block" />
+          <div className="absolute top-24 right-8 w-16 h-16 border-r border-t border-cosmic-gold/20 hidden lg:block" />
+
           <div className="container-cosmic relative z-10 text-center">
-            <p className="ornament text-xs tracking-[0.5em] mb-3">✦ ✦ ✦</p>
-            <h1 className="font-cinzel font-bold text-cosmic-cream mb-3"
-              style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>
+            <p className="font-raleway text-cosmic-gold/60 text-xs tracking-[0.5em] uppercase mb-4">✦ Our Collections ✦</p>
+            <h1 className="font-cinzel font-bold text-cosmic-cream mb-4"
+              style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
               Healing <span className="text-gradient-gold">Crystal Shop</span>
             </h1>
-            <p className="font-cormorant italic text-cosmic-cream/60 text-lg max-w-xl mx-auto">
-              100% authentic crystals, cleansed &amp; energized by Reiki Grand Masters
+            <p className="font-cormorant italic text-cosmic-cream/60 text-xl max-w-xl mx-auto mb-8">
+              Handpicked crystals, cleansed &amp; energized by Reiki Grand Masters
             </p>
-            <div className="flex flex-wrap justify-center gap-6 mt-6">
-              {['✦ Authentic & Certified', '✦ Reiki Energized', '✦ Free Shipping ₹1999+', '✦ 50,000+ Happy Customers'].map(b => (
-                <span key={b} className="font-raleway text-cosmic-cream/40 text-xs tracking-widest">{b}</span>
-              ))}
-            </div>
-          </div>
-        </section>
 
-        {/* Sticky toolbar */}
-        <div className="sticky top-16 z-30 bg-cosmic-deepPurple/95 backdrop-blur-md border-b border-cosmic-gold/10">
-          <div className="container-cosmic py-3 flex items-center gap-3">
-            {/* Search */}
-            <div className="flex-1 flex items-center gap-2 border border-cosmic-gold/20 px-3 max-w-xs">
-              <Search size={14} className="text-cosmic-cream/30 shrink-0" />
+            {/* Search bar */}
+            <form onSubmit={handleSearch}
+              className="flex items-center gap-0 max-w-md mx-auto border border-cosmic-gold/30 bg-cosmic-black/40 backdrop-blur-sm">
+              <Search size={15} className="ml-4 text-cosmic-cream/30 shrink-0" />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search collections..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="bg-transparent font-raleway text-xs text-cosmic-cream placeholder-cosmic-cream/25 outline-none py-2 w-full"
+                className="flex-1 bg-transparent font-raleway text-sm text-cosmic-cream placeholder-cosmic-cream/25
+                  outline-none px-3 py-3 tracking-wide"
               />
               {search && (
-                <button onClick={() => setSearch('')} className="text-cosmic-cream/30 hover:text-cosmic-gold">
-                  <X size={13} />
+                <button type="button" onClick={() => setSearch('')}
+                  className="px-3 text-cosmic-cream/30 hover:text-cosmic-gold transition-colors">
+                  <X size={14} />
                 </button>
               )}
-            </div>
+            </form>
 
-            {/* Sort */}
-            <select
-              value={sort}
-              onChange={e => setSort(e.target.value)}
-              className="bg-cosmic-deepPurple border border-cosmic-gold/20 text-cosmic-cream/70 font-raleway text-xs tracking-wider py-2 px-3 outline-none hover:border-cosmic-gold/40 transition-colors"
-            >
-              {SORT_OPTIONS.map(o => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+            {/* Trust badges */}
+            <div className="flex flex-wrap justify-center gap-6 mt-8">
+              {['✦ Authentic & Certified', '✦ Reiki Energized', '✦ Free Shipping ₹1999+', '✦ 50,000+ Happy Customers'].map(b => (
+                <span key={b} className="font-raleway text-cosmic-cream/35 text-xs tracking-widest">{b}</span>
               ))}
-            </select>
-
-            {/* Filter toggle mobile */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-1.5 border border-cosmic-gold/20 px-3 py-2 text-cosmic-cream/60 hover:text-cosmic-gold hover:border-cosmic-gold/40 transition-colors lg:hidden"
-            >
-              <SlidersHorizontal size={13} />
-              <span className="font-raleway text-xs tracking-widest">Filter</span>
-            </button>
-
-            {/* Cart */}
-            <button
-              onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-1.5 border border-cosmic-gold/30 px-3 py-2 text-cosmic-cream/70 hover:text-cosmic-gold hover:border-cosmic-gold transition-colors ml-auto"
-            >
-              <ShoppingCart size={14} />
-              <span className="font-raleway text-xs tracking-widest hidden sm:block">Cart</span>
-              {totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-cosmic-gold text-cosmic-black text-xs font-bold font-raleway rounded-full w-4 h-4 flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </button>
-          </div>
-
-          {/* Result count */}
-          {!loading && (
-            <div className="container-cosmic pb-2">
-              <p className="font-raleway text-cosmic-cream/30 text-xs tracking-widest">
-                {filtered.length} product{filtered.length !== 1 ? 's' : ''} in {activeLabel}
-                {search && ` matching "${search}"`}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Main content */}
-        <section className="section bg-cosmic-section pt-8">
-          <div className="container-cosmic">
-            <div className="flex gap-8">
-
-              {/* Sidebar — collections from DB */}
-              <aside className={`w-56 shrink-0 ${showFilters ? 'block' : 'hidden'} lg:block`}>
-                <p className="font-cinzel text-cosmic-cream/50 text-xs tracking-widest uppercase mb-4">
-                  Collections
-                </p>
-                <div className="space-y-0.5">
-                  {collections.map(col => {
-                    const slug    = col === 'All Products' ? 'all' : col.toLowerCase()
-                    const isActive= activeCollection === slug
-                    return (
-                      <button
-                        key={col}
-                        onClick={() => { setActiveCollection(slug); setShowFilters(false) }}
-                        className={`w-full text-left px-3 py-2 font-raleway text-xs tracking-wide transition-all duration-200 ${
-                          isActive
-                            ? 'text-cosmic-gold bg-cosmic-gold/10 border-l-2 border-cosmic-gold pl-4'
-                            : 'text-cosmic-cream/50 hover:text-cosmic-cream/80 border-l-2 border-transparent'
-                        }`}
-                      >
-                        {col}
-                      </button>
-                    )
-                  })}
-                </div>
-              </aside>
-
-              {/* Product grid */}
-              <div className="flex-1">
-                {loading || geoLoading ? (
-                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {[...Array(8)].map((_, i) => (
-                      <div key={i} className="cosmic-card animate-pulse">
-                        <div className="aspect-square bg-cosmic-gold/5" />
-                        <div className="p-4 space-y-2">
-                          <div className="h-3 bg-cosmic-gold/5 rounded w-1/2" />
-                          <div className="h-4 bg-cosmic-gold/8 rounded" />
-                          <div className="h-4 bg-cosmic-gold/5 rounded w-3/4" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : filtered.length === 0 ? (
-                  <div className="text-center py-24">
-                    <span className="text-6xl block mb-4">🔮</span>
-                    <p className="font-cinzel text-cosmic-cream/40 text-sm">No products found</p>
-                    <p className="font-cormorant text-cosmic-cream/30 italic mt-1">
-                      Try a different collection or search term
-                    </p>
-                    <button
-                      onClick={() => { setActiveCollection('all'); setSearch('') }}
-                      className="btn-outline mt-6 text-xs"
-                    >
-                      Clear Filters
-                    </button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {filtered.map(product => (
-                      <ProductCard key={product.id} product={product} />
-                    ))}
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </section>
+
+        {/* Toolbar */}
+        <div className="sticky top-16 z-30 bg-cosmic-black/95 backdrop-blur-md border-b border-cosmic-gold/10">
+          <div className="container-cosmic py-3 flex items-center justify-between">
+            <p className="font-raleway text-cosmic-cream/30 text-xs tracking-widest">
+              {loading ? 'Loading...' : `${filtered.length} collection${filtered.length !== 1 ? 's' : ''}`}
+            </p>
+            <div className="flex items-center gap-3">
+              <Link href="/shop/all" className="font-raleway text-cosmic-cream/50 hover:text-cosmic-gold text-xs tracking-widest uppercase transition-colors">
+                View All Products
+              </Link>
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative flex items-center gap-1.5 border border-cosmic-gold/30 px-3 py-2
+                  text-cosmic-cream/70 hover:text-cosmic-gold hover:border-cosmic-gold transition-colors"
+              >
+                <ShoppingCart size={14} />
+                <span className="font-raleway text-xs tracking-widest hidden sm:block">Cart</span>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-cosmic-gold text-cosmic-black text-xs
+                    font-bold font-raleway rounded-full w-4 h-4 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Category Grid */}
+        <section className="py-12 px-4" style={{ background: '#0A0708' }}>
+          <div className="container-cosmic">
+            {loading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {[...Array(12)].map((_, i) => (
+                  <div key={i} className="animate-pulse rounded-sm border border-cosmic-gold/5 bg-cosmic-deepPurple/30">
+                    <div className="aspect-[4/3] bg-cosmic-gold/5" />
+                    <div className="p-3 space-y-2">
+                      <div className="h-3 bg-cosmic-gold/5 rounded w-3/4" />
+                      <div className="h-3 bg-cosmic-gold/5 rounded w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-24">
+                <p className="font-cinzel text-cosmic-cream/40 text-sm mb-2">No collections found</p>
+                <button onClick={() => setSearch('')} className="btn-outline text-xs mt-4">Clear Search</button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filtered.map((cat, i) => (
+                  <CategoryCard key={cat.name} cat={cat} index={i} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Bottom CTA */}
+        {!loading && (
+          <section className="py-12 text-center border-t border-cosmic-gold/10"
+            style={{ background: 'linear-gradient(180deg, #0A0708 0%, #1A0A2E 100%)' }}>
+            <p className="font-cormorant text-cosmic-cream/50 italic text-lg mb-4">
+              Can't find what you're looking for?
+            </p>
+            <Link href="/shop/all" className="btn-primary">
+              Browse All {categories.reduce((s, c) => s + c.count, 0).toLocaleString()} Products
+            </Link>
+          </section>
+        )}
       </Layout>
 
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
