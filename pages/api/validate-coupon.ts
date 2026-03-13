@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!code) return res.status(400).json({ error: 'No coupon code provided' })
 
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+    const backendUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
     const r = await fetch(`${backendUrl}/coupons/validate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
