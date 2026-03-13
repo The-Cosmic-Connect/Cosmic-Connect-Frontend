@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useCart } from '@/context/CartContext'
@@ -30,6 +30,14 @@ export default function ProductPage({ product }: { product: Product }) {
   const [qty,      setQty]      = useState(1)
   const [openSpec, setOpenSpec] = useState<number | null>(0)
   const [added,    setAdded]    = useState(false)
+
+  // In [slug].tsx, add at top of component:
+  const router = useRouter()
+  useEffect(() => {
+    if (router.query.slug === 'all') {
+      router.replace('/shop/collection/all')
+    }
+  }, [router.query.slug])
 
   const price         = isIndia ? product.priceINR         : product.priceUSD
   const originalPrice = isIndia ? product.originalPriceINR : product.originalPriceUSD

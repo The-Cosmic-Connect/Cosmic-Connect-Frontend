@@ -161,14 +161,18 @@ export default function CollectionPage() {
 
     async function fetchAll() {
       try {
-        // Fetch collections list
+        // Fetch collections list first
         const colRes = await fetch(`${API}/collections`)
         const colData = await colRes.json()
-        setCollections(colData.collections || [])
+        const cols: string[] = colData.collections || []
+        setCollections(cols)
 
-        // Fetch products — use collection filter if not 'all'
+        // Resolve actual collection name from slug BEFORE fetching products
+        const resolvedName = cols.find(c => toSlug(c) === nameSlug) || nameSlug
+
+        // Fetch products using resolved name
         let url = `${API}/products?limit=500`
-        if (!isAll) url += `&collection=${encodeURIComponent(collectionName || nameSlug)}`
+        if (!isAll) url += `&collection=${encodeURIComponent(resolvedName)}`
 
         let products: Product[] = []
         let lastKey: any = null
