@@ -5,6 +5,7 @@ import { useCart } from '@/context/CartContext'
 import { useGeo } from '@/context/GeoContext'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { useRouter } from 'next/router'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
