@@ -14,6 +14,7 @@ async function getPayPalToken(): Promise<string> {
     },
     body: 'grant_type=client_credentials',
   })
+  
   const data = await r.json()
   return data.access_token
 }
