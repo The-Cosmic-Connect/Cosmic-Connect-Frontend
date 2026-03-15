@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Menu, X, Phone } from 'lucide-react'
+import { Menu, X, Phone, ShoppingCart } from 'lucide-react'
+import { useCart } from '@/context/CartContext'
+import CartDrawer from '@/components/shop/CartDrawer'
 
 const navLinks = [
   { label: 'Home',     href: '/' },
@@ -14,9 +16,12 @@ const navLinks = [
 ]
 
 export default function Navbar() {
-  const [scrolled,     setScrolled]     = useState(false)
-  const [menuOpen,     setMenuOpen]     = useState(false)
-  const router = useRouter()
+  const [scrolled,  setScrolled]  = useState(false)
+  const [menuOpen,  setMenuOpen]  = useState(false)
+  const [cartOpen,  setCartOpen]  = useState(false)
+  const [cartBump,  setCartBump]  = useState(false)
+  const router     = useRouter()
+  const { totalItems } = useCart()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -25,9 +30,17 @@ export default function Navbar() {
   }, [])
 
   // Close mobile menu on route change
+  useEffect(() => { setMenuOpen(false) }, [router.pathname])
+
+  // Bump animation when item added to cart
+  const prevTotal = useState(totalItems)[0]
   useEffect(() => {
-    setMenuOpen(false)
-  }, [router.pathname])
+    if (totalItems > 0) {
+      setCartBump(true)
+      const t = setTimeout(() => setCartBump(false), 400)
+      return () => clearTimeout(t)
+    }
+  }, [totalItems])
 
   return (
     <>
@@ -43,21 +56,13 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10">
-              {/* Decorative ring */}
               <div className="absolute inset-0 rounded-full border border-cosmic-gold/40 group-hover:border-cosmic-gold/80 transition-all duration-300 group-hover:shadow-gold" />
               <div className="absolute inset-1 rounded-full border border-cosmic-gold/20 group-hover:border-cosmic-gold/40 transition-all duration-300" />
-              {/* Star symbol */}
-              <div className="absolute inset-0 flex items-center justify-center text-cosmic-gold text-lg font-cinzel">
-                ✦
-              </div>
+              <div className="absolute inset-0 flex items-center justify-center text-cosmic-gold text-lg font-cinzel">✦</div>
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="font-cinzel text-base font-semibold text-cosmic-cream tracking-wider">
-                The Cosmic
-              </span>
-              <span className="font-cinzel text-xs font-normal text-cosmic-gold tracking-[0.25em] uppercase">
-                Connect
-              </span>
+              <span className="font-cinzel text-base font-semibold text-cosmic-cream tracking-wider">The Cosmic</span>
+              <span className="font-cinzel text-xs font-normal text-cosmic-gold tracking-[0.25em] uppercase">Connect</span>
             </div>
           </Link>
 
@@ -74,7 +79,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA + Hamburger */}
+          {/* Right side */}
           <div className="flex items-center gap-4">
             {/* Phone — desktop */}
             <a
@@ -84,6 +89,24 @@ export default function Navbar() {
               <Phone size={14} />
               <span>+91 95994 74758</span>
             </a>
+
+            {/* Cart button — always visible */}
+            <button
+              onClick={() => setCartOpen(true)}
+              aria-label="Open cart"
+              className={`relative flex items-center justify-center w-9 h-9 text-cosmic-cream/70
+                hover:text-cosmic-gold transition-all duration-300
+                ${cartBump ? 'scale-125' : 'scale-100'}`}
+            >
+              <ShoppingCart size={20} />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-cosmic-gold text-cosmic-black
+                  text-xs font-bold font-raleway rounded-full w-4 h-4
+                  flex items-center justify-center leading-none">
+                  {totalItems > 9 ? '9+' : totalItems}
+                </span>
+              )}
+            </button>
 
             {/* Book Now — desktop */}
             <Link href="/book" className="hidden lg:inline-flex btn-primary text-xs py-2 px-6">
@@ -108,43 +131,30 @@ export default function Navbar() {
           menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
-        {/* Backdrop */}
-        <div
-          className="absolute inset-0 bg-cosmic-black/90 backdrop-blur-md"
-          onClick={() => setMenuOpen(false)}
-        />
+        <div className="absolute inset-0 bg-cosmic-black/90 backdrop-blur-md" onClick={() => setMenuOpen(false)} />
 
-        {/* Menu Panel */}
-        <div
-          className={`absolute top-0 right-0 h-full w-72 bg-gradient-to-b from-cosmic-deepPurple to-cosmic-black border-l border-cosmic-gold/20 flex flex-col transition-transform duration-500 ${
-            menuOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
+        <div className={`absolute top-0 right-0 h-full w-72 bg-gradient-to-b from-cosmic-deepPurple
+          to-cosmic-black border-l border-cosmic-gold/20 flex flex-col transition-transform duration-500
+          ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}
         >
-          {/* Close */}
           <div className="flex justify-end p-6">
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="text-cosmic-cream hover:text-cosmic-gold transition-colors"
-            >
+            <button onClick={() => setMenuOpen(false)} className="text-cosmic-cream hover:text-cosmic-gold transition-colors">
               <X size={24} />
             </button>
           </div>
 
-          {/* Logo in panel */}
           <div className="px-8 pb-6 border-b border-cosmic-gold/20">
             <p className="font-cinzel text-cosmic-gold text-lg">The Cosmic Connect</p>
-            <p className="font-cormorant text-cosmic-cream/60 text-sm mt-1 italic">
-              Let the Universe Guide You
-            </p>
+            <p className="font-cormorant text-cosmic-cream/60 text-sm mt-1 italic">Let the Universe Guide You</p>
           </div>
 
-          {/* Links */}
           <nav className="flex flex-col px-8 py-6 gap-1">
             {navLinks.map((link, i) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`py-3 font-cinzel text-sm tracking-widest uppercase transition-all duration-300 border-b border-cosmic-gold/10 ${
+                className={`py-3 font-cinzel text-sm tracking-widest uppercase transition-all duration-300
+                  border-b border-cosmic-gold/10 ${
                   router.pathname === link.href
                     ? 'text-cosmic-gold'
                     : 'text-cosmic-cream/80 hover:text-cosmic-gold hover:pl-2'
@@ -156,11 +166,25 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* Bottom CTA */}
+          {/* Cart in mobile menu */}
+          <div className="px-8 pt-2 pb-4 border-t border-cosmic-gold/10">
+            <button
+              onClick={() => { setMenuOpen(false); setCartOpen(true) }}
+              className="w-full flex items-center justify-between py-3 font-cinzel text-sm
+                tracking-widest uppercase text-cosmic-cream/80 hover:text-cosmic-gold transition-colors"
+            >
+              <span>Cart</span>
+              {totalItems > 0 && (
+                <span className="bg-cosmic-gold text-cosmic-black text-xs font-bold font-raleway
+                  rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </button>
+          </div>
+
           <div className="mt-auto px-8 pb-10 flex flex-col gap-4">
-            <Link href="/services" className="btn-primary justify-center text-xs">
-              Book a Session
-            </Link>
+            <Link href="/services" className="btn-primary justify-center text-xs">Book a Session</Link>
             <a
               href="tel:+919599474758"
               className="flex items-center justify-center gap-2 text-cosmic-gold/70 hover:text-cosmic-gold transition-colors text-sm font-raleway"
@@ -186,6 +210,9 @@ export default function Navbar() {
           <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.857L.057 23.882a.5.5 0 0 0 .61.61l6.055-1.488A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.947 9.947 0 0 1-5.073-1.388l-.363-.217-3.762.923.951-3.688-.236-.38A9.947 9.947 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
         </svg>
       </a>
+
+      {/* Global Cart Drawer */}
+      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   )
 }
