@@ -17,7 +17,8 @@ interface LayoutProps {
 
 const DEFAULT_TITLE = 'The Cosmic Connect | Dr. Usha Bhatt — Psychic Healer & Tarot Reader'
 const DEFAULT_DESC  = 'Connect with Dr. Usha Bhatt — renowned psychic healer, tarot reader, and spiritual guide with 20+ years of experience. Book Akashic readings, healing sessions, past life therapy, and more.'
-const SITE_URL      = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thecosmicconnect.in'
+// const SITE_URL      = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thecosmicconnect.in'
+const SITE_URL      = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.arkasuryacrystals.com'
 
 export default function Layout({
   children,
