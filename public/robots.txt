@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /shop/checkout
+Disallow: /shop/order-success
+
+Sitemap: https://www.thecosmicconnect.in/sitemap.xml
