@@ -109,9 +109,9 @@ export default function Navbar() {
             </button>
 
             {/* Book Now — desktop */}
-            <Link href="/book" className="hidden lg:inline-flex btn-primary text-xs py-2 px-6">
+            {/* <Link href="/book" className="hidden lg:inline-flex btn-primary text-xs py-2 px-6">
               Book Now
-            </Link>
+            </Link> */}
 
             {/* Hamburger — mobile */}
             <button

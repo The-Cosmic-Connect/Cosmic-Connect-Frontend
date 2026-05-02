@@ -2,25 +2,27 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/layout/Layout'
 import Link from 'next/link'
-import { CheckCircle, Calendar, Clock, Video, Mail } from 'lucide-react'
+import { CheckCircle, Calendar, Clock, Video, Mail, MapPin, ExternalLink } from 'lucide-react'
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const API      = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const ADDRESS  = 'GG1/5A PVR Road, Vikaspuri, New Delhi 110018'
+const MAP_LINK = 'https://maps.google.com/?q=GG1/5A+PVR+Road+Vikaspuri+New+Delhi+110018'
 
 export default function BookingConfirmed() {
   const router = useRouter()
   const { bookingId, payment_id } = router.query as { bookingId: string; payment_id: string }
-  const [booking,  setBooking]  = useState<any>(null)
-  const [loading,  setLoading]  = useState(true)
-  const [confirmed, setConfirmed] = useState(false)
+  const [booking, setBooking] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!bookingId || !payment_id) return
-    // Confirm booking with backend
     fetch(`${API}/bookings/${bookingId}/confirm?payment_id=${payment_id}`, { method: 'POST' })
       .then(r => r.json())
-      .then(data => { setBooking(data); setConfirmed(true); setLoading(false) })
+      .then(data => { setBooking(data); setLoading(false) })
       .catch(() => setLoading(false))
   }, [bookingId, payment_id])
+
+  const isOnline = booking?.mode !== 'inperson'
 
   return (
     <Layout title="Booking Confirmed | The Cosmic Connect" noIndex={true}>
@@ -47,7 +49,9 @@ export default function BookingConfirmed() {
                     <p className="font-cinzel text-cosmic-cream">{booking.date} at {booking.startTime} IST</p>
                   </div>
                 </div>
-                {booking.meetLink && (
+
+                {/* Online — show Meet link */}
+                {isOnline && booking.meetLink && (
                   <div className="flex items-center gap-3">
                     <Video size={16} className="text-cosmic-gold shrink-0" />
                     <div>
@@ -59,6 +63,32 @@ export default function BookingConfirmed() {
                     </div>
                   </div>
                 )}
+
+                {isOnline && !booking.meetLink && (
+                  <div className="flex items-center gap-3">
+                    <Video size={16} className="text-cosmic-gold shrink-0" />
+                    <div>
+                      <p className="font-raleway text-cosmic-cream/40 text-xs tracking-widest uppercase">Session Mode</p>
+                      <p className="font-cinzel text-cosmic-cream">Online — Meet link will be sent via email</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* In-person — show address */}
+                {!isOnline && (
+                  <div className="flex items-start gap-3">
+                    <MapPin size={16} className="text-cosmic-gold shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-raleway text-cosmic-cream/40 text-xs tracking-widest uppercase mb-1">Healing Center Address</p>
+                      <p className="font-cinzel text-cosmic-cream mb-2">{ADDRESS}</p>
+                      <a href={MAP_LINK} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-raleway text-cosmic-gold text-xs tracking-widest hover:underline">
+                        <ExternalLink size={11} /> Open in Google Maps
+                      </a>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex items-center gap-3">
                   <Mail size={16} className="text-cosmic-gold shrink-0" />
                   <div>
@@ -67,6 +97,16 @@ export default function BookingConfirmed() {
                   </div>
                 </div>
               </div>
+
+              {/* In-person reminder */}
+              {!isOnline && (
+                <div className="border border-cosmic-gold/20 bg-cosmic-gold/5 rounded-sm p-4 mb-6 text-left">
+                  <p className="font-raleway text-cosmic-gold text-xs tracking-widest uppercase mb-2">Before You Visit</p>
+                  <p className="font-cormorant text-cosmic-cream/70 italic text-sm leading-relaxed">
+                    Please arrive 5–10 minutes before your scheduled time. Wear comfortable clothing and bring any crystals you'd like cleansed. Avoid eating a heavy meal within 2 hours of your session.
+                  </p>
+                </div>
+              )}
 
               <div className="flex gap-4 justify-center">
                 <Link href="/" className="btn-outline text-xs">Return Home</Link>

@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/layout/Layout'
 import { useGeo } from '@/context/GeoContext'
-import { ChevronLeft, ChevronRight, Clock, Calendar, User, Mail, Phone, Check } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Clock, Calendar, User, Mail, Phone, Video, MapPin } from 'lucide-react'
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const API      = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const ADDRESS  = 'GG1/5A PVR Road, Vikaspuri, New Delhi 110018'
+const MAP_LINK = 'https://maps.google.com/?q=GG1/5A+PVR+Road+Vikaspuri+New+Delhi+110018'
 
 interface Slot { startTime: string; endTime: string; available: boolean }
 
@@ -33,20 +35,17 @@ export default function BookPage() {
   const [service, setService] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
-  // Calendar state
   const now = toIST(new Date())
   const [calYear,  setCalYear]  = useState(now.getFullYear())
   const [calMonth, setCalMonth] = useState(now.getMonth())
   const [selDate,  setSelDate]  = useState<string | null>(null)
 
-  // Slot state
-  const [slots,       setSlots]       = useState<Slot[]>([])
-  const [slotsLoading,setSlotsLoading]= useState(false)
-  const [selSlot,     setSelSlot]     = useState<Slot | null>(null)
+  const [slots,        setSlots]        = useState<Slot[]>([])
+  const [slotsLoading, setSlotsLoading] = useState(false)
+  const [selSlot,      setSelSlot]      = useState<Slot | null>(null)
 
-  // Customer form
-  const [form, setForm] = useState({ name: '', email: '', phone: '' })
-  const [step, setStep] = useState<'calendar' | 'details' | 'payment'>('calendar')
+  const [mode,   setMode]   = useState<'online' | 'inperson' | null>(null)
+  const [form,   setForm]   = useState({ name: '', email: '', phone: '' })
   const [paying, setPaying] = useState(false)
   const [error,  setError]  = useState('')
 
@@ -55,15 +54,15 @@ export default function BookPage() {
     Promise.all([
       fetch(`${API}/agents/${agentId}`).then(r => r.json()),
       fetch(`${API}/services/${serviceId}`).then(r => r.json()),
-    ]).then(([a, s]) => {
-      setAgent(a); setService(s); setLoading(false)
-    }).catch(() => setLoading(false))
+    ]).then(([a, s]) => { setAgent(a); setService(s); setLoading(false) })
+     .catch(() => setLoading(false))
   }, [agentId, serviceId])
 
   useEffect(() => {
     if (!selDate || !agentId || !serviceId) return
     setSlotsLoading(true)
     setSelSlot(null)
+    setMode(null)
     fetch(`${API}/agents/${agentId}/slots?date=${selDate}&service_id=${serviceId}`)
       .then(r => r.json())
       .then(data => { setSlots(data.slots || []); setSlotsLoading(false) })
@@ -73,15 +72,22 @@ export default function BookPage() {
   const agentService = agent?.services?.find((s: any) => s.serviceId === serviceId)
   const price = isIndia ? agentService?.priceINR : agentService?.priceUSD
 
-  // Disabled days based on agent schedule
   const activeDays = agent?.schedule?.activeDays || [0,1,2,3,4,5]
-  // Convert Sun=0 to Mon=0 convention... agent uses Mon=0, JS uses Sun=0
+
   function isDayDisabled(year: number, month: number, day: number) {
     const d   = new Date(year, month, day)
-    const dow = d.getDay() // 0=Sun
-    const monBased = dow === 0 ? 6 : dow - 1  // convert to Mon=0
+    const dow = d.getDay()
+    const monBased = dow === 0 ? 6 : dow - 1
     const isPast = d < new Date(now.getFullYear(), now.getMonth(), now.getDate())
     return isPast || !activeDays.includes(monBased)
+  }
+
+  // Check if a slot is within 6 hours from now (IST)
+  function isSlotTooSoon(date: string, startTime: string): boolean {
+    const slotDt  = new Date(`${date}T${startTime}:00+05:30`)
+    const nowMs   = now.getTime()
+    const sixHrsMs = 6 * 60 * 60 * 1000
+    return slotDt.getTime() - nowMs < sixHrsMs
   }
 
   function prevMonth() {
@@ -94,7 +100,7 @@ export default function BookPage() {
   }
 
   async function handlePayment() {
-    if (!selDate || !selSlot || !form.name || !form.email || !form.phone) return
+    if (!selDate || !selSlot || !form.name || !form.email || !form.phone || !mode) return
     setPaying(true); setError('')
     try {
       const r = await fetch(`${API}/bookings/initiate`, {
@@ -107,6 +113,7 @@ export default function BookPage() {
           customerName:  form.name,
           customerEmail: form.email,
           customerPhone: form.phone,
+          mode:          mode,
           priceINR:      agentService?.priceINR || 0,
           priceUSD:      agentService?.priceUSD || 0,
           currency:      isIndia ? 'INR' : 'USD',
@@ -119,14 +126,14 @@ export default function BookPage() {
         setError('Could not initiate payment. Please try again.')
         setPaying(false)
       }
-    } catch (e) {
+    } catch {
       setError('Something went wrong. Please try again.')
       setPaying(false)
     }
   }
 
-  const daysInMonth  = getDaysInMonth(calYear, calMonth)
-  const firstDay     = getFirstDayOfMonth(calYear, calMonth)
+  const daysInMonth = getDaysInMonth(calYear, calMonth)
+  const firstDay    = getFirstDayOfMonth(calYear, calMonth)
 
   if (loading) return (
     <Layout title="Book a Session | The Cosmic Connect">
@@ -146,7 +153,7 @@ export default function BookPage() {
       <div className="min-h-screen pt-24 pb-16 px-4" style={{ background: '#0A0708' }}>
         <div className="container-cosmic max-w-4xl">
 
-          {/* Header */}
+          {/* Back */}
           <button onClick={() => router.push('/services')}
             className="flex items-center gap-2 font-raleway text-cosmic-cream/40 hover:text-cosmic-gold text-xs tracking-widest uppercase mb-8 transition-colors">
             <ChevronLeft size={14} /> Back to Services
@@ -189,55 +196,50 @@ export default function BookPage() {
                 <Calendar size={16} className="text-cosmic-gold" /> Select Date
               </h2>
 
-              {/* Month nav */}
               <div className="flex items-center justify-between mb-4">
                 <button onClick={prevMonth} className="text-cosmic-cream/40 hover:text-cosmic-gold transition-colors p-1">
                   <ChevronLeft size={18} />
                 </button>
-                <p className="font-cinzel text-cosmic-cream text-sm tracking-wider">
-                  {MONTHS[calMonth]} {calYear}
-                </p>
+                <p className="font-cinzel text-cosmic-cream text-sm tracking-wider">{MONTHS[calMonth]} {calYear}</p>
                 <button onClick={nextMonth} className="text-cosmic-cream/40 hover:text-cosmic-gold transition-colors p-1">
                   <ChevronRight size={18} />
                 </button>
               </div>
 
-              {/* Day headers */}
               <div className="grid grid-cols-7 mb-1">
                 {DAYS.map(d => (
-                  <div key={d} className="text-center font-raleway text-cosmic-cream/30 text-xs py-1 tracking-widest">
-                    {d}
-                  </div>
+                  <div key={d} className="text-center font-raleway text-cosmic-cream/30 text-xs py-1 tracking-widest">{d}</div>
                 ))}
               </div>
 
-              {/* Calendar grid */}
               <div className="grid grid-cols-7 gap-1">
                 {[...Array(firstDay)].map((_, i) => <div key={`e-${i}`} />)}
                 {[...Array(daysInMonth)].map((_, i) => {
-                  const day      = i + 1
-                  const dateStr  = formatDate(calYear, calMonth, day)
+                  const day     = i + 1
+                  const dateStr = formatDate(calYear, calMonth, day)
                   const disabled = isDayDisabled(calYear, calMonth, day)
                   const isSelected = selDate === dateStr
                   return (
-                    <button key={day}
-                      disabled={disabled}
-                      onClick={() => { setSelDate(dateStr); setSelSlot(null) }}
+                    <button key={day} disabled={disabled}
+                      onClick={() => { setSelDate(dateStr); setSelSlot(null); setMode(null) }}
                       className={`aspect-square flex items-center justify-center rounded-sm text-sm font-raleway transition-all ${
-                        isSelected
-                          ? 'bg-cosmic-gold text-cosmic-black font-bold'
-                          : disabled
-                          ? 'text-cosmic-cream/15 cursor-not-allowed'
-                          : 'text-cosmic-cream/70 hover:bg-cosmic-gold/20 hover:text-cosmic-gold cursor-pointer'
+                        isSelected ? 'bg-cosmic-gold text-cosmic-black font-bold'
+                        : disabled ? 'text-cosmic-cream/15 cursor-not-allowed'
+                        : 'text-cosmic-cream/70 hover:bg-cosmic-gold/20 hover:text-cosmic-gold cursor-pointer'
                       }`}>
                       {day}
                     </button>
                   )
                 })}
               </div>
+
+              {/* 6hr notice */}
+              <p className="font-raleway text-cosmic-cream/25 text-xs mt-4 tracking-wide">
+                ✦ Slots must be booked at least 6 hours in advance
+              </p>
             </div>
 
-            {/* Right — Slots + Form */}
+            {/* Right — Slots + Mode + Form */}
             <div>
               {selDate ? (
                 <>
@@ -248,40 +250,77 @@ export default function BookPage() {
 
                   {slotsLoading ? (
                     <div className="grid grid-cols-3 gap-2">
-                      {[...Array(6)].map((_, i) => (
-                        <div key={i} className="h-10 animate-pulse bg-cosmic-gold/5 rounded-sm" />
-                      ))}
+                      {[...Array(6)].map((_, i) => <div key={i} className="h-10 animate-pulse bg-cosmic-gold/5 rounded-sm" />)}
                     </div>
                   ) : slots.length === 0 ? (
                     <div className="text-center py-8 border border-cosmic-gold/10 rounded-sm">
                       <p className="font-cormorant text-cosmic-cream/40 italic">No available slots on this date</p>
-                      <p className="font-raleway text-cosmic-cream/25 text-xs mt-1 tracking-widest">Please select another date</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-3 gap-2">
-                      {slots.map(slot => (
-                        <button key={slot.startTime}
-                          onClick={() => { setSelSlot(slot); setStep('details') }}
-                          className={`py-2.5 text-center font-raleway text-xs tracking-wider transition-all rounded-sm border ${
-                            selSlot?.startTime === slot.startTime
-                              ? 'border-cosmic-gold bg-cosmic-gold text-cosmic-black font-bold'
+                      {slots.map(slot => {
+                        const tooSoon  = isSlotTooSoon(selDate, slot.startTime)
+                        const isActive = selSlot?.startTime === slot.startTime
+                        return (
+                          <button key={slot.startTime}
+                            disabled={tooSoon}
+                            onClick={() => { setSelSlot(slot); setMode(null) }}
+                            title={tooSoon ? 'Must book at least 6 hours in advance' : ''}
+                            className={`py-2.5 text-center font-raleway text-xs tracking-wider transition-all rounded-sm border ${
+                              isActive ? 'border-cosmic-gold bg-cosmic-gold text-cosmic-black font-bold'
+                              : tooSoon ? 'border-cosmic-gold/5 text-cosmic-cream/20 cursor-not-allowed line-through'
                               : 'border-cosmic-gold/20 text-cosmic-cream/70 hover:border-cosmic-gold/50 hover:text-cosmic-gold'
-                          }`}>
-                          {slot.startTime}
-                        </button>
-                      ))}
+                            }`}>
+                            {slot.startTime}
+                          </button>
+                        )
+                      })}
                     </div>
                   )}
                 </>
               ) : (
-                <div className="flex items-center justify-center h-full min-h-48 border border-cosmic-gold/10 rounded-sm">
+                <div className="flex items-center justify-center h-48 border border-cosmic-gold/10 rounded-sm">
                   <p className="font-cormorant text-cosmic-cream/30 italic text-lg">Select a date to see available times</p>
                 </div>
               )}
 
-              {/* Customer details form */}
+              {/* Session mode picker */}
               {selSlot && (
                 <div className="mt-6 border-t border-cosmic-gold/10 pt-6">
+                  <h2 className="font-cinzel text-cosmic-cream font-semibold mb-4">How would you like to attend?</h2>
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    <button onClick={() => setMode('online')}
+                      className={`p-4 border rounded-sm text-left transition-all ${
+                        mode === 'online'
+                          ? 'border-cosmic-gold bg-cosmic-gold/10'
+                          : 'border-cosmic-gold/20 hover:border-cosmic-gold/40'
+                      }`}>
+                      <Video size={20} className={`mb-2 ${mode === 'online' ? 'text-cosmic-gold' : 'text-cosmic-cream/40'}`} />
+                      <p className={`font-cinzel text-sm font-semibold ${mode === 'online' ? 'text-cosmic-gold' : 'text-cosmic-cream'}`}>
+                        Online
+                      </p>
+                      <p className="font-raleway text-cosmic-cream/40 text-xs mt-1">Via Google Meet</p>
+                    </button>
+
+                    <button onClick={() => setMode('inperson')}
+                      className={`p-4 border rounded-sm text-left transition-all ${
+                        mode === 'inperson'
+                          ? 'border-cosmic-gold bg-cosmic-gold/10'
+                          : 'border-cosmic-gold/20 hover:border-cosmic-gold/40'
+                      }`}>
+                      <MapPin size={20} className={`mb-2 ${mode === 'inperson' ? 'text-cosmic-gold' : 'text-cosmic-cream/40'}`} />
+                      <p className={`font-cinzel text-sm font-semibold ${mode === 'inperson' ? 'text-cosmic-gold' : 'text-cosmic-cream'}`}>
+                        In-Person
+                      </p>
+                      <p className="font-raleway text-cosmic-cream/40 text-xs mt-1">Visit our healing center</p>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Customer details */}
+              {selSlot && mode && (
+                <div className="border-t border-cosmic-gold/10 pt-6">
                   <h2 className="font-cinzel text-cosmic-cream font-semibold mb-4 flex items-center gap-2">
                     <User size={16} className="text-cosmic-gold" /> Your Details
                   </h2>
@@ -307,25 +346,27 @@ export default function BookPage() {
                     </div>
                   </div>
 
-                  {/* Booking summary */}
+                  {/* Summary */}
                   <div className="mt-4 p-3 bg-cosmic-deepPurple/30 border border-cosmic-gold/10 rounded-sm space-y-1">
                     <p className="font-raleway text-cosmic-cream/40 text-xs tracking-widest uppercase mb-2">Booking Summary</p>
                     <p className="font-raleway text-cosmic-cream/70 text-xs">{service?.name} with {agent?.name}</p>
                     <p className="font-raleway text-cosmic-cream/70 text-xs">{selDate} at {selSlot.startTime} IST ({service?.durationMins} mins)</p>
+                    <p className="font-raleway text-cosmic-cream/70 text-xs flex items-center gap-1">
+                      {mode === 'online' ? <><Video size={11} /> Online via Google Meet</> : <><MapPin size={11} /> In-Person at healing center</>}
+                    </p>
                     <p className="font-raleway text-cosmic-gold font-semibold text-sm mt-2">{symbol}{price?.toLocaleString()}</p>
                   </div>
 
                   {error && <p className="font-raleway text-red-400 text-xs mt-3 tracking-wide">{error}</p>}
 
-                  <button
-                    onClick={handlePayment}
+                  <button onClick={handlePayment}
                     disabled={!form.name || !form.email || !form.phone || paying}
                     className="btn-primary w-full mt-4 justify-center disabled:opacity-50 disabled:cursor-not-allowed">
                     {paying ? 'Redirecting to payment...' : `Pay ${symbol}${price?.toLocaleString()} & Confirm`}
                   </button>
 
                   <p className="font-raleway text-cosmic-cream/25 text-xs text-center mt-2 tracking-widest">
-                    Secure payment · Google Meet link sent after confirmation
+                    Secure payment · {mode === 'online' ? 'Google Meet link sent after confirmation' : 'Address shared after confirmation'}
                   </p>
                 </div>
               )}
