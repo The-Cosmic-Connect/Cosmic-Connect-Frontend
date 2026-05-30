@@ -68,7 +68,7 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
             <ShoppingBag size={18} className="text-cosmic-gold" />
             <span className="font-cinzel text-cosmic-cream font-semibold tracking-wide">Your Cart</span>
             {totalItems > 0 && (
-              <span className="bg-cosmic-gold text-cosmic-black text-xs font-bold font-raleway rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="bg-cosmic-gold text-cosmic-ink text-xs font-bold font-raleway rounded-full w-5 h-5 flex items-center justify-center">
                 {totalItems}
               </span>
             )}

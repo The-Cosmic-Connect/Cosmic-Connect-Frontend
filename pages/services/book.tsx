@@ -137,7 +137,7 @@ export default function BookPage() {
 
   if (loading) return (
     <Layout title="Book a Session | The Cosmic Connect">
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0708' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'rgb(var(--cosmic-black))' }}>
         <div className="text-cosmic-gold text-4xl animate-pulse">✦</div>
       </div>
     </Layout>
@@ -150,7 +150,7 @@ export default function BookPage() {
       canonical="/services/book"
       noIndex={true}
     >
-      <div className="min-h-screen pt-24 pb-16 px-4" style={{ background: '#0A0708' }}>
+      <div className="min-h-screen pt-24 pb-16 px-4" style={{ background: 'rgb(var(--cosmic-black))' }}>
         <div className="container-cosmic max-w-4xl">
 
           {/* Back */}
@@ -223,7 +223,7 @@ export default function BookPage() {
                     <button key={day} disabled={disabled}
                       onClick={() => { setSelDate(dateStr); setSelSlot(null); setMode(null) }}
                       className={`aspect-square flex items-center justify-center rounded-sm text-sm font-raleway transition-all ${
-                        isSelected ? 'bg-cosmic-gold text-cosmic-black font-bold'
+                        isSelected ? 'bg-cosmic-gold text-cosmic-ink font-bold'
                         : disabled ? 'text-cosmic-cream/15 cursor-not-allowed'
                         : 'text-cosmic-cream/70 hover:bg-cosmic-gold/20 hover:text-cosmic-gold cursor-pointer'
                       }`}>
@@ -267,7 +267,7 @@ export default function BookPage() {
                             onClick={() => { setSelSlot(slot); setMode(null) }}
                             title={tooSoon ? 'Must book at least 6 hours in advance' : ''}
                             className={`py-2.5 text-center font-raleway text-xs tracking-wider transition-all rounded-sm border ${
-                              isActive ? 'border-cosmic-gold bg-cosmic-gold text-cosmic-black font-bold'
+                              isActive ? 'border-cosmic-gold bg-cosmic-gold text-cosmic-ink font-bold'
                               : tooSoon ? 'border-cosmic-gold/5 text-cosmic-cream/20 cursor-not-allowed line-through'
                               : 'border-cosmic-gold/20 text-cosmic-cream/70 hover:border-cosmic-gold/50 hover:text-cosmic-gold'
                             }`}>

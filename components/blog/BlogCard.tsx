@@ -31,18 +31,18 @@ function formatDate(iso: string): string {
 }
 
 const CATEGORY_COLOURS: Record<string, string> = {
-  'Tarot & Divination':  '#4A2C8A',
-  'Crystals & Gemstones':'#1A5C6B',
-  'Spiritual Healing':   '#8B3A52',
+  'Tarot & Divination':  'rgb(var(--cosmic-violet))',
+  'Crystals & Gemstones':'rgb(var(--cosmic-teal))',
+  'Spiritual Healing':   'rgb(var(--cosmic-rose))',
   'Energy Work':         '#5C3A1A',
   'Meditation':          '#2A5C3A',
-  'Manifestation':       '#C9A84C',
+  'Manifestation':       'rgb(var(--cosmic-gold))',
   'Astrology':           '#3A4A8A',
   'General':             '#4A4A4A',
 }
 
 export default function BlogCard({ post, index = 0, featured = false }: Props) {
-  const accentColor = CATEGORY_COLOURS[post.category] || '#4A2C8A'
+  const accentColor = CATEGORY_COLOURS[post.category] || 'rgb(var(--cosmic-violet))'
 
   if (featured) {
     return (
@@ -57,12 +57,12 @@ export default function BlogCard({ post, index = 0, featured = false }: Props) {
               className="object-cover group-hover:scale-105 transition-transform duration-500" />
           ) : (
             <div className="w-full h-full min-h-[200px] flex items-center justify-center text-5xl"
-              style={{ background: `linear-gradient(135deg, ${accentColor}30, #0A0708)` }}>
+              style={{ background: `linear-gradient(135deg, ${accentColor}30, rgb(var(--cosmic-black)))` }}>
               ✦
             </div>
           )}
           <span className="absolute top-3 left-3 font-raleway text-xs tracking-widest uppercase px-2 py-1"
-            style={{ background: accentColor, color: '#F5EDD6' }}>
+            style={{ background: accentColor, color: 'rgb(var(--cosmic-cream))' }}>
             Featured
           </span>
         </div>
@@ -115,7 +115,7 @@ export default function BlogCard({ post, index = 0, featured = false }: Props) {
             className="object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-4xl"
-            style={{ background: `linear-gradient(135deg, ${accentColor}25, #0A0708)` }}>
+            style={{ background: `linear-gradient(135deg, ${accentColor}25, rgb(var(--cosmic-black)))` }}>
             ✦
           </div>
         )}

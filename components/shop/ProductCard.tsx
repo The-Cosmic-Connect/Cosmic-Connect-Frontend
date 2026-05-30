@@ -75,7 +75,7 @@ export default function ProductCard({ product, index = 0 }: Props) {
         ) : (
           <div
             className="w-full h-full flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, rgba(74,44,138,0.3), rgba(26,10,46,0.6))' }}
+            style={{ background: 'linear-gradient(135deg, rgb(var(--cosmic-violet) / 0.3), rgb(var(--cosmic-deep-purple) / 0.6))' }}
           >
             <span className="text-5xl">💎</span>
           </div>
@@ -84,7 +84,7 @@ export default function ProductCard({ product, index = 0 }: Props) {
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
           {product.ribbon && (
-            <span className="font-raleway text-xs tracking-widest uppercase bg-cosmic-gold text-cosmic-black px-2 py-0.5 font-bold">
+            <span className="font-raleway text-xs tracking-widest uppercase bg-cosmic-gold text-cosmic-ink px-2 py-0.5 font-bold">
               {product.ribbon}
             </span>
           )}

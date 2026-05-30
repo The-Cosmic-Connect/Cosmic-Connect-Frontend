@@ -26,6 +26,22 @@ function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 }
 
+// Migrated spec titles/values can contain HTML (e.g. "<p>India</p>"). Strip the
+// markup so they render as clean text in the specs accordion.
+function cleanSpecText(raw: string): string {
+  if (!raw) return ''
+  return raw
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export default function ProductPage({ product }: { product: Product }) {
   const { addToCart }        = useCart()
   const { isIndia }          = useGeo()
@@ -71,7 +87,7 @@ export default function ProductPage({ product }: { product: Product }) {
         ]),
       ]}
     >
-      <main style={{ background: '#0A0708', minHeight: '100vh', paddingTop: 80 }}>
+      <main style={{ background: 'rgb(var(--cosmic-black))', minHeight: '100vh', paddingTop: 80 }}>
         <div className="container-cosmic" style={{ paddingTop: 40, paddingBottom: 60 }}>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }}
@@ -83,7 +99,7 @@ export default function ProductPage({ product }: { product: Product }) {
                 <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
                   {product.images.map((img, i) => (
                     <button key={i} onClick={() => setMainImg(i)}
-                      style={{ width: 64, height: 64, border: `2px solid ${i === mainImg ? '#C9A84C' : '#333'}`,
+                      style={{ width: 64, height: 64, border: `2px solid ${i === mainImg ? 'rgb(var(--cosmic-gold))' : '#333'}`,
                         borderRadius: 6, overflow: 'hidden', cursor: 'pointer', background: 'none', padding: 0 }}>
                       <img src={img} alt={`${product.name} ${i + 1}`}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -91,17 +107,17 @@ export default function ProductPage({ product }: { product: Product }) {
                   ))}
                 </div>
               )}
-              <div style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', background: '#1A0A2E', aspectRatio: '1/1' }}>
+              <div style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', background: 'rgb(var(--cosmic-deep-purple))', aspectRatio: '1/1' }}>
                 {product.images[mainImg] ? (
                   <img src={product.images[mainImg]} alt={product.name}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <div style={{ width: '100%', height: '100%', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center', color: '#C9A84C', fontSize: 48 }}>✦</div>
+                    alignItems: 'center', justifyContent: 'center', color: 'rgb(var(--cosmic-gold))', fontSize: 48 }}>✦</div>
                 )}
                 {product.ribbon && (
-                  <span style={{ position: 'absolute', top: 14, left: 14, background: '#C9A84C',
-                    color: '#0A0708', fontSize: 11, fontWeight: 700, padding: '3px 10px',
+                  <span style={{ position: 'absolute', top: 14, left: 14, background: 'rgb(var(--cosmic-gold))',
+                    color: 'rgb(var(--cosmic-black))', fontSize: 11, fontWeight: 700, padding: '3px 10px',
                     borderRadius: 3, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                     {product.ribbon}
                   </span>
@@ -112,11 +128,11 @@ export default function ProductPage({ product }: { product: Product }) {
             {/* Details */}
             <div>
               {product.collections.length > 0 && (
-                <p style={{ color: '#C9A84C', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
+                <p style={{ color: 'rgb(var(--cosmic-gold))', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
                   {product.collections.join(' · ')}
                 </p>
               )}
-              <h1 style={{ fontFamily: 'Cinzel, serif', fontSize: 26, fontWeight: 700, color: '#F5EDD6', lineHeight: 1.3, marginBottom: 10 }}>
+              <h1 style={{ fontFamily: 'Cinzel, serif', fontSize: 26, fontWeight: 700, color: 'rgb(var(--cosmic-cream))', lineHeight: 1.3, marginBottom: 10 }}>
                 {product.name}
               </h1>
               {product.sku && <p style={{ color: '#666', fontSize: 12, marginBottom: 16 }}>SKU: {product.sku}</p>}
@@ -128,11 +144,11 @@ export default function ProductPage({ product }: { product: Product }) {
                       {currency}{originalPrice.toLocaleString()}
                     </span>
                   )}
-                  <span style={{ color: '#F5EDD6', fontSize: 28, fontWeight: 700 }}>
+                  <span style={{ color: 'rgb(var(--cosmic-cream))', fontSize: 28, fontWeight: 700 }}>
                     {currency}{price.toLocaleString()}
                   </span>
                   {discountPct > 0 && (
-                    <span style={{ background: '#C9A84C22', color: '#C9A84C', fontSize: 12, fontWeight: 600, padding: '2px 8px', borderRadius: 4 }}>
+                    <span style={{ background: 'rgb(var(--cosmic-gold))22', color: 'rgb(var(--cosmic-gold))', fontSize: 12, fontWeight: 600, padding: '2px 8px', borderRadius: 4 }}>
                       {discountPct}% OFF
                     </span>
                   )}
@@ -142,13 +158,13 @@ export default function ProductPage({ product }: { product: Product }) {
 
               {product.options.map(opt => (
                 <div key={opt.name} style={{ marginBottom: 16 }}>
-                  <p style={{ color: '#C9A84C', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+                  <p style={{ color: 'rgb(var(--cosmic-gold))', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
                     {opt.name}
                   </p>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     {opt.choices.map(choice => (
-                      <button key={choice} style={{ padding: '6px 14px', border: '1px solid #C9A84C44',
-                        borderRadius: 4, background: 'none', color: '#F5EDD6', fontSize: 13, cursor: 'pointer' }}>
+                      <button key={choice} style={{ padding: '6px 14px', border: '1px solid rgb(var(--cosmic-gold))44',
+                        borderRadius: 4, background: 'none', color: 'rgb(var(--cosmic-cream))', fontSize: 13, cursor: 'pointer' }}>
                         {choice}
                       </button>
                     ))}
@@ -157,15 +173,15 @@ export default function ProductPage({ product }: { product: Product }) {
               ))}
 
               <div style={{ marginBottom: 20 }}>
-                <p style={{ color: '#C9A84C', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+                <p style={{ color: 'rgb(var(--cosmic-gold))', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
                   Quantity
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #333', borderRadius: 6, width: 'fit-content' }}>
                   <button onClick={() => setQty(q => Math.max(1, q - 1))}
-                    style={{ width: 40, height: 40, background: 'none', border: 'none', color: '#F5EDD6', fontSize: 18, cursor: 'pointer' }}>−</button>
-                  <span style={{ width: 40, textAlign: 'center', color: '#F5EDD6', fontSize: 15 }}>{qty}</span>
+                    style={{ width: 40, height: 40, background: 'none', border: 'none', color: 'rgb(var(--cosmic-cream))', fontSize: 18, cursor: 'pointer' }}>−</button>
+                  <span style={{ width: 40, textAlign: 'center', color: 'rgb(var(--cosmic-cream))', fontSize: 15 }}>{qty}</span>
                   <button onClick={() => setQty(q => q + 1)}
-                    style={{ width: 40, height: 40, background: 'none', border: 'none', color: '#F5EDD6', fontSize: 18, cursor: 'pointer' }}>+</button>
+                    style={{ width: 40, height: 40, background: 'none', border: 'none', color: 'rgb(var(--cosmic-cream))', fontSize: 18, cursor: 'pointer' }}>+</button>
                 </div>
               </div>
 
@@ -189,11 +205,11 @@ export default function ProductPage({ product }: { product: Product }) {
 
           {/* Description */}
           <div style={{ marginTop: 48, maxWidth: 760 }}>
-            <div style={{ whiteSpace: 'pre-line', color: '#F5EDD6aa', fontSize: 15, lineHeight: 1.8, fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+            <div style={{ whiteSpace: 'pre-line', color: 'rgb(var(--cosmic-cream))aa', fontSize: 15, lineHeight: 1.8, fontFamily: 'Cormorant Garamond, Georgia, serif' }}
               dangerouslySetInnerHTML={{ __html: product.description
                 .replace(/\n/g, '<br/>')
                 .replace(/\*\s+\*/g, '')
-                .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#F5EDD6">$1</strong>') }}
+                .replace(/\*\*(.*?)\*\*/g, '<strong style="color:rgb(var(--cosmic-cream))">$1</strong>') }}
             />
           </div>
 
@@ -205,12 +221,12 @@ export default function ProductPage({ product }: { product: Product }) {
                   <button onClick={() => setOpenSpec(openSpec === i ? null : i)}
                     style={{ width: '100%', display: 'flex', justifyContent: 'space-between',
                       alignItems: 'center', padding: '16px 0', background: 'none', border: 'none', cursor: 'pointer' }}>
-                    <span style={{ color: '#F5EDD6', fontSize: 14, fontWeight: 500 }}>{spec.title}</span>
-                    <span style={{ color: '#C9A84C', fontSize: 18 }}>{openSpec === i ? '−' : '+'}</span>
+                    <span style={{ color: 'rgb(var(--cosmic-cream))', fontSize: 14, fontWeight: 500 }}>{cleanSpecText(spec.title)}</span>
+                    <span style={{ color: 'rgb(var(--cosmic-gold))', fontSize: 18 }}>{openSpec === i ? '−' : '+'}</span>
                   </button>
                   {openSpec === i && (
-                    <div style={{ paddingBottom: 16, color: '#F5EDD6aa', fontSize: 14, lineHeight: 1.7 }}>
-                      {spec.value}
+                    <div style={{ paddingBottom: 16, color: 'rgb(var(--cosmic-cream))aa', fontSize: 14, lineHeight: 1.7 }}>
+                      {cleanSpecText(spec.value)}
                     </div>
                   )}
                 </div>

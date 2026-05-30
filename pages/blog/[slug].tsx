@@ -22,12 +22,12 @@ interface Props {
 }
 
 const CATEGORY_COLOURS: Record<string, string> = {
-  'Tarot & Divination':  '#4A2C8A',
-  'Crystals & Gemstones':'#1A5C6B',
-  'Spiritual Healing':   '#8B3A52',
+  'Tarot & Divination':  'rgb(var(--cosmic-violet))',
+  'Crystals & Gemstones':'rgb(var(--cosmic-teal))',
+  'Spiritual Healing':   'rgb(var(--cosmic-rose))',
   'Energy Work':         '#5C3A1A',
   'Meditation':          '#2A5C3A',
-  'Manifestation':       '#C9A84C',
+  'Manifestation':       'rgb(var(--cosmic-gold))',
   'Astrology':           '#3A4A8A',
   'General':             '#4A4A4A',
 }
@@ -42,7 +42,7 @@ function formatDate(iso: string): string {
 
 export default function BlogPostPage({ post, related }: Props) {
   const [copied, setCopied] = useState(false)
-  const accentColor = CATEGORY_COLOURS[post.category] || '#4A2C8A'
+  const accentColor = CATEGORY_COLOURS[post.category] || 'rgb(var(--cosmic-violet))'
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thecosmicconnect.com'
   const postUrl = `${siteUrl}/blog/${post.slug}`
 
@@ -76,14 +76,14 @@ export default function BlogPostPage({ post, related }: Props) {
 
       {/* Hero */}
       <section className="relative pt-24 pb-0 overflow-hidden"
-        style={{ background: `linear-gradient(180deg, ${accentColor}18 0%, #0A0708 100%)` }}>
+        style={{ background: `linear-gradient(180deg, ${accentColor}18 0%, rgb(var(--cosmic-black)) 100%)` }}>
 
         {post.coverImage && (
           <div className="relative w-full h-72 md:h-96 overflow-hidden">
             <Image src={post.coverImage} alt={post.title} fill
               className="object-cover opacity-40" priority />
             <div className="absolute inset-0"
-              style={{ background: 'linear-gradient(to bottom, transparent 40%, #0A0708 100%)' }} />
+              style={{ background: 'linear-gradient(to bottom, transparent 40%, rgb(var(--cosmic-black)) 100%)' }} />
           </div>
         )}
 
@@ -148,7 +148,7 @@ export default function BlogPostPage({ post, related }: Props) {
                 className="w-8 h-8 border border-cosmic-gold/20 flex items-center justify-center text-cosmic-cream/50 hover:text-cosmic-gold hover:border-cosmic-gold/50 transition-colors relative">
                 <Link2 size={13} />
                 {copied && (
-                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 font-raleway text-xs bg-cosmic-gold text-cosmic-black px-2 py-0.5 whitespace-nowrap">
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 font-raleway text-xs bg-cosmic-gold text-cosmic-ink px-2 py-0.5 whitespace-nowrap">
                     Copied!
                   </span>
                 )}
@@ -202,7 +202,7 @@ export default function BlogPostPage({ post, related }: Props) {
 
           {/* CTA */}
           <div className="mt-10 p-8 text-center border border-cosmic-gold/20"
-            style={{ background: 'linear-gradient(135deg, rgba(74,44,138,0.15), rgba(26,10,46,0.3))' }}>
+            style={{ background: 'linear-gradient(135deg, rgb(var(--cosmic-violet) / 0.15), rgb(var(--cosmic-deep-purple) / 0.3))' }}>
             <p className="ornament text-xs tracking-[0.5em] mb-3">✦ ✦ ✦</p>
             <p className="font-cinzel text-cosmic-cream text-lg font-bold mb-2">
               Ready for a Personal Session?

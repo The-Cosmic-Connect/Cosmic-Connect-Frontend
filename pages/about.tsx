@@ -47,28 +47,28 @@ const awards = [
     title: 'Honorary Doctorate',
     body: 'Awarded for outstanding contributions to spiritual healing and psychic guidance across two decades of practice.',
     emoji: '🎓',
-    color: '#C9A84C',
+    color: 'rgb(var(--cosmic-gold))',
   },
   {
     year: '2023',
     title: 'Icons of Asia',
     body: 'Pride of Asia Award recognising excellence in holistic healing practices across the continent.',
     emoji: '🏆',
-    color: '#4A2C8A',
+    color: 'rgb(var(--cosmic-violet))',
   },
   {
     year: '2022',
     title: 'Right Choice Awards',
     body: 'Most Trusted Psychic Reader & Reiki Healer — voted by clients and industry peers nationally.',
     emoji: '⭐',
-    color: '#8B3A52',
+    color: 'rgb(var(--cosmic-rose))',
   },
   {
     year: '2021',
     title: 'Grand Master Certification',
     body: 'Certified Grand Master in Tarot Reading and Energy Healing by an international governing body.',
     emoji: '✦',
-    color: '#1A5C6B',
+    color: 'rgb(var(--cosmic-teal))',
   },
 ]
 
@@ -189,7 +189,7 @@ export default function AboutPage() {
         <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-cosmic-gradient pt-24 pb-16">
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse 60% 70% at 30% 50%, rgba(74,44,138,0.25), transparent 70%)' }}
+            style={{ background: 'radial-gradient(ellipse 60% 70% at 30% 50%, rgb(var(--cosmic-violet) / 0.25), transparent 70%)' }}
           />
 
           {/* Decorative rings */}
@@ -318,7 +318,7 @@ export default function AboutPage() {
               {/* Vertical line */}
               <div
                 className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px md:-translate-x-1/2"
-                style={{ background: 'linear-gradient(180deg, transparent, rgba(201,168,76,0.35), transparent)' }}
+                style={{ background: 'linear-gradient(180deg, transparent, rgb(var(--cosmic-gold) / 0.35), transparent)' }}
               />
 
               <div className="space-y-8">
@@ -461,7 +461,7 @@ export default function AboutPage() {
                   {/* SWAP: replace this div with <Image src={`/images/gallery/${item.file}`} ...> when you have photos */}
                   <div
                     className="relative aspect-square rounded-sm overflow-hidden group cursor-pointer border border-cosmic-gold/15 hover:border-cosmic-gold/40 transition-all duration-300"
-                    style={{ background: 'linear-gradient(135deg, rgba(45,27,94,0.5), rgba(26,10,46,0.8))' }}
+                    style={{ background: 'linear-gradient(135deg, rgb(var(--cosmic-purple) / 0.5), rgb(var(--cosmic-deep-purple) / 0.8))' }}
                   >
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <span className="text-5xl mb-2 group-hover:scale-110 transition-transform duration-300">{item.emoji}</span>
@@ -482,7 +482,7 @@ export default function AboutPage() {
         {/* ── QUOTE BANNER ────────────────────────────────────────────────── */}
         <section
           className="py-20 px-4 relative overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, rgba(74,44,138,0.3), #1A0A2E, rgba(201,168,76,0.1))' }}
+          style={{ background: 'linear-gradient(135deg, rgb(var(--cosmic-violet) / 0.3), rgb(var(--cosmic-deep-purple)), rgb(var(--cosmic-gold) / 0.1))' }}
         >
           <div className="container-cosmic max-w-3xl text-center relative z-10">
             <Reveal>

@@ -80,7 +80,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
         <section
           className="relative min-h-[70vh] flex items-center overflow-hidden"
           style={{
-            background: `linear-gradient(135deg, #0A0708 0%, ${service.accentColor}22 50%, #0A0708 100%)`,
+            background: `linear-gradient(135deg, rgb(var(--cosmic-black)) 0%, ${service.accentColor}22 50%, rgb(var(--cosmic-black)) 100%)`,
           }}
         >
           {/* Decorative rings */}
@@ -285,7 +285,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                       {/* Step number */}
                       <div
                         className="shrink-0 w-12 h-12 rounded-full border-2 flex items-center justify-center font-cinzel font-bold text-sm z-10"
-                        style={{ borderColor: service.accentColor, color: service.accentColor, background: '#0A0708' }}
+                        style={{ borderColor: service.accentColor, color: service.accentColor, background: 'rgb(var(--cosmic-black))' }}
                       >
                         {String(i + 1).padStart(2, '0')}
                       </div>
@@ -329,7 +329,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
         {/* ── BOOKING CTA BANNER ────────────────────────────────────────── */}
         <section
           className="py-20 px-4 relative overflow-hidden"
-          style={{ background: `linear-gradient(135deg, ${service.accentColor}33, #1A0A2E, ${service.accentColor}22)` }}
+          style={{ background: `linear-gradient(135deg, ${service.accentColor}33, rgb(var(--cosmic-deep-purple)), ${service.accentColor}22)` }}
         >
           <div className="absolute inset-0 pointer-events-none">
             {[...Array(4)].map((_, i) => (

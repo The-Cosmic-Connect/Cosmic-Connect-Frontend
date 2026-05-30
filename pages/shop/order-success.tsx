@@ -80,7 +80,7 @@ export default function OrderSuccessPage() {
               <div className="relative inline-block mb-8">
                 <div
                   className="w-24 h-24 rounded-full border-2 border-cosmic-gold/40 flex items-center justify-center mx-auto"
-                  style={{ boxShadow: '0 0 40px rgba(201,168,76,0.2)' }}
+                  style={{ boxShadow: '0 0 40px rgb(var(--cosmic-gold) / 0.2)' }}
                 >
                   <CheckCircle size={48} className="text-cosmic-gold" />
                 </div>

@@ -26,7 +26,7 @@ export default function BookingConfirmed() {
 
   return (
     <Layout title="Booking Confirmed | The Cosmic Connect" noIndex={true}>
-      <div className="min-h-screen flex items-center justify-center pt-24 pb-16 px-4" style={{ background: '#0A0708' }}>
+      <div className="min-h-screen flex items-center justify-center pt-24 pb-16 px-4" style={{ background: 'rgb(var(--cosmic-black))' }}>
         <div className="max-w-lg w-full text-center">
           {loading ? (
             <div className="text-cosmic-gold text-5xl animate-pulse">✦</div>

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import type { AppProps } from 'next/app'
 import { GeoProvider } from '@/context/GeoContext'
 import { CartProvider } from '@/context/CartContext'
+import { ThemeProvider } from '@/context/ThemeContext'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import '@/styles/globals.css'
@@ -28,12 +29,14 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router.events])
 
   return (
-    <GeoProvider>
-      <CartProvider>
-        <Component {...pageProps} />
-      </CartProvider>
-      <SpeedInsights />
-      <Analytics />
-    </GeoProvider>
+    <ThemeProvider>
+      <GeoProvider>
+        <CartProvider>
+          <Component {...pageProps} />
+        </CartProvider>
+        <SpeedInsights />
+        <Analytics />
+      </GeoProvider>
+    </ThemeProvider>
   )
 }

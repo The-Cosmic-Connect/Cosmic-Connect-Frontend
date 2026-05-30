@@ -9,16 +9,17 @@ module.exports = {
     extend: {
       colors: {
         cosmic: {
-          black:      '#0A0708',
-          deepPurple: '#1A0A2E',
-          purple:     '#2D1B5E',
-          violet:     '#4A2C8A',
-          gold:       '#C9A84C',
-          lightGold:  '#E8C97A',
-          cream:      '#F5EDD6',
-          offWhite:   '#FAF6EE',
-          rose:       '#8B3A52',
-          teal:       '#1A5C6B',
+          black:      'rgb(var(--cosmic-black) / <alpha-value>)',
+          deepPurple: 'rgb(var(--cosmic-deep-purple) / <alpha-value>)',
+          purple:     'rgb(var(--cosmic-purple) / <alpha-value>)',
+          violet:     'rgb(var(--cosmic-violet) / <alpha-value>)',
+          gold:       'rgb(var(--cosmic-gold) / <alpha-value>)',
+          lightGold:  'rgb(var(--cosmic-light-gold) / <alpha-value>)',
+          cream:      'rgb(var(--cosmic-cream) / <alpha-value>)',
+          offWhite:   'rgb(var(--cosmic-off-white) / <alpha-value>)',
+          rose:       'rgb(var(--cosmic-rose) / <alpha-value>)',
+          teal:       'rgb(var(--cosmic-teal) / <alpha-value>)',
+          ink:        'rgb(var(--cosmic-ink) / <alpha-value>)',
         },
       },
       fontFamily: {
@@ -27,9 +28,9 @@ module.exports = {
         raleway:   ['Raleway', 'sans-serif'],
       },
       backgroundImage: {
-        'cosmic-gradient': 'linear-gradient(135deg, #0A0708 0%, #1A0A2E 50%, #0A0708 100%)',
-        'gold-gradient':   'linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%)',
-        'hero-radial':     'radial-gradient(ellipse at center, #2D1B5E 0%, #1A0A2E 40%, #0A0708 100%)',
+        'cosmic-gradient': 'linear-gradient(135deg, rgb(var(--cosmic-black)) 0%, rgb(var(--cosmic-deep-purple)) 50%, rgb(var(--cosmic-black)) 100%)',
+        'gold-gradient':   'linear-gradient(135deg, rgb(var(--cosmic-gold)) 0%, rgb(var(--cosmic-light-gold)) 50%, rgb(var(--cosmic-gold)) 100%)',
+        'hero-radial':     'radial-gradient(ellipse at center, rgb(var(--cosmic-purple)) 0%, rgb(var(--cosmic-deep-purple)) 40%, rgb(var(--cosmic-black)) 100%)',
       },
       animation: {
         'float':      'float 6s ease-in-out infinite',

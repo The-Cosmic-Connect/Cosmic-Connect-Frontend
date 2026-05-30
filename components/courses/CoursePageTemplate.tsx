@@ -45,7 +45,7 @@ function ModuleItem({ mod, index }: { mod: CourseData['curriculum'][0]; index: n
           <div className="flex items-center gap-3">
             <span
               className="shrink-0 w-7 h-7 rounded-full border flex items-center justify-center font-cinzel text-xs font-bold"
-              style={{ borderColor: 'rgba(201,168,76,0.4)', color: '#C9A84C' }}
+              style={{ borderColor: 'rgb(var(--cosmic-gold) / 0.4)', color: 'rgb(var(--cosmic-gold))' }}
             >
               {index + 1}
             </span>
@@ -131,7 +131,7 @@ export default function CoursePageTemplate({ course }: { course: CourseData }) {
         {/* ── HERO ──────────────────────────────────────────────────────── */}
         <section
           className="relative min-h-[75vh] flex items-center overflow-hidden pt-24 pb-16"
-          style={{ background: `linear-gradient(135deg, #0A0708 0%, ${course.accentColor}18 50%, #0A0708 100%)` }}
+          style={{ background: `linear-gradient(135deg, rgb(var(--cosmic-black)) 0%, ${course.accentColor}18 50%, rgb(var(--cosmic-black)) 100%)` }}
         >
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: `radial-gradient(ellipse 60% 50% at 65% 50%, ${course.accentColor}18, transparent 70%)` }}
@@ -359,7 +359,7 @@ export default function CoursePageTemplate({ course }: { course: CourseData }) {
               <div className="cosmic-card p-8 flex flex-col md:flex-row gap-8 items-start">
                 {/* Photo placeholder */}
                 <div className="relative w-32 h-32 rounded-full overflow-hidden shrink-0 mx-auto md:mx-0 border-2 border-cosmic-gold/30 flex items-center justify-center text-5xl"
-                  style={{ background: 'linear-gradient(135deg, rgba(74,44,138,0.4), rgba(26,10,46,0.8))' }}>
+                  style={{ background: 'linear-gradient(135deg, rgb(var(--cosmic-violet) / 0.4), rgb(var(--cosmic-deep-purple) / 0.8))' }}>
                   🧘‍♀️
                 </div>
 
@@ -472,7 +472,7 @@ export default function CoursePageTemplate({ course }: { course: CourseData }) {
 
         {/* ── CTA BANNER ────────────────────────────────────────────────── */}
         <section className="py-20 px-4 relative overflow-hidden"
-          style={{ background: `linear-gradient(135deg, ${course.accentColor}28, #1A0A2E, ${course.accentColor}18)` }}>
+          style={{ background: `linear-gradient(135deg, ${course.accentColor}28, rgb(var(--cosmic-deep-purple)), ${course.accentColor}18)` }}>
           <div className="container-cosmic text-center relative z-10">
             <Reveal>
               <p className="ornament text-xs tracking-[0.5em] mb-4">✦ ✦ ✦</p>

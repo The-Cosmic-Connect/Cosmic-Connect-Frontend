@@ -58,13 +58,13 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           <img src={image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-5xl"
-            style={{ background: 'linear-gradient(135deg, rgba(74,44,138,0.3), rgba(26,10,46,0.6))' }}>
+            style={{ background: 'linear-gradient(135deg, rgb(var(--cosmic-violet) / 0.3), rgb(var(--cosmic-deep-purple) / 0.6))' }}>
             💎
           </div>
         )}
         {product.ribbon && (
           <div className="absolute top-3 left-3">
-            <span className="font-raleway text-xs tracking-widest uppercase bg-cosmic-gold text-cosmic-black px-2.5 py-1 font-semibold">
+            <span className="font-raleway text-xs tracking-widest uppercase bg-cosmic-gold text-cosmic-ink px-2.5 py-1 font-semibold">
               {product.ribbon}
             </span>
           </div>

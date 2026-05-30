@@ -73,7 +73,7 @@ export default function Layout({
         <link rel="manifest"         href="/site.webmanifest" />
 
         {/* Theme */}
-        <meta name="theme-color" content="#0A0708" />
+        <meta name="theme-color" content="rgb(var(--cosmic-black))" />
 
         {/* Page-specific JSON-LD */}
         {schemas.map((schema, i) => (

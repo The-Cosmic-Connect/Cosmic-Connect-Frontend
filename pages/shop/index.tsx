@@ -76,14 +76,14 @@ function CategoryCard({ cat, index }: { cat: CategoryData; index: number }) {
     >
       <Link href={`/shop/collection/${cat.slug}`} className="group block">
         <div className="relative overflow-hidden rounded-sm border border-cosmic-gold/10 bg-cosmic-deepPurple
-          hover:border-cosmic-gold/40 transition-all duration-400 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(201,168,76,0.12)]">
+          hover:border-cosmic-gold/40 transition-all duration-400 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(var(--cosmic-gold) / 0.12)]">
           <div className="relative aspect-[4/3] overflow-hidden">
             {cat.image ? (
               <img src={cat.image} alt={cat.name}
                 className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-108" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-5xl"
-                style={{ background: 'linear-gradient(135deg, rgba(74,44,138,0.4), rgba(10,7,8,0.8))' }}>
+                style={{ background: 'linear-gradient(135deg, rgb(var(--cosmic-violet) / 0.4), rgb(var(--cosmic-black) / 0.8))' }}>
                 {icon}
               </div>
             )}
@@ -168,9 +168,9 @@ export default function ShopPage() {
     >
       {/* Hero */}
       <section className="relative pt-36 pb-16 px-4 overflow-hidden"
-        style={{ background: 'linear-gradient(180deg, #1A0A2E 0%, #0A0708 100%)' }}>
+        style={{ background: 'linear-gradient(180deg, rgb(var(--cosmic-deep-purple)) 0%, rgb(var(--cosmic-black)) 100%)' }}>
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(201,168,76,0.07), transparent 70%)' }} />
+          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgb(var(--cosmic-gold) / 0.07), transparent 70%)' }} />
         <div className="absolute top-24 left-8 w-16 h-16 border-l border-t border-cosmic-gold/20 hidden lg:block" />
         <div className="absolute top-24 right-8 w-16 h-16 border-r border-t border-cosmic-gold/20 hidden lg:block" />
         <div className="container-cosmic relative z-10 text-center">
@@ -215,7 +215,7 @@ export default function ShopPage() {
       </div>
 
       {/* Category Grid */}
-      <section className="py-12 px-4" style={{ background: '#0A0708' }}>
+      <section className="py-12 px-4" style={{ background: 'rgb(var(--cosmic-black))' }}>
         <div className="container-cosmic">
           {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -245,7 +245,7 @@ export default function ShopPage() {
       {/* Bottom CTA */}
       {!loading && (
         <section className="py-12 text-center border-t border-cosmic-gold/10"
-          style={{ background: 'linear-gradient(180deg, #0A0708 0%, #1A0A2E 100%)' }}>
+          style={{ background: 'linear-gradient(180deg, rgb(var(--cosmic-black)) 0%, rgb(var(--cosmic-deep-purple)) 100%)' }}>
           <p className="font-cormorant text-cosmic-cream/50 italic text-lg mb-4">Can't find what you're looking for?</p>
           <Link href="/shop/collection/all" className="btn-primary">
             Browse All {categories.reduce((s, c) => s + c.count, 0).toLocaleString()} Products

@@ -61,9 +61,9 @@ export default function ServicesPage() {
       canonical="/services"
     >
       <section className="relative pt-36 pb-16 px-4 overflow-hidden"
-        style={{ background: 'linear-gradient(180deg, #1A0A2E 0%, #0A0708 100%)' }}>
+        style={{ background: 'linear-gradient(180deg, rgb(var(--cosmic-deep-purple)) 0%, rgb(var(--cosmic-black)) 100%)' }}>
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(201,168,76,0.07), transparent 70%)' }} />
+          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgb(var(--cosmic-gold) / 0.07), transparent 70%)' }} />
         <div className="container-cosmic relative z-10 text-center">
           <p className="font-raleway text-cosmic-gold/60 text-xs tracking-[0.5em] uppercase mb-4">✦ Begin Your Journey ✦</p>
           <h1 className="font-cinzel font-bold text-cosmic-cream mb-4" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>
@@ -78,7 +78,7 @@ export default function ServicesPage() {
             {(['agent', 'service', 'slot'] as const).map((s, i) => (
               <div key={s} className="flex items-center gap-3">
                 <div className={`flex items-center justify-center w-8 h-8 rounded-full border font-raleway text-xs font-bold transition-all ${
-                  step === s ? 'border-cosmic-gold bg-cosmic-gold text-cosmic-black'
+                  step === s ? 'border-cosmic-gold bg-cosmic-gold text-cosmic-ink'
                   : i < ['agent','service','slot'].indexOf(step) ? 'border-cosmic-gold/60 bg-cosmic-gold/20 text-cosmic-gold'
                   : 'border-cosmic-gold/20 text-cosmic-cream/30'
                 }`}>{i + 1}</div>
@@ -92,7 +92,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="py-12 px-4" style={{ background: '#0A0708' }}>
+      <section className="py-12 px-4" style={{ background: 'rgb(var(--cosmic-black))' }}>
         <div className="container-cosmic max-w-4xl">
 
           {/* Step 1 — Choose Agent */}

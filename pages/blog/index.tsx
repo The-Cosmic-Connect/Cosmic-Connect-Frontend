@@ -40,7 +40,7 @@ export default function BlogPage() {
       {/* Hero */}
       <section className="relative pt-36 pb-12 px-4 bg-cosmic-gradient overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(74,44,138,0.18), transparent 70%)' }}
+          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgb(var(--cosmic-violet) / 0.18), transparent 70%)' }}
         />
         <div className="container-cosmic relative z-10 text-center">
           <p className="ornament text-xs tracking-[0.5em] mb-4">✦ ✦ ✦</p>

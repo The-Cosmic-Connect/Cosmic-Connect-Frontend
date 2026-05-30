@@ -12,7 +12,7 @@ const courses = [
     description:
       'Unlock your innate psychic abilities. Learn to read energy, develop clairvoyance, and strengthen your intuition.',
     topics: ['Energy Reading', 'Clairvoyance', 'Intuition', 'Aura Scanning'],
-    accent: '#4A2C8A',
+    accent: 'rgb(var(--cosmic-violet))',
     emoji: '🔮',
   },
   {
@@ -24,7 +24,7 @@ const courses = [
     description:
       'Master the 78 cards of Tarot. Learn to perform accurate readings for love, career, and spiritual growth.',
     topics: ['Major Arcana', 'Minor Arcana', 'Spreads', 'Interpretation'],
-    accent: '#8B3A52',
+    accent: 'rgb(var(--cosmic-rose))',
     emoji: '🃏',
   },
   {
@@ -36,7 +36,7 @@ const courses = [
     description:
       'Learn to harness the healing power of crystals. Understand crystal grids, chakra alignment, and energy healing.',
     topics: ['Crystal Properties', 'Chakras', 'Grids', 'Cleansing'],
-    accent: '#1A5C6B',
+    accent: 'rgb(var(--cosmic-teal))',
     emoji: '💎',
   },
   {
@@ -48,7 +48,7 @@ const courses = [
     description:
       'Deepen your spiritual understanding. Explore meditation, manifestation, karma, and soul purpose.',
     topics: ['Meditation', 'Manifestation', 'Karma', 'Soul Purpose'],
-    accent: '#C9A84C',
+    accent: 'rgb(var(--cosmic-gold))',
     emoji: '🌟',
   },
 ]

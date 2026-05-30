@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Menu, X, Phone, ShoppingCart } from 'lucide-react'
+import { Menu, X, Phone, ShoppingCart, Sun, Moon } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
+import { useTheme } from '@/context/ThemeContext'
 import CartDrawer from '@/components/shop/CartDrawer'
 
 const navLinks = [
@@ -22,6 +23,7 @@ export default function Navbar() {
   const [cartBump,  setCartBump]  = useState(false)
   const router     = useRouter()
   const { totalItems } = useCart()
+  const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -81,6 +83,16 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-4">
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              className="flex items-center justify-center w-9 h-9 text-cosmic-cream/70 hover:text-cosmic-gold transition-colors duration-300"
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
             {/* Phone — desktop */}
             <a
               href="tel:+919599474758"
@@ -100,7 +112,7 @@ export default function Navbar() {
             >
               <ShoppingCart size={20} />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-cosmic-gold text-cosmic-black
+                <span className="absolute -top-1 -right-1 bg-cosmic-gold text-cosmic-ink
                   text-xs font-bold font-raleway rounded-full w-4 h-4
                   flex items-center justify-center leading-none">
                   {totalItems > 9 ? '9+' : totalItems}
@@ -175,11 +187,23 @@ export default function Navbar() {
             >
               <span>Cart</span>
               {totalItems > 0 && (
-                <span className="bg-cosmic-gold text-cosmic-black text-xs font-bold font-raleway
+                <span className="bg-cosmic-gold text-cosmic-ink text-xs font-bold font-raleway
                   rounded-full w-5 h-5 flex items-center justify-center">
                   {totalItems}
                 </span>
               )}
+            </button>
+          </div>
+
+          {/* Theme toggle in mobile menu */}
+          <div className="px-8 pb-2">
+            <button
+              onClick={toggleTheme}
+              className="w-full flex items-center justify-between py-3 font-cinzel text-sm
+                tracking-widest uppercase text-cosmic-cream/80 hover:text-cosmic-gold transition-colors"
+            >
+              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
           </div>
 
