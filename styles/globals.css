@@ -12,22 +12,36 @@
    [data-theme=dark] → original cosmic dark theme
    ──────────────────────────────────────────────────────────── */
 :root {
-  --cosmic-black:       255 252 247;  /* #FFFCF7  page background  */
-  --cosmic-deep-purple: 236 224 196;  /* #ECE0C4  surfaces/cards   */
-  --cosmic-purple:      226 210 176;  /* #E2D2B0                   */
-  --cosmic-violet:      198 173 123;  /* #C6AD7B                   */
-  --cosmic-gold:        184 144 58;   /* #B8903A  deeper for light  */
-  --cosmic-light-gold:  156 117 40;   /* #9C7528                   */
-  --cosmic-cream:       26 27 58;     /* #1A1B3A  primary text      */
-  --cosmic-off-white:   58 60 92;     /* #3A3C5C  secondary text    */
-  --cosmic-rose:        139 58 82;    /* #8B3A52                   */
-  --cosmic-teal:        26 92 107;    /* #1A5C6B                   */
-  --cosmic-ink:         26 27 58;     /* #1A1B3A  text on gold      */
+  --cosmic-black:       251 247 238;  /* #FBF7EE  warm parchment bg     */
+  --cosmic-deep-purple: 255 255 255;  /* #FFFFFF  pure white cards      */
+  --cosmic-purple:      247 239 220;  /* #F7EFDC  alt surface           */
+  --cosmic-violet:      225 196 138;  /* #E1C48A  decorative tone       */
+  --cosmic-gold:        163 119 33;   /* #A37721  rich 22K-style gold   */
+  --cosmic-light-gold:  201 156 53;   /* #C99C35  hover / highlight     */
+  --cosmic-cream:       30 22 58;     /* #1E163A  deep midnight text    */
+  --cosmic-off-white:   75 65 100;    /* #4B4164  secondary text        */
+  --cosmic-rose:        145 50 80;    /* #913250  richer rose accent    */
+  --cosmic-teal:        20 80 95;     /* #14505F  deeper teal accent    */
+  --cosmic-ink:         18 14 40;     /* #120E28  text on gold buttons  */
 
   --cosmic-card-bg:     #FFFFFF;
-  --cosmic-card-border: rgba(26, 27, 58, 0.12);
-  --cosmic-card-shadow: 0 1px 2px rgba(26, 27, 58, 0.05), 0 12px 28px rgba(26, 27, 58, 0.07);
-  --star-color:         rgba(184, 144, 58, 0.5);
+  --cosmic-card-border: rgba(120, 90, 30, 0.14);
+  --cosmic-card-shadow:
+    0 1px 2px rgba(60, 40, 20, 0.05),
+    0 6px 16px rgba(60, 40, 20, 0.06),
+    0 16px 40px rgba(60, 40, 20, 0.08);
+  --star-color:         rgba(184, 144, 58, 0.4);
+
+  /* Floating-surface shadows for light mode */
+  --surface-shadow:     0 1px 3px rgba(60, 40, 20, 0.06), 0 8px 24px rgba(60, 40, 20, 0.07);
+  --surface-shadow-lg:  0 2px 6px rgba(60, 40, 20, 0.08), 0 18px 48px rgba(60, 40, 20, 0.10);
+
+  /* Hero gradient — warm radial glow on parchment (replaces the dark ramp) */
+  --hero-gradient:
+    radial-gradient(ellipse 70% 60% at 50% 30%, rgba(163, 119, 33, 0.10), transparent 70%),
+    linear-gradient(180deg, #FBF7EE 0%, #F5EAD3 100%);
+  --section-gradient:
+    linear-gradient(180deg, #FBF7EE 0%, #F7EFDC 50%, #FBF7EE 100%);
 }
 
 [data-theme='dark'] {
@@ -289,4 +303,65 @@ html:not([data-theme='dark']) .bg-cosmic-purple\/30 {
 html:not([data-theme='dark']) .bg-cosmic-gold\/10,
 html:not([data-theme='dark']) .bg-cosmic-gold\/20 {
   background-color: rgb(var(--cosmic-gold) / 0.4);
+}
+
+/* ─── LIGHT-MODE POLISH (v2) ───────────────────────────────
+   The earlier overrides made cards opaque cream-on-cream, which still
+   read as flat. These v2 rules give light mode real visual depth:
+   white card surfaces with shadows on a warm parchment page, and hero
+   gradients tuned to the warm palette. Dark mode unaffected.
+   ────────────────────────────────────────────────────────────────── */
+
+/* Cards: pure white surfaces with real shadows, replacing the cream wash */
+html:not([data-theme='dark']) .bg-cosmic-deepPurple,
+html:not([data-theme='dark']) .bg-cosmic-deepPurple\/10,
+html:not([data-theme='dark']) .bg-cosmic-deepPurple\/20,
+html:not([data-theme='dark']) .bg-cosmic-deepPurple\/30,
+html:not([data-theme='dark']) .bg-cosmic-deepPurple\/40,
+html:not([data-theme='dark']) .bg-cosmic-deepPurple\/50,
+html:not([data-theme='dark']) .bg-cosmic-deepPurple\/60 {
+  background-color: #FFFFFF;
+  box-shadow: var(--surface-shadow);
+}
+
+/* Slightly less faint gold borders so card edges read */
+html:not([data-theme='dark']) .border-cosmic-gold\/5,
+html:not([data-theme='dark']) .border-cosmic-gold\/10,
+html:not([data-theme='dark']) .border-cosmic-gold\/15 {
+  border-color: rgb(var(--cosmic-gold) / 0.22);
+}
+
+/* Hero gradient: section[style] inline background overridden to warm radial */
+html:not([data-theme='dark']) section[style*="linear-gradient(180deg, rgb(var(--cosmic-deep-purple)) 0%, rgb(var(--cosmic-black)) 100%)"] {
+  background: var(--hero-gradient) !important;
+}
+html:not([data-theme='dark']) section[style*="linear-gradient(180deg, rgb(var(--cosmic-black)) 0%, rgb(var(--cosmic-deep-purple)) 100%)"] {
+  background: var(--section-gradient) !important;
+}
+
+/* Sticky toolbar: a slightly warmer translucent strip with a gold underline */
+html:not([data-theme='dark']) .bg-cosmic-black\/95 {
+  background-color: rgb(var(--cosmic-black) / 0.96);
+}
+
+/* Outline button: heavier border on parchment so it doesn't read as a label */
+html:not([data-theme='dark']) .btn-outline {
+  border-width: 1.5px;
+}
+html:not([data-theme='dark']) .btn-outline:hover {
+  background: rgb(var(--cosmic-gold) / 0.08);
+  box-shadow: 0 4px 14px rgba(163, 119, 33, 0.18);
+}
+
+/* Cosmic card uses the richer multi-layer shadow */
+html:not([data-theme='dark']) .cosmic-card {
+  box-shadow: var(--cosmic-card-shadow);
+}
+html:not([data-theme='dark']) .cosmic-card:hover {
+  box-shadow: var(--surface-shadow-lg);
+}
+
+/* Decorative star field: dial down on parchment so it doesn't look dusty */
+html:not([data-theme='dark']) .star {
+  opacity: 0.45;
 }
