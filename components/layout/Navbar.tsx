@@ -16,6 +16,8 @@ const navLinks = [
   { label: 'Blog',     href: '/blog' },
 ]
 
+// Desktop "Shop" is now a plain click-through to /shop (the chooser landing).
+
 export default function Navbar() {
   const [scrolled,  setScrolled]  = useState(false)
   const [menuOpen,  setMenuOpen]  = useState(false)
@@ -74,7 +76,11 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`nav-link ${router.pathname === link.href ? 'active' : ''}`}
+                className={`nav-link ${
+                  link.href === '/shop'
+                    ? router.pathname.startsWith('/shop') ? 'active' : ''
+                    : router.pathname === link.href ? 'active' : ''
+                }`}
               >
                 {link.label}
               </Link>

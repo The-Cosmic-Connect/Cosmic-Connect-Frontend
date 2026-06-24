@@ -1,257 +1,123 @@
-import { useState, useEffect, useRef } from 'react'
+// pages/shop/index.tsx — Shop chooser landing
+// Three big tiles: By Purpose / By Crystal / By Category. No products listed
+// here; this is purely a "how do you want to shop?" decision page.
 import Link from 'next/link'
-import { Search, X } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
-import { useRouter } from 'next/router'
-import type { Product } from '@/types/product'
-export type { Product }
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-
-const CATEGORY_ICONS: Record<string, string> = {
-  'Bracelets': '📿',
-  'Zodiac Bracelets': '♈',
-  'Therapy Bracelets': '💚',
-  'Raw / Rough Stones': '🪨',
-  'Tumble Stones': '💎',
-  'Crystal Clusters': '✨',
-  'Towers, Wands & Pencils': '🔮',
-  'Balls & Spheres': '🔵',
-  'Pyramids': '🔺',
-  'Puffy Hearts': '💜',
-  'Palm Stones': '🖐️',
-  'Crystal Tree': '🌳',
-  'Rollers & Gua Sha': '🌿',
-  'Pendants & Jewellery': '💍',
-  'Angels': '👼',
-  'Idols & Figurines': '🪷',
-  'Evil Eye Products': '🧿',
-  'Jap Mala': '📿',
-  'Rudraksh': '🌰',
-  'Feng Shui': '☯️',
-  'Dowsers': '🌀',
-  'Energy Generator Orgones': '⚡',
-  'Intention Coin': '🪙',
-  'Sage & Incense': '🌿',
-  'Cleansing & Charging': '🌙',
-  'Meditation Essentials': '🧘',
-  'Energized Water': '💧',
-  'Lamp': '🕯️',
+interface Mode {
+  href: string
+  icon: string
+  title: string
+  tagline: string
+  description: string
+  highlights: string[]
+  cta: string
 }
 
-interface CategoryData {
-  name: string
-  count: number
-  image: string
-  slug: string
-}
+const MODES: Mode[] = [
+  {
+    href: '/shop/purposes',
+    icon: '✨',
+    title: 'Shop by Purpose',
+    tagline: 'Start with what you need',
+    description: 'New to crystals or have something specific in mind? Tell us your intention — love, abundance, calm, protection — and we\'ll guide you to the right stones.',
+    highlights: ['Love & Relationships', 'Abundance & Wealth', 'Calm & Stress Relief', 'Protection & Cleansing'],
+    cta: 'Find by intention',
+  },
+  {
+    href: '/shop/crystals',
+    icon: '💎',
+    title: 'Shop by Crystal',
+    tagline: 'Already know the stone?',
+    description: 'Browse by crystal name — Amethyst, Rose Quartz, Tiger Eye and more. Perfect when you already know what you\'re looking for.',
+    highlights: ['250+ crystal varieties', 'Real photos for every stone', 'Filter within each crystal'],
+    cta: 'Browse by stone',
+  },
+  {
+    href: '/shop/categories',
+    icon: '🗂',
+    title: 'Shop by Category',
+    tagline: 'Browse the whole shop',
+    description: 'Bracelets, raw stones, pyramids, malas, jewellery and more — explore by product type, the way a physical store is laid out.',
+    highlights: ['28 collections', 'Bracelets & Malas', 'Shapes & Figures', 'Home & Vaastu'],
+    cta: 'Browse categories',
+  },
+]
 
-function toSlug(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-}
-
-function CategoryCard({ cat, index }: { cat: CategoryData; index: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true) },
-      { threshold: 0.1 }
-    )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
-
-  const icon = CATEGORY_ICONS[cat.name] || '✦'
-
-  return (
-    <div
-      ref={ref}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: `opacity 0.55s ease ${(index % 8) * 0.06}s, transform 0.55s ease ${(index % 8) * 0.06}s`,
-      }}
-    >
-      <Link href={`/shop/collection/${cat.slug}`} className="group block">
-        <div className="relative overflow-hidden rounded-sm border border-cosmic-gold/10 bg-cosmic-deepPurple
-          hover:border-cosmic-gold/40 transition-all duration-400 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(var(--cosmic-gold) / 0.12)]">
-          <div className="relative aspect-[4/3] overflow-hidden">
-            {cat.image ? (
-              <img src={cat.image} alt={cat.name}
-                className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-108" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-5xl"
-                style={{ background: 'linear-gradient(135deg, rgb(var(--cosmic-violet) / 0.4), rgb(var(--cosmic-black) / 0.8))' }}>
-                {icon}
-              </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-cosmic-black/80 via-cosmic-black/20 to-transparent" />
-            <div className="absolute top-3 right-3 bg-cosmic-black/60 backdrop-blur-sm border border-cosmic-gold/30 px-2 py-0.5 rounded-sm">
-              <span className="font-raleway text-cosmic-gold text-xs tracking-widest">{cat.count}</span>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-4">
-              <p className="font-raleway text-cosmic-gold/70 text-xs tracking-[0.2em] uppercase mb-1">{icon} Collection</p>
-              <h3 className="font-cinzel text-cosmic-cream font-semibold text-sm leading-snug group-hover:text-cosmic-gold transition-colors duration-300">
-                {cat.name}
-              </h3>
-            </div>
-          </div>
-          <div className="px-4 py-3 flex items-center justify-between border-t border-cosmic-gold/10">
-            <span className="font-cormorant text-cosmic-cream/50 text-sm italic">{cat.count} products</span>
-            <span className="font-raleway text-cosmic-gold text-xs tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              Shop →
-            </span>
-          </div>
-        </div>
-      </Link>
-    </div>
-  )
-}
-
-export default function ShopPage() {
-  const router = useRouter()
-  const [categories, setCategories] = useState<CategoryData[]>([])
-  const [loading,    setLoading]    = useState(true)
-  const [search,     setSearch]     = useState('')
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const colRes  = await fetch(`${API}/collections`)
-        const colData = await colRes.json()
-        const cols: string[] = colData.collections || []
-
-        const prodRes  = await fetch(`${API}/products?limit=200`)
-        const prodData = await prodRes.json()
-        const products = prodData.products || []
-
-        const catMap: Record<string, { count: number; image: string }> = {}
-        products.forEach((p: any) => {
-          p.collections?.forEach((col: string) => {
-            if (!catMap[col]) catMap[col] = { count: 0, image: '' }
-            catMap[col].count++
-            if (!catMap[col].image && p.images?.[0]) catMap[col].image = p.images[0]
-          })
-        })
-
-        const cats: CategoryData[] = cols
-          .filter(c => catMap[c])
-          .map(name => ({ name, count: catMap[name]?.count || 0, image: catMap[name]?.image || '', slug: toSlug(name) }))
-          .sort((a, b) => b.count - a.count)
-
-        setCategories(cats)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [])
-
-  const filtered = search
-    ? categories.filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
-    : categories
-
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault()
-    if (filtered.length === 1) router.push(`/shop/collection/${filtered[0].slug}`)
-  }
-
+export default function ShopChooserPage() {
   return (
     <Layout
       title="Crystal & Healing Products Shop | The Cosmic Connect"
-      description="Shop 100% authentic crystals, healing bracelets, malas, yantras and spiritual tools. Cleansed and energized by Reiki Grand Masters. Free shipping above ₹1999."
+      description="Shop 100% authentic crystals, healing bracelets, malas, yantras and spiritual tools. Browse by purpose, crystal or category."
       canonical="/shop"
     >
       {/* Hero */}
-      <section className="relative pt-36 pb-16 px-4 overflow-hidden"
+      <section className="relative pt-36 pb-12 px-4 overflow-hidden"
         style={{ background: 'linear-gradient(180deg, rgb(var(--cosmic-deep-purple)) 0%, rgb(var(--cosmic-black)) 100%)' }}>
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgb(var(--cosmic-gold) / 0.07), transparent 70%)' }} />
         <div className="absolute top-24 left-8 w-16 h-16 border-l border-t border-cosmic-gold/20 hidden lg:block" />
         <div className="absolute top-24 right-8 w-16 h-16 border-r border-t border-cosmic-gold/20 hidden lg:block" />
         <div className="container-cosmic relative z-10 text-center">
-          <p className="font-raleway text-cosmic-gold/60 text-xs tracking-[0.5em] uppercase mb-4">✦ Our Collections ✦</p>
+          <p className="font-raleway text-cosmic-gold/60 text-xs tracking-[0.5em] uppercase mb-4">✦ The Cosmic Shop ✦</p>
           <h1 className="font-cinzel font-bold text-cosmic-cream mb-4" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
-            Healing <span className="text-gradient-gold">Crystal Shop</span>
+            How would you like to <span className="text-gradient-gold">shop today?</span>
           </h1>
-          <p className="font-cormorant italic text-cosmic-cream/60 text-xl max-w-xl mx-auto mb-8">
-            Handpicked crystals, cleansed &amp; energized by Reiki Grand Masters
+          <p className="font-cormorant italic text-cosmic-cream/60 text-xl max-w-2xl mx-auto">
+            Three ways in — pick what feels right.
           </p>
-          <form onSubmit={handleSearch}
-            className="flex items-center gap-0 max-w-md mx-auto border border-cosmic-gold/30 bg-cosmic-black/40 backdrop-blur-sm">
-            <Search size={15} className="ml-4 text-cosmic-cream/30 shrink-0" />
-            <input type="text" placeholder="Search collections..." value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="flex-1 bg-transparent font-raleway text-sm text-cosmic-cream placeholder-cosmic-cream/25 outline-none px-3 py-3 tracking-wide" />
-            {search && (
-              <button type="button" onClick={() => setSearch('')} className="px-3 text-cosmic-cream/30 hover:text-cosmic-gold transition-colors">
-                <X size={14} />
-              </button>
-            )}
-          </form>
           <div className="flex flex-wrap justify-center gap-6 mt-8">
-            {['✦ Authentic & Certified', '✦ Reiki Energized', '✦ Free Shipping ₹1999+', '✦ 50,000+ Happy Customers'].map(b => (
+            {['✦ Authentic & Certified', '✦ Reiki Energized', '✦ Free Shipping ₹1999+', '✦ 50,000+ Happy Customers'].map((b) => (
               <span key={b} className="font-raleway text-cosmic-cream/35 text-xs tracking-widest">{b}</span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Toolbar */}
-      <div className="sticky top-16 z-30 bg-cosmic-black/95 backdrop-blur-md border-b border-cosmic-gold/10">
-        <div className="container-cosmic py-3 flex items-center justify-between">
-          <p className="font-raleway text-cosmic-cream/30 text-xs tracking-widest">
-            {loading ? 'Loading...' : `${filtered.length} collection${filtered.length !== 1 ? 's' : ''}`}
-          </p>
-          <Link href="/shop/collection/all"
-            className="font-raleway text-cosmic-cream/50 hover:text-cosmic-gold text-xs tracking-widest uppercase transition-colors">
-            View All Products
-          </Link>
-        </div>
-      </div>
+      {/* Three big mode tiles */}
+      <section className="py-14 px-4" style={{ background: 'rgb(var(--cosmic-black))' }}>
+        <div className="container-cosmic grid grid-cols-1 md:grid-cols-3 gap-6">
+          {MODES.map((m) => (
+            <Link key={m.href} href={m.href}
+              className="group relative flex flex-col p-7 border border-cosmic-gold/20 bg-cosmic-deepPurple/40
+                hover:border-cosmic-gold/60 hover:bg-cosmic-deepPurple hover:-translate-y-1
+                transition-all duration-400 hover:shadow-[0_12px_40px_rgb(var(--cosmic-gold)/0.15)]">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cosmic-gold/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      {/* Category Grid */}
-      <section className="py-12 px-4" style={{ background: 'rgb(var(--cosmic-black))' }}>
-        <div className="container-cosmic">
-          {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {[...Array(12)].map((_, i) => (
-                <div key={i} className="animate-pulse rounded-sm border border-cosmic-gold/5 bg-cosmic-deepPurple/30">
-                  <div className="aspect-[4/3] bg-cosmic-gold/5" />
-                  <div className="p-3 space-y-2">
-                    <div className="h-3 bg-cosmic-gold/5 rounded w-3/4" />
-                    <div className="h-3 bg-cosmic-gold/5 rounded w-1/2" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center py-24">
-              <p className="font-cinzel text-cosmic-cream/40 text-sm mb-2">No collections found</p>
-              <button onClick={() => setSearch('')} className="btn-outline text-xs mt-4">Clear Search</button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filtered.map((cat, i) => <CategoryCard key={cat.name} cat={cat} index={i} />)}
-            </div>
-          )}
+              <div className="text-5xl mb-5">{m.icon}</div>
+              <p className="font-raleway text-cosmic-gold/60 text-[10px] tracking-[0.3em] uppercase mb-2">{m.tagline}</p>
+              <h2 className="font-cinzel text-cosmic-cream text-xl md:text-2xl mb-3 group-hover:text-cosmic-gold transition-colors duration-300">
+                {m.title}
+              </h2>
+              <p className="font-cormorant italic text-cosmic-cream/65 text-base leading-relaxed mb-5">
+                {m.description}
+              </p>
+
+              <ul className="space-y-1.5 mb-6">
+                {m.highlights.map((h) => (
+                  <li key={h} className="font-raleway text-cosmic-cream/55 text-[13px] flex items-center gap-2">
+                    <span className="text-cosmic-gold/70">✦</span>{h}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-auto pt-4 border-t border-cosmic-gold/15 flex items-center justify-between">
+                <span className="font-raleway text-cosmic-gold text-xs tracking-widest uppercase">{m.cta}</span>
+                <span className="font-raleway text-cosmic-gold text-lg transition-transform duration-300 group-hover:translate-x-1">→</span>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      {!loading && (
-        <section className="py-12 text-center border-t border-cosmic-gold/10"
-          style={{ background: 'linear-gradient(180deg, rgb(var(--cosmic-black)) 0%, rgb(var(--cosmic-deep-purple)) 100%)' }}>
-          <p className="font-cormorant text-cosmic-cream/50 italic text-lg mb-4">Can't find what you're looking for?</p>
-          <Link href="/shop/collection/all" className="btn-primary">
-            Browse All {categories.reduce((s, c) => s + c.count, 0).toLocaleString()} Products
-          </Link>
-        </section>
-      )}
+      {/* View all products escape hatch */}
+      <section className="py-12 text-center border-t border-cosmic-gold/10"
+        style={{ background: 'linear-gradient(180deg, rgb(var(--cosmic-black)) 0%, rgb(var(--cosmic-deep-purple)) 100%)' }}>
+        <p className="font-cormorant text-cosmic-cream/50 italic text-lg mb-4">
+          Just want to see everything?
+        </p>
+        <Link href="/shop/collection/all" className="btn-primary">View All Products</Link>
+      </section>
     </Layout>
   )
 }

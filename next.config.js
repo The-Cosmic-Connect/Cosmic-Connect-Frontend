@@ -8,6 +8,7 @@ const nextConfig = {
       'thecosmicconnect-images-dev.s3.ap-south-1.amazonaws.com',
       'thecosmicconnect-images-staging.s3.ap-south-1.amazonaws.com',
       'thecosmicconnect-images.s3.ap-south-1.amazonaws.com',
+      'thecosmicconnect-crystal-cover-images.s3.ap-south-1.amazonaws.com',
     ],
     formats: ['image/avif', 'image/webp'],
   },
