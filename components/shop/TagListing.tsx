@@ -11,10 +11,8 @@ import Link from 'next/link'
 import { ArrowLeft, SlidersHorizontal, X } from 'lucide-react'
 import { useGeo } from '@/context/GeoContext'
 import ProductCard from '@/components/shop/ProductCard'
-import { fetchAllProducts } from '@/lib/fetchProducts'
+import { fetchAllProducts, getCachedProducts } from '@/lib/fetchProducts'
 import type { Product } from '@/types/product'
-
-const PAGE_SIZE = 48
 
 const SORTS = [
   { value: 'featured',   label: 'Featured' },
@@ -44,14 +42,17 @@ export default function TagListing({
   tag, title, eyebrow, backHref, backLabel, icon,
 }: Props) {
   const { isIndia, symbol } = useGeo()
-  const [all, setAll]         = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+  // Hydrate from cache synchronously on mount — no loading flash when warm.
+  const [all, setAll]         = useState<Product[]>(() => getCachedProducts() || [])
+  const [loading, setLoading] = useState<boolean>(() => !getCachedProducts())
   const [sort, setSort]       = useState('featured')
-  const [page, setPage]       = useState(1)
   const [filters, setFilters] = useState<FiltersState>(EMPTY_FILTERS)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   useEffect(() => {
+    // If we already had cached data at mount, skip the fetch entirely —
+    // fetchAllProducts() would just return the same array.
+    if (getCachedProducts()) return
     let on = true
     setLoading(true)
     fetchAllProducts()
@@ -60,9 +61,8 @@ export default function TagListing({
     return () => { on = false }
   }, [])
 
-  // Reset filters & page whenever the tag changes (e.g. clicking another crystal)
-  useEffect(() => { setFilters(EMPTY_FILTERS); setPage(1) }, [tag])
-  useEffect(() => { setPage(1) }, [sort, filters])
+  // Reset filters whenever the tag changes (e.g. clicking another crystal)
+  useEffect(() => { setFilters(EMPTY_FILTERS) }, [tag])
 
   const price = (p: Product) => (isIndia ? p.priceINR : p.priceUSD)
 
@@ -121,7 +121,6 @@ export default function TagListing({
     return out
   }, [tagMatched, filters, sort, isIndia])
 
-  const shown = filteredSorted.slice(0, page * PAGE_SIZE)
   const activeFilterCount =
     filters.categories.length + (filters.priceMin != null ? 1 : 0) + (filters.priceMax != null ? 1 : 0)
 
@@ -291,16 +290,9 @@ export default function TagListing({
                 <button onClick={clearFilters} className="btn-outline mt-4 text-xs">Clear filters</button>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {shown.map((p, i) => <ProductCard key={p.id} product={p as any} index={i} />)}
-                </div>
-                {shown.length < filteredSorted.length && (
-                  <div className="text-center mt-12">
-                    <button onClick={() => setPage((pg) => pg + 1)} className="btn-outline">Load More</button>
-                  </div>
-                )}
-              </>
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filteredSorted.map((p, i) => <ProductCard key={p.id} product={p as any} index={i} />)}
+              </div>
             )}
           </div>
         </div>
