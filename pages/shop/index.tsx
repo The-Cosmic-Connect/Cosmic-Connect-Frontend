@@ -1,17 +1,21 @@
 // pages/shop/index.tsx — Shop chooser landing
-// Three big tiles: By Purpose / By Crystal / By Category. No products listed
-// here; this is purely a "how do you want to shop?" decision page.
+//
+// Two horizontal carousels (Featured + Bestsellers) sit above the chooser
+// tiles. Both are pre-rendered server-side via ISR (revalidate every 10 min)
+// so the user gets fully-baked HTML on first paint — no client fetch, no
+// loading state. The "Bestsellers" list is sourced from the admin-toggleable
+// mode (manual = bestseller flag, auto = sales-derived top sellers).
 import Link from 'next/link'
+import type { GetStaticProps } from 'next'
 import Layout from '@/components/layout/Layout'
+import FeaturedCarousel from '@/components/shop/FeaturedCarousel'
+import type { Product } from '@/types/product'
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 interface Mode {
-  href: string
-  icon: string
-  title: string
-  tagline: string
-  description: string
-  highlights: string[]
-  cta: string
+  href: string; icon: string; title: string; tagline: string
+  description: string; highlights: string[]; cta: string
 }
 
 const MODES: Mode[] = [
@@ -44,7 +48,12 @@ const MODES: Mode[] = [
   },
 ]
 
-export default function ShopChooserPage() {
+interface Props {
+  featured:    Product[]
+  bestsellers: Product[]
+}
+
+export default function ShopChooserPage({ featured, bestsellers }: Props) {
   return (
     <Layout
       title="Crystal & Healing Products Shop | The Cosmic Connect"
@@ -74,8 +83,29 @@ export default function ShopChooserPage() {
         </div>
       </section>
 
+      {/* Featured + Bestseller carousels (only render when there's content) */}
+      {featured.length > 0 && (
+        <div style={{ background: 'rgb(var(--cosmic-black))' }}>
+          <FeaturedCarousel
+            eyebrow="Hand-picked by us"
+            title="Featured"
+            products={featured}
+          />
+        </div>
+      )}
+
+      {bestsellers.length > 0 && (
+        <div style={{ background: 'rgb(var(--cosmic-black))', borderTop: featured.length > 0 ? '1px solid rgb(var(--cosmic-gold) / 0.08)' : undefined }}>
+          <FeaturedCarousel
+            eyebrow="What people are loving"
+            title="Bestsellers"
+            products={bestsellers}
+          />
+        </div>
+      )}
+
       {/* Three big mode tiles */}
-      <section className="py-14 px-4" style={{ background: 'rgb(var(--cosmic-black))' }}>
+      <section className="py-14 px-4" style={{ background: 'rgb(var(--cosmic-black))', borderTop: '1px solid rgb(var(--cosmic-gold) / 0.08)' }}>
         <div className="container-cosmic grid grid-cols-1 md:grid-cols-3 gap-6">
           {MODES.map((m) => (
             <Link key={m.href} href={m.href}
@@ -120,4 +150,63 @@ export default function ShopChooserPage() {
       </section>
     </Layout>
   )
+}
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const FEATURED_LIMIT     = 12
+  const BESTSELLER_LIMIT   = 12
+
+  // Walk the paginated /products endpoint server-side to get the full catalog,
+  // then filter for featured. Doing the filter server-side keeps the pre-rendered
+  // HTML small (carousel data is only the 12 cards, not 2300).
+  let products: any[] = []
+  try {
+    let lastKey: any = null
+    do {
+      const url = lastKey
+        ? `${API}/products?limit=500&last_key=${encodeURIComponent(JSON.stringify(lastKey))}`
+        : `${API}/products?limit=500`
+      const res  = await fetch(url)
+      if (!res.ok) break
+      const data = await res.json()
+      products = products.concat(data.products || [])
+      lastKey  = data.nextKey || null
+    } while (lastKey)
+  } catch (e) {
+    console.error('getStaticProps /shop: products fetch failed', e)
+  }
+
+  const byId = new Map<string, any>(products.filter((p) => p.id).map((p) => [p.id, p]))
+
+  // Featured: client-side filter is fine because we already have the full list.
+  // Ordered newest first; cap at FEATURED_LIMIT.
+  const featured = products
+    .filter((p) => p.featured && p.inStock !== false)
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+    .slice(0, FEATURED_LIMIT)
+
+  // Bestsellers: ask the backend for the ranked id list — it knows whether
+  // we're in 'manual' mode (admin-flagged) or 'auto' (sales-derived from orders).
+  let bestsellerIds: string[] = []
+  try {
+    const res = await fetch(`${API}/products/bestseller-ids?limit=${BESTSELLER_LIMIT}`)
+    if (res.ok) {
+      const data = await res.json()
+      bestsellerIds = Array.isArray(data?.ids) ? data.ids : []
+    }
+  } catch (e) {
+    console.error('getStaticProps /shop: bestsellers fetch failed', e)
+  }
+
+  // Hydrate to full product objects, preserving the ranked order. If the cache
+  // somehow missing a referenced product (rare), drop it silently.
+  const bestsellers = bestsellerIds
+    .map((id) => byId.get(id))
+    .filter(Boolean)
+    .slice(0, BESTSELLER_LIMIT)
+
+  return {
+    props: { featured, bestsellers },
+    revalidate: 600,   // every 10 minutes
+  }
 }
