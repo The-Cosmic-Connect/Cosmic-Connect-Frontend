@@ -32,7 +32,7 @@ export default function CrystalsPage({ tiles }: Props) {
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgb(var(--cosmic-gold) / 0.07), transparent 70%)' }} />
         <div className="container-cosmic relative z-10 text-center">
-          <p className="font-raleway text-cosmic-gold/60 text-xs tracking-[0.5em] uppercase mb-4">✦ Shop by Crystal ✦</p>
+          <p className="font-script text-cosmic-gold text-2xl mb-2">Shop by Crystal</p>
           <h1 className="font-cinzel font-bold text-cosmic-cream mb-4" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
             Browse <span className="text-gradient-gold">By Crystal</span>
           </h1>

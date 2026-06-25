@@ -23,9 +23,25 @@ module.exports = {
         },
       },
       fontFamily: {
-        cinzel:    ['Cinzel', 'serif'],
-        cormorant: ['Cormorant Garamond', 'serif'],
-        raleway:   ['Raleway', 'sans-serif'],
+        // ── Type system ────────────────────────────────────────────
+        //   font-cinzel    → Montserrat        (headings, page titles)
+        //   font-cormorant → Montserrat        (quotes, taglines — use italic + weight 300)
+        //   font-raleway   → Plus Jakarta Sans (nav, UI, buttons, filter labels)
+        //   font-roboto    → Roboto            (long-form body, descriptions)
+        //   font-script    → Dancing Script    (decorative accents — use sparingly)
+        //
+        // Legacy class names (cinzel/cormorant/raleway) are preserved so
+        // existing components don't need to be touched; only the underlying
+        // font family was swapped.
+        cinzel:    ['Montserrat', 'system-ui', 'sans-serif'],
+        cormorant: ['Montserrat', 'system-ui', 'sans-serif'],
+        raleway:   ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        roboto:    ['Roboto', 'system-ui', 'sans-serif'],
+        script:    ['Dancing Script', 'cursive'],
+        // Aliases by intent (preferred for any new code)
+        display:   ['Montserrat', 'system-ui', 'sans-serif'],
+        ui:        ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        body:      ['Roboto', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'cosmic-gradient': 'linear-gradient(135deg, rgb(var(--cosmic-black)) 0%, rgb(var(--cosmic-deep-purple)) 50%, rgb(var(--cosmic-black)) 100%)',

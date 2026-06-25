@@ -59,7 +59,7 @@ export default function ShopChooserPage() {
         <div className="absolute top-24 left-8 w-16 h-16 border-l border-t border-cosmic-gold/20 hidden lg:block" />
         <div className="absolute top-24 right-8 w-16 h-16 border-r border-t border-cosmic-gold/20 hidden lg:block" />
         <div className="container-cosmic relative z-10 text-center">
-          <p className="font-raleway text-cosmic-gold/60 text-xs tracking-[0.5em] uppercase mb-4">✦ The Cosmic Shop ✦</p>
+          <p className="font-script text-cosmic-gold text-2xl mb-2">The Cosmic Shop</p>
           <h1 className="font-cinzel font-bold text-cosmic-cream mb-4" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
             How would you like to <span className="text-gradient-gold">shop today?</span>
           </h1>
