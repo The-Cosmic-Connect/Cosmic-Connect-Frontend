@@ -1,51 +1,79 @@
 // lib/fetchProducts.ts
 //
-// Fetches every published product by walking the paginated /products endpoint,
-// with a multi-layer cache so the list survives navigation, refresh, and even
-// browser restarts:
+// Stale-while-revalidate product catalog cache with INCREMENTAL SYNC.
 //
-//   1. Module-level memory cache  → instant on every navigation within the SPA.
-//   2. localStorage backup        → survives full page reloads AND new sessions.
-//   3. Sync getter (getCachedProducts) → lets components hydrate state at mount
-//      with zero loading flash on a warm cache.
+// Architecture:
+//   - First visit: full fetch from /products (paginated). Stores products plus
+//     the server's `serverTime` watermark.
+//   - Subsequent background refreshes: call /products/changes-since?since=<watermark>
+//     to get ONLY the products updated since last sync. Merge into local cache.
+//   - Deletes are propagated via tombstones (items with deleted=true): client
+//     removes them from local cache.
+//   - If server signals fullSync=true (client's `since` is stale, GSI down,
+//     etc.), the client falls back to a fresh full fetch — self-healing.
 //
-// TTL is 30 minutes. Frontend pages don't see edits in real time anyway (ISR
-// caches landing pages for 10 min), so this is consistent. The admin should
-// call invalidateProductsCache() after any product write so the next read is
-// fresh.
+// At scale this is huge: 100K users/day × one tiny delta query per session is
+// pennies of DynamoDB reads. The full-fetch alternative is 100K full scans.
+//
+// Storage:
+//   - memCache  : module-level memory     (instant within an SPA session)
+//   - localStorage : persistent backup    (survives reload + browser restart)
+//
+// Freshness model:
+//   - < 5 min       : no refetch
+//   - 5 min – 24 hr : return cache instantly + delta sync in BACKGROUND
+//   - > 24 hr       : discard, treat as cold start
+//
+// Cache invalidation: call invalidateProductsCache() after admin writes.
 import type { Product } from '@/types/product'
 
-const API     = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-const TTL_MS  = 30 * 60 * 1000          // 30 min — products change rarely
-const STORAGE = 'cc-products-cache-v2'  // bump version when cache shape changes
+const API        = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const FRESH_MS   = 5  * 60 * 1000
+const STALE_MS   = 24 * 60 * 60 * 1000
+const STORAGE    = 'cc-products-cache-v4'   // bumped — adds syncedAt watermark
 
-interface Cached { ts: number; data: Product[] }
+interface Cached {
+  ts:       number        // local timestamp of last update (for freshness)
+  syncedAt: string        // server timestamp to pass as `since` next call
+  data:     Product[]
+}
 
 let memCache: Cached | null = null
-let inflight: Promise<Product[]> | null = null   // dedupe concurrent calls
+let inflight: Promise<Product[]> | null = null
 
+// ── storage layer ────────────────────────────────────────────────────────────
 function readStorage(): Cached | null {
   if (typeof window === 'undefined') return null
   try {
     const raw = window.localStorage.getItem(STORAGE)
     if (!raw) return null
     const parsed: Cached = JSON.parse(raw)
-    if (!parsed?.ts || !Array.isArray(parsed.data)) return null
-    if (Date.now() - parsed.ts > TTL_MS) return null
+    if (!parsed?.ts || !parsed.syncedAt || !Array.isArray(parsed.data)) return null
     return parsed
   } catch { return null }
 }
 
 function writeStorage(c: Cached): void {
   if (typeof window === 'undefined') return
-  try { window.localStorage.setItem(STORAGE, JSON.stringify(c)) } catch {
-    // Quota exceeded — non-fatal. Memory cache still works.
-  }
+  try { window.localStorage.setItem(STORAGE, JSON.stringify(c)) } catch {}
 }
 
-async function fetchFromApi(): Promise<Product[]> {
+function ageOfCache(): number {
+  if (memCache) return Date.now() - memCache.ts
+  const fromStorage = readStorage()
+  if (fromStorage) {
+    memCache = fromStorage
+    return Date.now() - fromStorage.ts
+  }
+  return Infinity
+}
+
+// ── network ──────────────────────────────────────────────────────────────────
+async function doFullFetch(): Promise<Cached> {
   let products: Product[] = []
-  let lastKey: any = null
+  let lastKey:  any        = null
+  let serverTime: string   = new Date().toISOString()   // fallback if no header
+
   do {
     const url = lastKey
       ? `${API}/products?limit=500&last_key=${encodeURIComponent(JSON.stringify(lastKey))}`
@@ -53,57 +81,130 @@ async function fetchFromApi(): Promise<Product[]> {
     const res = await fetch(url)
     if (!res.ok) break
     const data = await res.json()
-    products = products.concat(data.products || [])
-    lastKey = data.nextKey || null
+    products    = products.concat(data.products || [])
+    lastKey     = data.nextKey || null
+    if (data.serverTime) serverTime = data.serverTime
   } while (lastKey)
-  return products
+
+  const fresh: Cached = { ts: Date.now(), syncedAt: serverTime, data: products }
+  memCache = fresh
+  writeStorage(fresh)
+  return fresh
 }
 
+async function doDeltaSync(prev: Cached): Promise<Cached> {
+  // Paginate the changes-since response in case a bulk admin update
+  // produced more than `limit` rows since the watermark.
+  const changes: Product[] = []
+  let lastKey: any = null
+  let serverTime  = prev.syncedAt
+  let fullSync    = false
+
+  do {
+    const params = new URLSearchParams({
+      since: prev.syncedAt,
+      limit: '1000',
+    })
+    if (lastKey) params.set('last_key', JSON.stringify(lastKey))
+    const res = await fetch(`${API}/products/changes-since?${params}`)
+    if (!res.ok) { fullSync = true; break }
+    const data = await res.json()
+    if (data.fullSync) { fullSync = true; break }
+    if (Array.isArray(data.items)) changes.push(...data.items)
+    lastKey    = data.nextKey   || null
+    serverTime = data.serverTime || serverTime
+  } while (lastKey)
+
+  if (fullSync) {
+    // Server told us to rebuild from scratch (since too old, GSI down, etc.)
+    return doFullFetch()
+  }
+
+  // Merge: upsert non-deleted, drop deleted-by-id.
+  const byId = new Map(prev.data.map((p) => [p.id, p]))
+  for (const item of changes) {
+    if ((item as any).deleted === true) {
+      if (item.id) byId.delete(item.id)
+    } else if (item.id) {
+      byId.set(item.id, item)
+    }
+  }
+  const merged: Product[] = Array.from(byId.values())
+  const fresh: Cached     = { ts: Date.now(), syncedAt: serverTime, data: merged }
+  memCache = fresh
+  writeStorage(fresh)
+  return fresh
+}
+
+function refreshInBackground(): void {
+  if (inflight) return
+  if (!memCache) return                          // nothing to sync against
+  inflight = doDeltaSync(memCache).then(() => {}).finally(() => { inflight = null }) as any
+}
+
+// ── public API ───────────────────────────────────────────────────────────────
+
 /**
- * SYNCHRONOUS cache check. Returns cached products immediately if available
- * and fresh, otherwise null. Use this in `useState(() => …)` initializers so
- * the component renders with data on the very first paint — no loading flash.
- *
- * Safe to call on the server; returns null there (the localStorage layer is
- * client-only, and memCache will be null on first SSR pass anyway).
+ * Synchronous cache read. Returns cached products if usable (< 24 hr old),
+ * otherwise null. Use in `useState(() => …)` for zero-flash mounts.
  */
 export function getCachedProducts(): Product[] | null {
-  if (memCache && Date.now() - memCache.ts < TTL_MS) return memCache.data
-  const fromStorage = readStorage()
-  if (fromStorage) {
-    memCache = fromStorage
-    return fromStorage.data
-  }
+  const age = ageOfCache()
+  if (age < STALE_MS && memCache) return memCache.data
   return null
 }
 
 /**
- * Async fetch with caching. Returns cached data instantly when available,
- * dedupes concurrent calls, and persists to localStorage for next time.
- *
- * Pass `{ force: true }` after a write to bypass cache.
+ * Main entry. Stale-while-revalidate with incremental sync:
+ *   - Fresh cache (< 5 min)        → return as-is.
+ *   - Stale cache (< 24 hr)        → return cached now; delta sync in background.
+ *   - Expired / no cache           → block on full fetch.
+ *   - opts.force=true              → ignore cache, run full fetch fresh.
  */
 export async function fetchAllProducts(opts: { force?: boolean } = {}): Promise<Product[]> {
-  if (!opts.force) {
-    const cached = getCachedProducts()
-    if (cached) return cached
+  if (opts.force) {
+    if (inflight) return inflight as any
+    inflight = doFullFetch().then((c) => c.data).finally(() => { inflight = null })
+    return inflight
   }
-  if (inflight) return inflight
-  inflight = (async () => {
-    try {
-      const data = await fetchFromApi()
-      const fresh: Cached = { ts: Date.now(), data }
-      memCache = fresh
-      writeStorage(fresh)
-      return data
-    } finally { inflight = null }
-  })()
+
+  const age = ageOfCache()
+
+  if (age < FRESH_MS && memCache) return memCache.data
+
+  if (age < STALE_MS && memCache) {
+    refreshInBackground()
+    return memCache.data
+  }
+
+  // Cold: must wait for fresh data.
+  if (inflight) return inflight as any
+  inflight = doFullFetch().then((c) => c.data).finally(() => { inflight = null })
   return inflight
 }
 
 /**
- * Clear all cache layers so the next call refetches. Call after creating,
- * editing, or deleting a product.
+ * Warm the cache from any page (call once on app interactive). Non-blocking.
+ * If cache is fresh this is a no-op; if stale it runs a delta sync; if cold
+ * it kicks off a full fetch in the background.
+ */
+export function prefetchProductsInBackground(): void {
+  if (typeof window === 'undefined') return
+  const age = ageOfCache()
+  if (age < FRESH_MS && memCache) return        // already fresh
+
+  if (age < STALE_MS && memCache) {
+    refreshInBackground()
+    return
+  }
+
+  if (inflight) return
+  inflight = doFullFetch().then((c) => c.data).finally(() => { inflight = null })
+}
+
+/**
+ * Wipe cache (memory + localStorage). The next read will do a full fetch.
+ * Call after creating, editing, or deleting a product from the admin.
  */
 export function invalidateProductsCache(): void {
   memCache = null
