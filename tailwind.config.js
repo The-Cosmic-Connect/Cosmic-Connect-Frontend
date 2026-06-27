@@ -15,6 +15,12 @@ module.exports = {
           violet:     'rgb(var(--cosmic-violet) / <alpha-value>)',
           gold:       'rgb(var(--cosmic-gold) / <alpha-value>)',
           lightGold:  'rgb(var(--cosmic-light-gold) / <alpha-value>)',
+          // Brand purples — use these for CTAs, links, focus states, dividers.
+          // Gold-tinted utilities are still around for backward compat, but
+          // their underlying RGB values now resolve to muted champagne.
+          plum:       'rgb(var(--cosmic-plum) / <alpha-value>)',
+          plumSoft:   'rgb(var(--cosmic-plum-soft) / <alpha-value>)',
+          plumHaze:   'rgb(var(--cosmic-plum-haze) / <alpha-value>)',
           cream:      'rgb(var(--cosmic-cream) / <alpha-value>)',
           offWhite:   'rgb(var(--cosmic-off-white) / <alpha-value>)',
           rose:       'rgb(var(--cosmic-rose) / <alpha-value>)',

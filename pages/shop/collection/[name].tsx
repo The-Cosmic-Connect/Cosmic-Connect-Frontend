@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Search, X, SlidersHorizontal, ArrowLeft } from 'lucide-react'
+import type { GetStaticPaths, GetStaticProps } from 'next'
 import Layout from '@/components/layout/Layout'
 import { useCart } from '@/context/CartContext'
 import { useGeo } from '@/context/GeoContext'
@@ -379,14 +380,19 @@ function FiltersSidebar(p: SidebarProps) {
 // Page
 // ---------------------------------------------------------------------------
 
-export default function CollectionPage() {
+export default function CollectionPage({ initialProducts, initialTitle }: {
+  initialProducts?: Product[]
+  initialTitle?: string
+}) {
   const router = useRouter()
   const { name: nameSlug } = router.query as { name: string }
 
   const { isIndia, symbol, loading: geoLoading } = useGeo()
 
-  const [allProducts, setAllProducts] = useState<Product[]>([])
-  const [loading,     setLoading]     = useState(true)
+  // Seed from ISR-rendered props when present, so the first paint already
+  // has real data — no skeleton grid on a cold/SEO visit.
+  const [allProducts, setAllProducts] = useState<Product[]>(initialProducts || [])
+  const [loading,     setLoading]     = useState(!(initialProducts && initialProducts.length > 0))
   const [search,      setSearch]      = useState('')
   const [sort,        setSort]        = useState('featured')
   const [page,        setPage]        = useState(1)
@@ -394,7 +400,7 @@ export default function CollectionPage() {
   const [inStockOnly, setInStockOnly] = useState(false)
   const [priceRange,  setPriceRange]  = useState<[number, number]>([0, 100000])
   const [maxPrice,    setMaxPrice]    = useState(100000)
-  const [pageTitle,   setPageTitle]   = useState('Collection')
+  const [pageTitle,   setPageTitle]   = useState(initialTitle || 'Collection')
   const [mobileOpen,  setMobileOpen]  = useState(false)
 
   // new facet selections
@@ -406,6 +412,22 @@ export default function CollectionPage() {
 
   useEffect(() => {
     if (!nameSlug) return
+
+    // If ISR already delivered this exact page's products via props, skip
+    // the client fetch entirely on first mount. Client-side navigation
+    // between two different collection pages still re-fetches (initialProducts
+    // won't match the new nameSlug in that case — see the dependency below).
+    if (initialProducts && initialProducts.length > 0) {
+      setAllProducts(initialProducts)
+      setPageTitle(initialTitle || pageTitle)
+      setLoading(false)
+      const prices = initialProducts.map(p => isIndia ? p.priceINR : p.priceUSD).filter(Boolean)
+      const max = Math.ceil(Math.max(...prices, 1000) / 500) * 500
+      setMaxPrice(max)
+      setPriceRange([0, max])
+      return
+    }
+
     setLoading(true)
     setPage(1)
 
@@ -681,4 +703,55 @@ export default function CollectionPage() {
       )}
     </Layout>
   )
+}
+
+// ISR: pre-build nothing at deploy time (28+ collections, plus 'all'); every
+// path is generated on first visit via fallback:'blocking' and cached from
+// then on, re-validated every 10 minutes. Same pattern as the crystal/purpose
+// pages — see pages/shop/crystal/[name].tsx for the full rationale.
+export const getStaticPaths: GetStaticPaths = async () => {
+  return { paths: [], fallback: 'blocking' }
+}
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  const nameSlug = typeof ctx.params?.name === 'string' ? ctx.params.name : ''
+  const isAll = nameSlug === 'all'
+
+  let resolvedName = nameSlug
+  let initialTitle = 'All Products'
+
+  try {
+    if (!isAll) {
+      const colRes  = await fetch(`${API}/collections`)
+      const colData = await colRes.json()
+      const cols: string[] = colData.collections || []
+      resolvedName = cols.find((c) => toSlug(c) === nameSlug) || nameSlug
+      initialTitle = resolvedName
+    }
+  } catch (e) {
+    console.error(`getStaticProps /shop/collection/${nameSlug}: collections fetch failed`, e)
+  }
+
+  let initialProducts: Product[] = []
+  try {
+    let url = `${API}/products?limit=500`
+    if (!isAll) url += `&collection=${encodeURIComponent(resolvedName)}`
+
+    let lastKey: any = null
+    do {
+      const pageUrl = lastKey ? `${url}&last_key=${encodeURIComponent(JSON.stringify(lastKey))}` : url
+      const res  = await fetch(pageUrl)
+      if (!res.ok) break
+      const data = await res.json()
+      initialProducts = [...initialProducts, ...(data.products || [])]
+      lastKey = data.nextKey || null
+    } while (lastKey)
+  } catch (e) {
+    console.error(`getStaticProps /shop/collection/${nameSlug}: products fetch failed`, e)
+  }
+
+  return {
+    props: { initialProducts, initialTitle },
+    revalidate: 600,
+  }
 }

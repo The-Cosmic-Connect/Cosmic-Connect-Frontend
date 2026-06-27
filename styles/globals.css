@@ -12,36 +12,44 @@
    [data-theme=dark] → original cosmic dark theme
    ──────────────────────────────────────────────────────────── */
 :root {
-  --cosmic-black:       251 247 238;  /* #FBF7EE  warm parchment bg     */
+  /* Surface palette — warm parchment with white cards and a faint lilac wash */
+  --cosmic-black:       250 247 244;  /* #FAF7F4  warm off-white bg     */
   --cosmic-deep-purple: 255 255 255;  /* #FFFFFF  pure white cards      */
-  --cosmic-purple:      247 239 220;  /* #F7EFDC  alt surface           */
-  --cosmic-violet:      225 196 138;  /* #E1C48A  decorative tone       */
-  --cosmic-gold:        163 119 33;   /* #A37721  rich 22K-style gold   */
-  --cosmic-light-gold:  201 156 53;   /* #C99C35  hover / highlight     */
+  --cosmic-purple:      246 242 250;  /* #F6F2FA  faint lavender wash   */
+  --cosmic-violet:      214 200 232;  /* #D6C8E8  soft lilac decorative */
+
+  /* Brand purples — new primary action color */
+  --cosmic-plum:        59 43 95;     /* #3B2B5F  rich aubergine — CTAs */
+  --cosmic-plum-soft:   107 90 142;   /* #6B5A8E  muted plum — hover    */
+  --cosmic-plum-haze:   165 152 188;  /* #A598BC  faint plum — dividers */
+
+  /* Champagne gold — reduced to a whisper, never a fill */
+  --cosmic-gold:        184 160 118;  /* #B8A076  desaturated champagne */
+  --cosmic-light-gold:  212 194 154;  /* #D4C29A  whisper highlight     */
+
   --cosmic-cream:       30 22 58;     /* #1E163A  deep midnight text    */
   --cosmic-off-white:   75 65 100;    /* #4B4164  secondary text        */
-  --cosmic-rose:        145 50 80;    /* #913250  richer rose accent    */
-  --cosmic-teal:        20 80 95;     /* #14505F  deeper teal accent    */
-  --cosmic-ink:         18 14 40;     /* #120E28  text on gold buttons  */
+  --cosmic-rose:        145 50 80;    /* #913250  rose accent           */
+  --cosmic-teal:        20 80 95;     /* #14505F  teal accent           */
+  --cosmic-ink:         18 14 40;     /* #120E28  dark text on champagne/gold accents */
 
   --cosmic-card-bg:     #FFFFFF;
-  --cosmic-card-border: rgba(120, 90, 30, 0.14);
+  --cosmic-card-border: rgba(59, 43, 95, 0.10);
   --cosmic-card-shadow:
-    0 1px 2px rgba(60, 40, 20, 0.05),
-    0 6px 16px rgba(60, 40, 20, 0.06),
-    0 16px 40px rgba(60, 40, 20, 0.08);
-  --star-color:         rgba(184, 144, 58, 0.4);
+    0 1px 2px rgba(40, 30, 70, 0.05),
+    0 6px 16px rgba(40, 30, 70, 0.06),
+    0 16px 40px rgba(40, 30, 70, 0.08);
+  --star-color:         rgba(165, 152, 188, 0.45);
 
-  /* Floating-surface shadows for light mode */
-  --surface-shadow:     0 1px 3px rgba(60, 40, 20, 0.06), 0 8px 24px rgba(60, 40, 20, 0.07);
-  --surface-shadow-lg:  0 2px 6px rgba(60, 40, 20, 0.08), 0 18px 48px rgba(60, 40, 20, 0.10);
+  --surface-shadow:     0 1px 3px rgba(40, 30, 70, 0.06), 0 8px 24px rgba(40, 30, 70, 0.07);
+  --surface-shadow-lg:  0 2px 6px rgba(40, 30, 70, 0.08), 0 18px 48px rgba(40, 30, 70, 0.10);
 
-  /* Hero gradient — warm radial glow on parchment (replaces the dark ramp) */
+  /* Hero gradient — lavender glow on parchment, very subtle */
   --hero-gradient:
-    radial-gradient(ellipse 70% 60% at 50% 30%, rgba(163, 119, 33, 0.10), transparent 70%),
-    linear-gradient(180deg, #FBF7EE 0%, #F5EAD3 100%);
+    radial-gradient(ellipse 70% 60% at 50% 30%, rgba(107, 90, 142, 0.08), transparent 70%),
+    linear-gradient(180deg, #FAF7F4 0%, #F2EDF8 100%);
   --section-gradient:
-    linear-gradient(180deg, #FBF7EE 0%, #F7EFDC 50%, #FBF7EE 100%);
+    linear-gradient(180deg, #FAF7F4 0%, #F6F2FA 50%, #FAF7F4 100%);
 }
 
 [data-theme='dark'] {
@@ -368,4 +376,61 @@ html:not([data-theme='dark']) .cosmic-card:hover {
 /* Decorative star field: dial down on parchment so it doesn't look dusty */
 html:not([data-theme='dark']) .star {
   opacity: 0.45;
+}
+
+/* ─── LIGHT-MODE PLUM PALETTE (v3) ────────────────────
+   The original saturated gold (#A37721) on cream felt cheap as a button
+   fill. These overrides shift LIGHT MODE ONLY to a deep-plum primary,
+   plum hover states, and plum text accents — with champagne gold kept
+   as a fine-detail whisper. Dark mode keeps its rich gold gradient.
+   ============================================================== */
+
+/* Primary button: deep aubergine plum fill with white text. The faint
+   champagne inset on hover keeps a hint of the brand's gold thread. */
+html:not([data-theme='dark']) .btn-primary {
+  background: rgb(var(--cosmic-plum));
+  background-size: auto;
+  color: #FFFFFF;
+  border: 1px solid rgb(var(--cosmic-plum));
+  box-shadow: 0 1px 2px rgba(40, 30, 70, 0.10), 0 4px 12px rgba(40, 30, 70, 0.08);
+}
+html:not([data-theme='dark']) .btn-primary:hover {
+  background: rgb(var(--cosmic-plum-soft));
+  background-position: 0 0;
+  box-shadow:
+    0 1px 2px rgba(40, 30, 70, 0.12),
+    0 6px 18px rgba(40, 30, 70, 0.12),
+    inset 0 0 0 1px rgba(184, 160, 118, 0.35);
+}
+
+/* Outline button: plum border/text in light mode (gold version preserved in dark) */
+html:not([data-theme='dark']) .btn-outline {
+  color: rgb(var(--cosmic-plum));
+  border-color: rgb(var(--cosmic-plum));
+}
+html:not([data-theme='dark']) .btn-outline:hover {
+  background: rgb(var(--cosmic-plum));
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(40, 30, 70, 0.15);
+}
+
+/* Nav links: plum hover + underline (replaces gold) */
+html:not([data-theme='dark']) .nav-link::after {
+  background: rgb(var(--cosmic-plum));
+}
+html:not([data-theme='dark']) .nav-link:hover { color: rgb(var(--cosmic-plum)); }
+html:not([data-theme='dark']) .nav-link.active { color: rgb(var(--cosmic-plum)); }
+
+/* Card hover: plum tint instead of gold glow */
+html:not([data-theme='dark']) .cosmic-card:hover {
+  border-color: rgb(var(--cosmic-plum-soft) / 0.45);
+  box-shadow: 0 8px 32px rgba(59, 43, 95, 0.10);
+}
+
+/* Accent gradient for heading words like "shop today?" — plum in light mode */
+html:not([data-theme='dark']) .text-gradient-gold {
+  background: linear-gradient(135deg, rgb(var(--cosmic-plum)), rgb(var(--cosmic-plum-soft)));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

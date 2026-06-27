@@ -28,6 +28,7 @@ interface Props {
   backHref: string            // e.g. /shop/crystals
   backLabel: string           // e.g. All Crystals
   icon?: string
+  initialProducts?: Product[]
 }
 
 interface FiltersState {
@@ -39,19 +40,23 @@ interface FiltersState {
 const EMPTY_FILTERS: FiltersState = { categories: [], priceMin: null, priceMax: null }
 
 export default function TagListing({
-  tag, title, eyebrow, backHref, backLabel, icon,
+  tag, title, eyebrow, backHref, backLabel, icon, initialProducts,
 }: Props) {
   const { isIndia, symbol } = useGeo()
-  // Hydrate from cache synchronously on mount — no loading flash when warm.
-  const [all, setAll]         = useState<Product[]>(() => getCachedProducts() || [])
-  const [loading, setLoading] = useState<boolean>(() => !getCachedProducts())
+  // Priority: server-rendered initialProducts (ISR) > client cache > empty.
+  // If ISR gave us data, the page is never in a loading state on first paint.
+  const [all, setAll]         = useState<Product[]>(() =>
+    (initialProducts && initialProducts.length > 0) ? initialProducts : (getCachedProducts() || []))
+  const [loading, setLoading] = useState<boolean>(() =>
+    !(initialProducts && initialProducts.length > 0) && !getCachedProducts())
   const [sort, setSort]       = useState('featured')
   const [filters, setFilters] = useState<FiltersState>(EMPTY_FILTERS)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   useEffect(() => {
-    // If we already had cached data at mount, skip the fetch entirely —
-    // fetchAllProducts() would just return the same array.
+    // ISR already gave us this tag's matches, or the client cache is warm —
+    // either way, skip the network fetch on mount.
+    if (initialProducts && initialProducts.length > 0) return
     if (getCachedProducts()) return
     let on = true
     setLoading(true)
@@ -59,6 +64,27 @@ export default function TagListing({
       .then((p) => on && setAll(p))
       .finally(() => on && setLoading(false))
     return () => { on = false }
+  }, [])
+
+  // Client-side navigation between tag pages (e.g. clicking from Amethyst to
+  // Rose Quartz) re-runs getStaticProps and hands us new initialProducts via
+  // props, but the `all` state above only initializes once on mount. Without
+  // this effect, the grid would keep showing the PREVIOUS tag's products
+  // until a full reload. Sync `all` whenever a fresh initialProducts arrives.
+  useEffect(() => {
+    if (initialProducts && initialProducts.length > 0) {
+      setAll(initialProducts)
+      setLoading(false)
+    }
+  }, [initialProducts])
+
+  // Even when ISR supplied initialProducts (just this tag's matches), warm
+  // the FULL client cache in the background so navigating to another
+  // crystal/purpose page is instant rather than waiting on ISR again.
+  useEffect(() => {
+    if (!initialProducts || initialProducts.length === 0) return
+    if (getCachedProducts()) return
+    fetchAllProducts().catch(() => {})
   }, [])
 
   // Reset filters whenever the tag changes (e.g. clicking another crystal)
