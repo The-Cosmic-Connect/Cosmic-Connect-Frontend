@@ -67,16 +67,19 @@ export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
     return { props: { crystal: '', slug, products: [] }, revalidate: 60 }
   }
 
-  // Plain server-side fetch — deliberately NOT using lib/fetchProducts.ts,
-  // which depends on localStorage/window and only works client-side.
+  // Server-side tag filter: the backend's FilterExpression does the work
+  // during the DynamoDB scan, so this returns only the ~10-50 products that
+  // actually match this crystal — NOT the full 2,000+ catalog. This is the
+  // fix for the 15-20s cold-render delay that plain `?limit=500` pagination
+  // caused (it had to walk every page of the entire catalog on every
+  // cache-miss render, compounding with Lambda cold starts).
   let products: Product[] = []
   try {
     let lastKey: any = null
     do {
-      const url = lastKey
-        ? `${API}/products?limit=500&last_key=${encodeURIComponent(JSON.stringify(lastKey))}`
-        : `${API}/products?limit=500`
-      const res = await fetch(url)
+      const params = new URLSearchParams({ tag: crystal, limit: '500' })
+      if (lastKey) params.set('last_key', JSON.stringify(lastKey))
+      const res = await fetch(`${API}/products?${params}`)
       if (!res.ok) break
       const data = await res.json()
       products = products.concat(data.products || [])
@@ -86,16 +89,8 @@ export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
     console.error(`getStaticProps /shop/crystal/${slug}: products fetch failed`, e)
   }
 
-  // Pre-filter to just this crystal's tag server-side. Keeps the pre-rendered
-  // HTML small — TagListing still does category/price filtering client-side,
-  // but doesn't need the full 2000+ catalog to do it.
-  const want = crystal.trim().toLowerCase()
-  const matched = products.filter((p) =>
-    (p.tags || []).some((t) => (t || '').trim().toLowerCase() === want),
-  )
-
   return {
-    props: { crystal, slug, products: matched },
+    props: { crystal, slug, products },
     revalidate: 600,   // 10 minutes, same cadence as /shop
   }
 }

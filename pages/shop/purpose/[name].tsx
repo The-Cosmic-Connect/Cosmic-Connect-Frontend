@@ -60,14 +60,18 @@ export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
     return { props: { purposeKey: '', purposeIcon: '', slug, products: [] }, revalidate: 60 }
   }
 
+  // Server-side tag filter — see pages/shop/crystal/[name].tsx for the full
+  // rationale. Without this, a cold ISR render had to walk the ENTIRE
+  // catalog (2,000+ products across multiple paginated round-trips) just to
+  // find the ~handful matching this purpose, which is what caused the
+  // 15-20s delay on first visit.
   let products: Product[] = []
   try {
     let lastKey: any = null
     do {
-      const url = lastKey
-        ? `${API}/products?limit=500&last_key=${encodeURIComponent(JSON.stringify(lastKey))}`
-        : `${API}/products?limit=500`
-      const res = await fetch(url)
+      const params = new URLSearchParams({ tag: match.key, limit: '500' })
+      if (lastKey) params.set('last_key', JSON.stringify(lastKey))
+      const res = await fetch(`${API}/products?${params}`)
       if (!res.ok) break
       const data = await res.json()
       products = products.concat(data.products || [])
@@ -77,13 +81,8 @@ export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
     console.error(`getStaticProps /shop/purpose/${slug}: products fetch failed`, e)
   }
 
-  const want = match.key.trim().toLowerCase()
-  const matched = products.filter((p) =>
-    (p.tags || []).some((t) => (t || '').trim().toLowerCase() === want),
-  )
-
   return {
-    props: { purposeKey: match.key, purposeIcon: match.icon, slug, products: matched },
+    props: { purposeKey: match.key, purposeIcon: match.icon, slug, products },
     revalidate: 600,
   }
 }
