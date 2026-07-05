@@ -18,14 +18,17 @@ export default function OrderSuccessPage() {
     if (!orderId || !gateway) return
 
     // PhonePe requires server-side status check to confirm payment
-    if (gateway === 'phonepe') {
+    if (gateway === 'phonepe' || gateway === 'cashfree') {
       const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const endpoint   = gateway === 'cashfree'
+        ? `${backendUrl}/orders/cashfree/status/${orderId}`
+        : `${backendUrl}/orders/phonepe/status/${orderId}`
 
-      // Poll up to 5 times with 2s delay — PhonePe can take a moment to update
+      // Poll up to 5 times with 2s delay — payment gateways can take a moment to update
       let attempts = 0
       const check = async () => {
         try {
-          const r = await fetch(`${backendUrl}/orders/phonepe/status/${orderId}`)
+          const r = await fetch(endpoint)
           const data = await r.json()
 
           if (data.state === 'COMPLETED') {
@@ -37,7 +40,6 @@ export default function OrderSuccessPage() {
             attempts++
             setTimeout(check, 2000)
           } else {
-            // After 5 attempts still pending — show unknown, don't fail the customer
             setStatus('unknown')
             clearCart()
           }
