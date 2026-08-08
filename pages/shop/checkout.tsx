@@ -28,21 +28,24 @@ interface Gateway {
 
 const GATEWAYS: Gateway[] = [
   {
-    id: 'phonepe', name: 'PhonePe', label: 'UPI, Cards, Netbanking',
-    color: '#5F259F', icon: 'Pe', comingSoon: false, forIndia: true,
+    id: 'cashfree', name: 'Cashfree', label: 'UPI, Cards, Netbanking, Wallets',
+    color: '#00C29A', icon: 'CF', comingSoon: false, forIndia: true,
   },
-  {
-    id: 'cashfree', name: 'Cashfree', label: 'Cards, UPI, Wallets',
-    color: '#00C29A', icon: 'CF', comingSoon: true, forIndia: true,
-  },
-  {
-    id: 'airpay', name: 'Airpay', label: 'UPI, Cards, Netbanking',
-    color: '#0066CC', icon: 'AP', comingSoon: true, forIndia: true,
-  },
-  {
-    id: 'paypal', name: 'PayPal', label: 'International — USD',
-    color: '#003087', icon: 'PP', comingSoon: false, forIndia: false,
-  },
+  // PhonePe and Airpay preserved in code — re-enable by setting comingSoon: false
+  // when credentials are ready.
+  // {
+  //   id: 'phonepe', name: 'PhonePe', label: 'UPI, Cards, Netbanking',
+  //   color: '#5F259F', icon: 'Pe', comingSoon: false, forIndia: true,
+  // },
+  // {
+  //   id: 'airpay', name: 'Airpay', label: 'UPI, Cards, Netbanking',
+  //   color: '#0066CC', icon: 'AP', comingSoon: true, forIndia: true,
+  // },
+  // PayPal preserved — re-enable for international payments when ready.
+  // {
+  //   id: 'paypal', name: 'PayPal', label: 'International — USD',
+  //   color: '#003087', icon: 'PP', comingSoon: false, forIndia: false,
+  // },
 ]
 
 export default function CheckoutPage() {
@@ -65,7 +68,7 @@ export default function CheckoutPage() {
 
   // Set sensible default gateway based on geo
   useEffect(() => {
-    if (!geoLoading) setSelected(isIndia ? 'phonepe' : 'paypal')
+    if (!geoLoading) setSelected('cashfree')
   }, [isIndia, geoLoading])
 
   const visibleGateways = GATEWAYS.filter(g => isIndia ? g.forIndia : !g.forIndia)
@@ -178,14 +181,10 @@ export default function CheckoutPage() {
 
   function handlePay() {
     if (!validate()) return
-    const gw = GATEWAYS.find(g => g.id === selectedGateway)
-    if (gw?.comingSoon) {
-      alert(`${gw.name} is coming soon! Please use ${isIndia ? 'PhonePe' : 'PayPal'} for now.`)
-      return
-    }
-    if (selectedGateway === 'phonepe')  handlePhonePe()
-    else if (selectedGateway === 'cashfree') handleCashfree()
-    else handlePayPal()
+    // Only Cashfree is active — route directly to it.
+    // Other gateways (PhonePe, PayPal, Airpay) are preserved in GATEWAYS
+    // array above and can be re-enabled by uncommenting them.
+    handleCashfree()
   }
 
   const shippingINR = isIndia && totalINR < 1999 ? 99 : 0
@@ -299,6 +298,8 @@ export default function CheckoutPage() {
                 {/* Description for selected gateway */}
                 {activeGw && !activeGw.comingSoon && (
                   <p className="font-cormorant text-cosmic-cream/50 text-sm leading-relaxed mt-4 pt-4 border-t border-cosmic-gold/10">
+                    {activeGw.id === 'cashfree' &&
+                      'Pay securely via UPI, credit / debit card, netbanking, or wallet. You will be redirected to Cashfree to complete your payment and automatically returned here.'}
                     {activeGw.id === 'phonepe' &&
                       'Pay via PhonePe, UPI, credit / debit card, or netbanking. You will be redirected to PhonePe to complete your payment and automatically returned here.'}
                     {activeGw.id === 'paypal' &&
