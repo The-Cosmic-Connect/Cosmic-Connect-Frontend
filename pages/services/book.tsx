@@ -120,14 +120,28 @@ export default function BookPage() {
         }),
       })
       const data = await r.json()
-      if (data.paymentUrl) {
-        window.location.href = data.paymentUrl
-      } else {
-        setError('Could not initiate payment. Please try again.')
-        setPaying(false)
+      if (!r.ok) throw new Error(data.detail || data.error || 'Could not initiate booking')
+
+      const { paymentSessionId } = data
+      if (!paymentSessionId) throw new Error('No payment session returned. Please try again.')
+
+      // Load Cashfree JS SDK and open hosted checkout
+      if (!(window as any).Cashfree) {
+        await new Promise<void>((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js'
+          script.onload  = () => resolve()
+          script.onerror = () => reject(new Error('Failed to load payment SDK'))
+          document.head.appendChild(script)
+        })
       }
-    } catch {
-      setError('Something went wrong. Please try again.')
+
+      const cashfreeEnv = (process.env.NEXT_PUBLIC_CASHFREE_ENV || 'production') as 'production' | 'sandbox'
+      const cashfree = (window as any).Cashfree({ mode: cashfreeEnv })
+      await cashfree.checkout({ paymentSessionId, redirectTarget: '_self' })
+      setPaying(false)
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.')
       setPaying(false)
     }
   }
