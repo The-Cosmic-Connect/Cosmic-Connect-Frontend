@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { ArrowLeft, Lock, Globe } from 'lucide-react'
+import { ArrowLeft, Lock } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import { useCart } from '@/context/CartContext'
 import { useGeo } from '@/context/GeoContext'
@@ -19,11 +19,11 @@ type GatewayId = 'phonepe' | 'cashfree' | 'paypal' | 'airpay'
 interface Gateway {
   id: GatewayId
   name: string
-  label: string       // short descriptor under the name
-  color: string       // background for the icon chip
-  icon: string        // text inside the chip
+  label: string
+  color: string
+  icon: string
   comingSoon: boolean
-  forIndia: boolean   // false = international only
+  forIndia: boolean
 }
 
 const GATEWAYS: Gateway[] = [
@@ -31,21 +31,11 @@ const GATEWAYS: Gateway[] = [
     id: 'cashfree', name: 'Cashfree', label: 'UPI, Cards, Netbanking, Wallets',
     color: '#00C29A', icon: 'CF', comingSoon: false, forIndia: true,
   },
-  // PhonePe and Airpay preserved in code — re-enable by setting comingSoon: false
-  // when credentials are ready.
-  // {
-  //   id: 'phonepe', name: 'PhonePe', label: 'UPI, Cards, Netbanking',
-  //   color: '#5F259F', icon: 'Pe', comingSoon: false, forIndia: true,
-  // },
-  // {
-  //   id: 'airpay', name: 'Airpay', label: 'UPI, Cards, Netbanking',
-  //   color: '#0066CC', icon: 'AP', comingSoon: true, forIndia: true,
-  // },
+  // PhonePe and Airpay preserved — re-enable by setting comingSoon: false when credentials are ready.
+  // { id: 'phonepe', name: 'PhonePe', label: 'UPI, Cards, Netbanking', color: '#5F259F', icon: 'Pe', comingSoon: false, forIndia: true },
+  // { id: 'airpay', name: 'Airpay', label: 'UPI, Cards, Netbanking', color: '#0066CC', icon: 'AP', comingSoon: true, forIndia: true },
   // PayPal preserved — re-enable for international payments when ready.
-  // {
-  //   id: 'paypal', name: 'PayPal', label: 'International — USD',
-  //   color: '#003087', icon: 'PP', comingSoon: false, forIndia: false,
-  // },
+  // { id: 'paypal', name: 'PayPal', label: 'International — USD', color: '#003087', icon: 'PP', comingSoon: false, forIndia: false },
 ]
 
 export default function CheckoutPage() {
@@ -56,20 +46,18 @@ export default function CheckoutPage() {
   } = useCart()
   const { isIndia, symbol, currency, loading: geoLoading } = useGeo()
 
-  const [form, setForm]               = useState<CustomerForm>(emptyForm)
-  const [errors, setErrors]           = useState<Partial<CustomerForm>>({})
-  const [processing, setProcessing]   = useState(false)
-  const [selectedGateway, setSelected] = useState<GatewayId>('phonepe')
+  const [form, setForm]                = useState<CustomerForm>(emptyForm)
+  const [errors, setErrors]            = useState<Partial<CustomerForm>>({})
+  const [processing, setProcessing]    = useState(false)
+  const [selectedGateway, setSelected] = useState<GatewayId>('cashfree')
 
-  // Redirect if cart empty
   useEffect(() => {
     if (!geoLoading && items.length === 0) router.replace('/shop')
   }, [items, geoLoading, router])
 
-  // Set sensible default gateway based on geo
   useEffect(() => {
     if (!geoLoading) setSelected('cashfree')
-  }, [isIndia, geoLoading])
+  }, [geoLoading])
 
   const visibleGateways = GATEWAYS.filter(g => isIndia ? g.forIndia : !g.forIndia)
 
@@ -141,6 +129,8 @@ export default function CheckoutPage() {
     try {
       const shippingINR   = totalINR >= 1999 ? 0 : 99
       const grandTotalINR = totalINR + shippingINR
+
+      // Step 1: Create order on backend, get paymentSessionId
       const r = await fetch('/api/create-cashfree-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -150,14 +140,44 @@ export default function CheckoutPage() {
         }),
       })
       const data = await r.json()
-      if (r.status === 503) throw new Error('Cashfree is coming soon. Please use PhonePe for now.')
-      if (!r.ok) throw new Error(data.error || 'Cashfree initiation failed')
-      if (data.paymentLink) {
-        sessionStorage.setItem('cosmic_checkout_form', JSON.stringify(form))
-        window.location.href = data.paymentLink
-      } else throw new Error('No payment link from Cashfree')
+      if (!r.ok) throw new Error(data.error || data.detail || 'Could not create order')
+
+      const { paymentSessionId, orderId } = data
+      if (!paymentSessionId) throw new Error('No payment session returned. Please try again.')
+
+      // Save form so order-success page can display customer details
+      sessionStorage.setItem('cosmic_checkout_form', JSON.stringify(form))
+      sessionStorage.setItem('cosmic_order_id', orderId)
+
+      // Step 2: Load Cashfree JS SDK dynamically (only when needed)
+      // Using v3 SDK which supports both sandbox and production via mode config
+      if (!(window as any).Cashfree) {
+        await new Promise<void>((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js'
+          script.onload  = () => resolve()
+          script.onerror = () => reject(new Error('Failed to load payment SDK. Check your internet connection.'))
+          document.head.appendChild(script)
+        })
+      }
+
+      // Step 3: Initialise and redirect to Cashfree hosted checkout
+      const cashfreeEnv = (process.env.NEXT_PUBLIC_CASHFREE_ENV || 'production') as 'production' | 'sandbox'
+      const { load } = (window as any).Cashfree
+      const cashfree  = await load({ mode: cashfreeEnv })
+
+      // redirectTarget: '_self' replaces the current tab (cleaner UX than a new tab)
+      // Cashfree appends ?order_id=... to the return_url so the success page
+      // knows which order to verify.
+      await cashfree.checkout({
+        paymentSessionId,
+        redirectTarget: '_self',
+      })
+      // If checkout() resolves without redirect (e.g. payment popup closed),
+      // re-enable the button so the customer can try again.
+      setProcessing(false)
     } catch (err: any) {
-      alert(err.message)
+      alert(err.message || 'Payment initiation failed. Please try again.')
       setProcessing(false)
     }
   }
@@ -181,9 +201,8 @@ export default function CheckoutPage() {
 
   function handlePay() {
     if (!validate()) return
-    // Only Cashfree is active — route directly to it.
-    // Other gateways (PhonePe, PayPal, Airpay) are preserved in GATEWAYS
-    // array above and can be re-enabled by uncommenting them.
+    // Only Cashfree is active. Other gateways (PhonePe, PayPal, Airpay) are
+    // preserved in the GATEWAYS array above — uncomment to re-enable.
     handleCashfree()
   }
 
@@ -194,7 +213,7 @@ export default function CheckoutPage() {
   if (geoLoading || items.length === 0) {
     return (
       <Layout title="Checkout | The Cosmic Connect">
-        <div className="min-h-screen bg-cosmic-gradient flex items-center justify-center pt-24">
+        <div className="min-h-screen flex items-center justify-center pt-24">
           <div className="text-center">
             <div className="w-8 h-8 border-2 border-cosmic-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="font-cormorant text-cosmic-cream/60 italic">Loading checkout...</p>
@@ -226,7 +245,6 @@ export default function CheckoutPage() {
             {/* Left — form */}
             <div className="lg:col-span-3 space-y-6">
 
-              {/* Delivery details */}
               <div className="cosmic-card p-6">
                 <h2 className="font-cinzel text-cosmic-cream text-base font-semibold mb-5 pb-3 border-b border-cosmic-gold/15">
                   Delivery Details
@@ -248,44 +266,28 @@ export default function CheckoutPage() {
                 <h2 className="font-cinzel text-cosmic-cream text-base font-semibold mb-4 pb-3 border-b border-cosmic-gold/15">
                   Payment Method
                 </h2>
-
                 <div className="space-y-3">
                   {visibleGateways.map(gw => {
                     const active = selectedGateway === gw.id
                     return (
-                      <button
-                        key={gw.id}
-                        type="button"
-                        disabled={gw.comingSoon}
+                      <button key={gw.id} type="button" disabled={gw.comingSoon}
                         onClick={() => !gw.comingSoon && setSelected(gw.id)}
                         className={`w-full flex items-center gap-4 p-4 border rounded-sm transition-all text-left
-                          ${active
-                            ? 'border-cosmic-gold/60 bg-cosmic-gold/5'
-                            : gw.comingSoon
-                              ? 'border-cosmic-gold/10 opacity-50 cursor-not-allowed'
-                              : 'border-cosmic-gold/20 hover:border-cosmic-gold/40 cursor-pointer'}`}
-                      >
-                        {/* Selection dot */}
+                          ${active ? 'border-cosmic-gold/60 bg-cosmic-gold/5'
+                            : gw.comingSoon ? 'border-cosmic-gold/10 opacity-50 cursor-not-allowed'
+                            : 'border-cosmic-gold/20 hover:border-cosmic-gold/40 cursor-pointer'}`}>
                         <div className={`w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center
                           ${active ? 'border-cosmic-gold' : 'border-cosmic-gold/30'}`}>
                           {active && <div className="w-2 h-2 rounded-full bg-cosmic-gold" />}
                         </div>
-
-                        {/* Icon chip */}
                         <div className="w-9 h-9 flex items-center justify-center shrink-0 rounded text-white font-bold text-xs"
-                          style={{ background: gw.color }}>
-                          {gw.icon}
-                        </div>
-
-                        {/* Name + label */}
+                          style={{ background: gw.color }}>{gw.icon}</div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="font-cinzel text-cosmic-cream text-sm font-semibold">{gw.name}</span>
                             {gw.comingSoon && (
                               <span className="font-raleway text-[9px] tracking-widest uppercase px-1.5 py-0.5 rounded
-                                bg-cosmic-gold/10 text-cosmic-gold/70 border border-cosmic-gold/20">
-                                Coming Soon
-                              </span>
+                                bg-cosmic-gold/10 text-cosmic-gold/70 border border-cosmic-gold/20">Coming Soon</span>
                             )}
                           </div>
                           <p className="font-cormorant text-cosmic-cream/45 text-xs mt-0.5">{gw.label}</p>
@@ -294,16 +296,11 @@ export default function CheckoutPage() {
                     )
                   })}
                 </div>
-
-                {/* Description for selected gateway */}
                 {activeGw && !activeGw.comingSoon && (
                   <p className="font-cormorant text-cosmic-cream/50 text-sm leading-relaxed mt-4 pt-4 border-t border-cosmic-gold/10">
-                    {activeGw.id === 'cashfree' &&
-                      'Pay securely via UPI, credit / debit card, netbanking, or wallet. You will be redirected to Cashfree to complete your payment and automatically returned here.'}
-                    {activeGw.id === 'phonepe' &&
-                      'Pay via PhonePe, UPI, credit / debit card, or netbanking. You will be redirected to PhonePe to complete your payment and automatically returned here.'}
-                    {activeGw.id === 'paypal' &&
-                      'Pay via PayPal or credit / debit card. You will be redirected to PayPal to complete your payment in USD.'}
+                    {activeGw.id === 'cashfree' && 'Pay securely via UPI, credit / debit card, netbanking, or wallet. You will be redirected to Cashfree\'s secure checkout and automatically returned here after payment.'}
+                    {activeGw.id === 'phonepe' && 'Pay via PhonePe, UPI, credit / debit card, or netbanking. You will be redirected to PhonePe to complete your payment.'}
+                    {activeGw.id === 'paypal' && 'Pay via PayPal or credit / debit card in USD. You will be redirected to PayPal to complete your payment.'}
                   </p>
                 )}
               </div>
@@ -315,33 +312,24 @@ export default function CheckoutPage() {
                 <h2 className="font-cinzel text-cosmic-cream text-base font-semibold mb-5 pb-3 border-b border-cosmic-gold/15">
                   Order Summary
                 </h2>
-
-                {/* Items */}
                 <div className="space-y-3 mb-5">
                   {items.map(item => (
                     <div key={item.id} className="flex gap-3 items-center">
                       <div className="relative w-12 h-12 rounded-sm overflow-hidden shrink-0 border border-cosmic-gold/15">
-                        {item.image && !item.image.includes('placeholder') ? (
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-cosmic-black/30 text-xl">💎</div>
-                        )}
+                        {item.image && !item.image.includes('placeholder')
+                          ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          : <div className="w-full h-full flex items-center justify-center bg-cosmic-black/30 text-xl">💎</div>}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-cinzel text-cosmic-cream text-xs font-medium line-clamp-1">{item.name}</p>
                         <p className="font-raleway text-cosmic-cream/40 text-xs">× {item.quantity}</p>
                       </div>
                       <p className="font-cinzel text-cosmic-cream text-xs shrink-0">
-                        {symbol}
-                        {isIndia
-                          ? (item.priceINR * item.quantity).toLocaleString('en-IN')
-                          : (item.priceUSD * item.quantity).toFixed(2)}
+                        {symbol}{isIndia ? (item.priceINR * item.quantity).toLocaleString('en-IN') : (item.priceUSD * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   ))}
                 </div>
-
-                {/* Totals */}
                 <div className="space-y-2 text-sm border-t border-cosmic-gold/10 pt-4">
                   <div className="flex justify-between">
                     <span className="font-cormorant text-cosmic-cream/60">Subtotal</span>
@@ -368,33 +356,24 @@ export default function CheckoutPage() {
                   <div className="flex justify-between pt-2 border-t border-cosmic-gold/15">
                     <span className="font-cinzel text-cosmic-cream font-semibold">Total ({currency})</span>
                     <span className="font-cinzel text-cosmic-gold font-bold text-base">
-                      {symbol}
-                      {isIndia ? grandTotal.toLocaleString('en-IN') : (grandTotal as number).toFixed(2)}
+                      {symbol}{isIndia ? grandTotal.toLocaleString('en-IN') : (grandTotal as number).toFixed(2)}
                     </span>
                   </div>
                 </div>
-
-                {/* Pay button */}
-                <button
-                  onClick={handlePay}
-                  disabled={processing}
-                  className="btn-primary w-full justify-center mt-6 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
+                <button onClick={handlePay} disabled={processing}
+                  className="btn-primary w-full justify-center mt-6 disabled:opacity-60 disabled:cursor-not-allowed">
                   {processing ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Redirecting...
+                      Redirecting to Cashfree...
                     </>
                   ) : (
                     <>
                       <Lock size={14} />
-                      Pay {symbol}
-                      {isIndia ? grandTotal.toLocaleString('en-IN') : (grandTotal as number).toFixed(2)}
-                      {' '}via {activeGw?.name || 'Payment Gateway'}
+                      Pay {symbol}{isIndia ? grandTotal.toLocaleString('en-IN') : (grandTotal as number).toFixed(2)} via {activeGw?.name || 'Cashfree'}
                     </>
                   )}
                 </button>
-
                 <p className="font-raleway text-cosmic-cream/25 text-xs text-center mt-3 leading-relaxed">
                   By placing an order you agree to our{' '}
                   <Link href="/terms" className="underline hover:text-cosmic-gold/50 transition-colors">Terms</Link>

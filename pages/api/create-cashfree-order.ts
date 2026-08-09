@@ -1,6 +1,6 @@
 // pages/api/create-cashfree-order.ts
-// Proxies to the backend Cashfree initiate endpoint. Returns 503 when
-// Cashfree credentials aren't configured (Coming Soon state).
+// Proxies to the backend Cashfree initiate endpoint.
+// Returns orderId + paymentSessionId which the frontend uses with Cashfree JS SDK.
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
