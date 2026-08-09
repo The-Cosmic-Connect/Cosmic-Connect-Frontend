@@ -150,7 +150,6 @@ export default function CheckoutPage() {
       sessionStorage.setItem('cosmic_order_id', orderId)
 
       // Step 2: Load Cashfree JS SDK dynamically (only when needed)
-      // Using v3 SDK which supports both sandbox and production via mode config
       if (!(window as any).Cashfree) {
         await new Promise<void>((resolve, reject) => {
           const script = document.createElement('script')
@@ -161,20 +160,16 @@ export default function CheckoutPage() {
         })
       }
 
-      // Step 3: Initialise and redirect to Cashfree hosted checkout
+      // Step 3: Initialise using the CDN global Cashfree() function
+      // NOTE: When loaded via <script> tag, the SDK exposes a global Cashfree()
+      // constructor — NOT a load() function. load() is only for the npm package.
       const cashfreeEnv = (process.env.NEXT_PUBLIC_CASHFREE_ENV || 'production') as 'production' | 'sandbox'
-      const { load } = (window as any).Cashfree
-      const cashfree  = await load({ mode: cashfreeEnv })
+      const cashfree = (window as any).Cashfree({ mode: cashfreeEnv })
 
-      // redirectTarget: '_self' replaces the current tab (cleaner UX than a new tab)
-      // Cashfree appends ?order_id=... to the return_url so the success page
-      // knows which order to verify.
       await cashfree.checkout({
         paymentSessionId,
         redirectTarget: '_self',
       })
-      // If checkout() resolves without redirect (e.g. payment popup closed),
-      // re-enable the button so the customer can try again.
       setProcessing(false)
     } catch (err: any) {
       alert(err.message || 'Payment initiation failed. Please try again.')
