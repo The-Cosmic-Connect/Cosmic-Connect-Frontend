@@ -112,7 +112,7 @@ export default function HeroSection() {
               />
             ))}
             <span className="font-raleway text-cosmic-cream/50 text-xs ml-2 tracking-widest">
-              500+ sessions
+              3000+ sessions
             </span>
           </div>
 

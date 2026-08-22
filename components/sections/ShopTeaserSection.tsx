@@ -183,7 +183,7 @@ export default function ShopTeaserSection() {
             Explore Full Shop
           </Link>
           <p className="font-raleway text-cosmic-cream/40 text-xs tracking-widest">
-            Free shipping on orders above ₹1,999
+            Free shipping on all orders
           </p>
         </div>
       </div>

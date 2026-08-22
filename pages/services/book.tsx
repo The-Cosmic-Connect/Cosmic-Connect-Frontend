@@ -247,10 +247,10 @@ export default function BookPage() {
                 })}
               </div>
 
-              {/* 6hr notice */}
-              <p className="font-raleway text-cosmic-cream/25 text-xs mt-4 tracking-wide">
+              {/* 6hr notice — hidden from clients, enforced in slot logic */}
+              {/* <p className="font-raleway text-cosmic-cream/25 text-xs mt-4 tracking-wide">
                 ✦ Slots must be booked at least 6 hours in advance
-              </p>
+              </p> */}
             </div>
 
             {/* Right — Slots + Mode + Form */}

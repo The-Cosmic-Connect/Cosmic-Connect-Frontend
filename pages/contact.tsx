@@ -85,7 +85,7 @@ export default function ContactPage() {
                 <div className="space-y-4">
                   {[
                     { icon: <Phone size={15} />,   label: 'Phone', value: '+91 95994 74758', href: 'tel:+919599474758' },
-                    { icon: <Mail size={15} />,    label: 'Email', value: 'hello@thecosmicconnect.com', href: 'mailto:hello@thecosmicconnect.com' },
+                    { icon: <Mail size={15} />,    label: 'Email', value: 'info@thecosmicconnect.com', href: 'mailto:info@thecosmicconnect.com' },
                     { icon: <MapPin size={15} />,  label: 'Address', value: 'GG1/5A PVR Road, Vikaspuri\nNew Delhi 110018', href: 'https://maps.google.com/?q=Vikaspuri+New+Delhi' },
                   ].map(({ icon, label, value, href }) => (
                     <a key={label} href={href} target={href.startsWith('http') ? '_blank' : undefined}

@@ -126,11 +126,11 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:hello@thecosmicconnect.com"
+                  href="mailto:info@thecosmicconnect.com"
                   className="flex items-start gap-3 text-cosmic-cream/60 hover:text-cosmic-gold transition-colors duration-300 group"
                 >
                   <Mail size={15} className="mt-0.5 text-cosmic-gold/50 group-hover:text-cosmic-gold shrink-0" />
-                  <span className="font-raleway text-sm">hello@thecosmicconnect.com</span>
+                  <span className="font-raleway text-sm">info@thecosmicconnect.com</span>
                 </a>
               </li>
               <li>

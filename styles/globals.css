@@ -285,6 +285,31 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; letter-spacing: -0.01em;
 .blog-content img { width: 100%; height: auto; margin: 2rem 0; border: 1px solid rgb(var(--cosmic-gold) / 0.15); }
 .blog-content hr { border: none; border-top: 1px solid rgb(var(--cosmic-gold) / 0.2); margin: 2.5rem 0; }
 
+/* ─── LIGHT-MODE GOLD TEXT LEGIBILITY ───────────────────────
+   In light mode, cosmic-gold (#B8A076) on parchment (#FAF7F4)
+   has very low contrast and is hard to read. Override gold text
+   to the plum accent (#3B2B5F) which is already used for CTAs
+   and nav — readable, on-brand, and consistent with the light
+   theme. Dark mode unaffected (keeps rich gold).
+   ──────────────────────────────────────────────────────────── */
+html:not([data-theme='dark']) .text-cosmic-gold {
+  color: rgb(var(--cosmic-plum));
+}
+html:not([data-theme='dark']) .text-cosmic-gold\/60,
+html:not([data-theme='dark']) .text-cosmic-gold\/70,
+html:not([data-theme='dark']) .text-cosmic-gold\/80 {
+  color: rgb(var(--cosmic-plum) / 0.75);
+}
+html:not([data-theme='dark']) .text-cosmic-gold\/30,
+html:not([data-theme='dark']) .text-cosmic-gold\/40,
+html:not([data-theme='dark']) .text-cosmic-gold\/50 {
+  color: rgb(var(--cosmic-plum) / 0.45);
+}
+/* fill-cosmic-gold (star icons, etc.) */
+html:not([data-theme='dark']) .fill-cosmic-gold {
+  fill: rgb(var(--cosmic-plum));
+}
+
 /* ─── LIGHT-MODE LEGIBILITY OVERRIDES ───────────────────────
    Low-opacity gold borders and surface fills look great on the
    dark theme but nearly vanish on cream. Strengthen them ONLY
