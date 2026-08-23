@@ -86,7 +86,7 @@ export default function ContactPage() {
                   {[
                     { icon: <Phone size={15} />,   label: 'Phone', value: '+91 95994 74758', href: 'tel:+919599474758' },
                     { icon: <Mail size={15} />,    label: 'Email', value: 'info@thecosmicconnect.com', href: 'mailto:info@thecosmicconnect.com' },
-                    { icon: <MapPin size={15} />,  label: 'Address', value: 'KG1/298, KG-1 Rd, Near Coffeegram\nVikaspuri, Delhi 110018', href: 'https://maps.app.goo.gl/s18vSeAsM7fB85zf7' },
+                    { icon: <MapPin size={15} />,  label: 'Address', value: 'KG1/298, KG1 Road, near Coffeegram\nVikaspuri, New Delhi – 110018', href: 'https://maps.app.goo.gl/s18vSeAsM7fB85zf7' },
                   ].map(({ icon, label, value, href }) => (
                     <a key={label} href={href} target={href.startsWith('http') ? '_blank' : undefined}
                       rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
@@ -251,7 +251,7 @@ export default function ContactPage() {
             </h2>
             <div className="gold-divider" />
             <p className="font-cormorant text-cosmic-cream/50 italic mt-3">
-            KG1/298, KG-1 Rd, Near Coffeegram, Vikaspuri, Delhi 110018
+            KG1/298, KG1 Road, near Coffeegram, Vikaspuri, New Delhi – 110018
             </p>
             </div>
             <div className="border border-cosmic-gold/20 overflow-hidden">
