@@ -86,7 +86,7 @@ export default function ContactPage() {
                   {[
                     { icon: <Phone size={15} />,   label: 'Phone', value: '+91 95994 74758', href: 'tel:+919599474758' },
                     { icon: <Mail size={15} />,    label: 'Email', value: 'info@thecosmicconnect.com', href: 'mailto:info@thecosmicconnect.com' },
-                    { icon: <MapPin size={15} />,  label: 'Address', value: 'GG1/5A PVR Road, Vikaspuri\nNew Delhi 110018', href: 'https://maps.google.com/?q=Vikaspuri+New+Delhi' },
+                    { icon: <MapPin size={15} />,  label: 'Address', value: 'KG1/298, KG-1 Rd, Near Coffeegram\nVikaspuri, Delhi 110018', href: 'https://maps.app.goo.gl/s18vSeAsM7fB85zf7' },
                   ].map(({ icon, label, value, href }) => (
                     <a key={label} href={href} target={href.startsWith('http') ? '_blank' : undefined}
                       rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
@@ -251,19 +251,19 @@ export default function ContactPage() {
             </h2>
             <div className="gold-divider" />
             <p className="font-cormorant text-cosmic-cream/50 italic mt-3">
-              GG1/5A PVR Road, Vikaspuri, New Delhi 110018
+            KG1/298, KG-1 Rd, Near Coffeegram, Vikaspuri, Delhi 110018
             </p>
-          </div>
-          <div className="border border-cosmic-gold/20 overflow-hidden">
+            </div>
+            <div className="border border-cosmic-gold/20 overflow-hidden">
             <iframe
-              title="The Cosmic Connect location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.7550704571318!2d77.0771809!3d28.637102!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d056ada47273f%3A0x78c57d06a1c2ea8f!2sThe%20Cosmic%20Connect%20-%20White%20Light%20Tarot%20%26%20Crystals%20by%20Dr.%20Usha%20Bhatt!5e0!3m2!1sen!2sin!4v1772390325154!5m2!1sen!2sin"
-              width="100%"
-              height="380"
-              style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) brightness(0.85) contrast(0.9)' }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
+            title="The Cosmic Connect location"
+            src="https://maps.app.goo.gl/s18vSeAsM7fB85zf7"
+            width="100%"
+            height="380"
+            style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) brightness(0.85) contrast(0.9)' }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
           <p className="font-cormorant text-cosmic-cream/30 italic text-sm text-center mt-3">

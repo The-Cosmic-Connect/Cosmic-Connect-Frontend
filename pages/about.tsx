@@ -99,6 +99,11 @@ const certifications = [
     body: 'Certified therapist in past life exploration and karmic healing modalities.',
   },
   {
+    icon: '🔔',
+    title: 'Sound Healing Practitioner',
+    body: 'Trained in Gong Bath, Tuning Fork Therapy, Voice & Mantra, and Chakra Balancing through sound.',
+  },
+  {
     icon: '🎓',
     title: 'Honorary Doctorate — Spiritual Sciences',
     body: 'Awarded Honorary Doctorate for two decades of service in spiritual healing and guidance.',
@@ -108,38 +113,38 @@ const certifications = [
 const journeyMilestones = [
   {
     year: '2000',
-    title: 'The Awakening',
-    desc: "Dr. Usha Bhatt's spiritual journey began when she experienced her first profound psychic vision. Recognising an extraordinary gift, she committed herself fully to understanding and developing her intuitive abilities.",
+    title: 'The Beginning',
+    desc: 'Dr. Usha Bhatt\'s professional journey began in process quality, training and counselling — disciplines that continue to shape the structured, empathetic way she works today.',
   },
   {
-    year: '2004',
-    title: 'Formal Training',
-    desc: "Undertook rigorous training in Tarot, Reiki, and energy healing under some of India's most respected spiritual teachers. Achieved her first Reiki Master certification and began practising professionally.",
-  },
-  {
-    year: '2008',
-    title: 'Helping Hundreds',
-    desc: 'By 2008, Dr. Bhatt had already guided hundreds of clients through major life challenges — career crossroads, relationship crises, spiritual blocks, and emotional trauma. Her reputation grew entirely through word of mouth.',
+    year: '2006',
+    title: 'Spiritual Exploration',
+    desc: 'Her exploration of consciousness and complementary spiritual practices expanded across multiple modalities — Tarot, Reiki, Crystal Therapy, Akashic Records, Past Life work and more.',
   },
   {
     year: '2012',
     title: 'The Cosmic Connect Founded',
-    desc: 'Founded The Cosmic Connect as a dedicated healing studio in New Delhi, bringing together all her services under one roof and making spiritual guidance accessible to many more people.',
+    desc: 'Founded The Cosmic Connect as a dedicated healing and guidance practice in New Delhi, bringing together all modalities under one identity and making spiritual guidance more accessible.',
   },
   {
     year: '2016',
     title: 'Going Online',
-    desc: 'Expanded to online sessions, making her unique healing gifts available to clients across India and internationally. Distance healing proved equally powerful, reaching souls in need across the world.',
+    desc: 'Expanded to online sessions, making her healing gifts available to clients across India and internationally. Distance healing proved equally powerful, reaching souls in need across the world.',
   },
   {
     year: '2020',
     title: 'Courses & Education',
-    desc: "Launched structured courses in Tarot, Crystal Therapy, Psychic Development, and Spiritual Awareness — empowering students to develop their own healing abilities under Dr. Bhatt's expert guidance.",
+    desc: 'Launched structured courses in Tarot, Crystal Therapy, Psychic Development, Reiki and Spiritual Awareness — empowering students to develop their own healing abilities.',
+  },
+  {
+    year: '2022',
+    title: 'Puneet Mehta Joins',
+    desc: 'Co-Founder Puneet Mehta joined the leadership, bringing over two decades of strategic, operational and customer-experience expertise to help transform The Cosmic Connect into a professionally managed spiritual-wellness brand.',
   },
   {
     year: '2024',
     title: 'Nationally Recognised',
-    desc: 'Received the Honorary Doctorate in Spiritual Sciences — the culmination of over two decades of dedicated service, healing, and spiritual education. The journey continues.',
+    desc: 'Received the Honorary Doctorate in Spiritual Sciences — the culmination of dedicated service, healing, and spiritual education. The ecosystem continues to grow.',
   },
 ]
 
@@ -255,20 +260,22 @@ export default function AboutPage() {
 
                 <div className="space-y-4 font-cormorant text-cosmic-cream/70 text-lg leading-relaxed">
                   <p>
-                    With over two decades of experience, Dr. Usha Bhatt is one of India&apos;s most
-                    trusted and celebrated psychic healers. Her extraordinary gifts — clairvoyance,
-                    deep empathy, and a profound connection to the spiritual realm — have guided
-                    thousands of individuals toward clarity, healing, and transformation.
+                    For Dr. Usha Bhatt, The Cosmic Connect is much more than an organisation.
+                    Before devoting herself extensively to this field, her professional journey
+                    included experience in process quality, training and counselling — a background
+                    that continues to influence how she works today, bringing structure and
+                    practical communication to disciplines often viewed as purely mystical.
                   </p>
                   <p>
-                    A certified Grand Master in Tarot Reading, Reiki, Crystal Therapy, and
-                    Akashic Records Reading, Dr. Bhatt combines ancient wisdom with intuitive
-                    insight to offer healing that is both deeply personal and powerfully effective.
+                    Her work spans Psychic and Tarot Reading, Reiki, Crystal Therapy, Akashic
+                    Records Reading, Mokshapat, Past Life practices, Sound Healing and other
+                    energy-based approaches. Rather than presenting spirituality as fixed
+                    predictions, she encourages people to look deeper into their circumstances,
+                    patterns, choices and inner responses.
                   </p>
                   <p>
-                    Her warm, compassionate approach makes even the most complex spiritual
-                    journeys feel safe, supported, and profoundly meaningful. Whether you seek
-                    answers, healing, or spiritual growth — Dr. Bhatt meets you exactly where you are.
+                    Her approach combines intuition with empathy, spiritual wisdom with practical
+                    conversation, and ancient traditions with contemporary understanding.
                   </p>
                 </div>
 
@@ -295,6 +302,54 @@ export default function AboutPage() {
                 </div>
               </Reveal>
             </div>
+          </div>
+        </section>
+
+        {/* PUNEET MEHTA */}
+        <section className="section bg-cosmic-section">
+          <div className="container-cosmic">
+            <Reveal>
+              <div className="text-center mb-12">
+                <p className="ornament text-xs tracking-[0.5em] mb-4">✦ ✦ ✦</p>
+                <h2 className="font-cinzel text-3xl md:text-4xl text-cosmic-cream font-bold mb-3">
+                  Meet the <span className="text-gradient-gold">Co-Founder</span>
+                </h2>
+                <div className="gold-divider mb-4" />
+              </div>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="max-w-4xl mx-auto cosmic-card p-8 md:p-10">
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                  <div className="shrink-0 mx-auto md:mx-0">
+                    <div className="w-32 h-32 rounded-full border-2 border-cosmic-gold/30 bg-cosmic-deepPurple/40 flex items-center justify-center">
+                      <span className="font-cinzel text-cosmic-gold text-4xl">PM</span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-cinzel text-cosmic-cream text-xl font-bold mb-1">Puneet Mehta</h3>
+                    <p className="font-cormorant italic text-cosmic-gold text-base mb-5">Co-Founder &amp; Managing Director</p>
+                    <div className="space-y-3 font-cormorant text-cosmic-cream/70 text-lg leading-relaxed">
+                      <p>Puneet Mehta brings the strategic, operational and customer-experience perspective that enables The Cosmic Connect&apos;s vision to grow as an organisation. With more than two decades of professional experience across strategic planning, operations management and process improvement, he brings a distinctly structured approach to the business.</p>
+                      <p>Before The Cosmic Connect, his career included senior leadership responsibilities in the healthcare and diagnostic-services sectors, including serving as National Head of Customer Services at Dr. Lal PathLabs Ltd.</p>
+                      <p>His focus is on developing the systems, processes, customer experience and business strategy required to transform a practitioner-led vision into a professionally managed and scalable spiritual-wellness brand.</p>
+                    </div>
+                    <blockquote className="mt-6 border-l-2 border-cosmic-gold/40 pl-4">
+                      <p className="font-cormorant italic text-cosmic-cream/60 text-base leading-relaxed">&ldquo;Preserve the authenticity and personal connection at the heart of The Cosmic Connect while building the professional foundation required for it to grow responsibly.&rdquo;</p>
+                    </blockquote>
+                  </div>
+                </div>
+                <div className="mt-8 pt-6 border-t border-cosmic-gold/15 grid md:grid-cols-2 gap-4">
+                  <div className="cosmic-card p-4 bg-cosmic-deepPurple/20">
+                    <p className="font-cinzel text-cosmic-gold text-xs tracking-widest uppercase mb-2">Dr. Usha Bhatt</p>
+                    <p className="font-cormorant text-cosmic-cream/60 text-sm">Spiritual knowledge, intuitive practice, teaching and direct engagement with clients and students.</p>
+                  </div>
+                  <div className="cosmic-card p-4 bg-cosmic-deepPurple/20">
+                    <p className="font-cinzel text-cosmic-gold text-xs tracking-widest uppercase mb-2">Puneet Mehta</p>
+                    <p className="font-cormorant text-cosmic-cream/60 text-sm">Business strategy, operational discipline, customer-experience management and organisational development.</p>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
           </div>
         </section>
 

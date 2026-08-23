@@ -5,8 +5,8 @@ import { useGeo } from '@/context/GeoContext'
 import { ChevronLeft, ChevronRight, Clock, Calendar, User, Mail, Phone, Video, MapPin } from 'lucide-react'
 
 const API      = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-const ADDRESS  = 'GG1/5A PVR Road, Vikaspuri, New Delhi 110018'
-const MAP_LINK = 'https://maps.google.com/?q=GG1/5A+PVR+Road+Vikaspuri+New+Delhi+110018'
+const ADDRESS  = 'KG1/298, KG-1 Rd, Near Coffeegram, Vikaspuri, Delhi 110018'
+const MAP_LINK = 'https://maps.app.goo.gl/s18vSeAsM7fB85zf7'
 
 interface Slot { startTime: string; endTime: string; available: boolean }
 
