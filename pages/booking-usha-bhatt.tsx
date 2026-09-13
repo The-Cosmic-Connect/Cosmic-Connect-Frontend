@@ -1,12 +1,12 @@
-import { useState, useEffect, type ComponentType } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
 import { SERVICE_CATEGORIES } from '@/lib/serviceCategories'
-import { Sparkles, Infinity, Zap, Music, ShieldAlert, Gem, Compass, ChevronRight } from 'lucide-react'
+import { Sparkles, Infinity, Zap, Music, ShieldAlert, Gem, Compass, ChevronRight, type LucideIcon } from 'lucide-react'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-const ICONS: Record<string, ComponentType<{ size?: number; className?: string }>> = {
+const ICONS: Record<string, LucideIcon> = {
   Sparkles, Infinity, Zap, Music, ShieldAlert, Gem, Compass,
 }
 
