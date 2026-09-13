@@ -1,123 +1,191 @@
 import Layout from '@/components/layout/Layout'
 
-const LAST_UPDATED = 'March 2025'
+const LAST_UPDATED = 'September 2026'
 
 const sections = [
   {
-    title: 'Acceptance of Terms',
-    content: `By accessing and using the website thecosmicconnect.com and any services offered by The Cosmic Connect, you accept and agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use our website or services.
+    title: '1. About These Terms',
+    content: `These Terms and Conditions govern purchases and bookings with Cosmic Connect India LLP, trading as The Cosmic Connect ("we", "us" or "our"), through www.thecosmicconnect.com and our authorised booking channels. They also govern permitted use of our website and paid content. Our contact details appear in section 18.
 
-These terms apply to all visitors, clients, students, and customers of The Cosmic Connect.`,
+Before paying, please read these terms and the description of your chosen product, service, course or plan. We will make the applicable terms available before purchase and ask you to accept them through an affirmative action. Browsing our website does not authorise a purchase, recurring payment, session recording or marketing consent.
+
+The description and specific terms shown before purchase form part of your agreement. Our Privacy Policy explains data handling; our Return, Exchange, Cancellation & Refund Policy, Shipping Policy and Disclaimer provide related details. No policy or special term reduces mandatory consumer rights. Where our published refund promises conflict, we will honour the more favourable promise applicable when you purchased. A later website change does not retrospectively reduce your rights.`,
   },
   {
-    title: 'Nature of Services',
-    content: `The Cosmic Connect offers spiritual guidance, energy healing, Tarot reading, Akashic Records reading, crystal therapy, courses, and related products through Dr. Usha Bhatt and authorised associates.
+    title: '2. What We Offer',
+    content: `Available offerings may include the following, as described in the relevant listing. Inclusion here does not mean every offering is currently available or included in a booking.
 
-All readings, healings, and spiritual guidance provided by The Cosmic Connect are intended for entertainment, personal growth, and spiritual exploration purposes only. They do not constitute medical, legal, financial, or psychological advice.
+Spiritual readings and guidance: Tarot, psychic and oracle readings; Akashic Records and Mokshapat readings; past life regression and related spiritual reflection; pendulum dowsing and gemstone guidance.
 
-Results from spiritual services vary between individuals and cannot be guaranteed. The Cosmic Connect makes no warranty that any specific outcome will be achieved from our services.`,
+Complementary wellness sessions: Reiki, crystal and distance healing; animal healing; sound healing, sound baths, Naad Yoga and meditation; crystal grid work; and spiritual practices described as energy cleansing, protection, or black magic and evil eye scanning and negation.
+
+Learning: Reiki levels and teacher training, Karuna Reiki, Angel Healing, Tarot and oracle reading, crystal therapy, mindfulness, visualisation, mudras, meditation and other advertised workshops or courses.
+
+Products: Crystals, gemstones, jewellery, bracelets, malas, crystal trees and grids, spiritual accessories, meditation tools, incense and other listed merchandise. Digital resources, packages and memberships are covered only where separately offered with clear delivery and access terms.`,
   },
   {
-    title: 'Disclaimer of Medical Advice',
-    content: `Nothing on this website or in any session with Dr. Usha Bhatt constitutes medical advice, diagnosis, or treatment. Our services are not a substitute for professional medical, psychiatric, legal, or financial advice.
+    title: '3. Eligibility and Accounts',
+    content: `The person placing an order must be at least 18 and legally competent to contract. Where we expressly offer an age-appropriate activity for a child, a parent or lawful guardian must make the booking, provide the required consent and supervise as instructed. A child cannot independently accept payment obligations. We may decline an activity that is unsuitable for the participant.
 
-If you are experiencing a medical or mental health emergency, please contact a qualified healthcare professional or emergency services immediately.
-
-By engaging our services, you acknowledge that you understand the nature of spiritual work and that you do so voluntarily and at your own discretion.`,
+Provide accurate contact and booking information and use only payment methods you are authorised to use. Keep account credentials private and report suspected misuse promptly. You are responsible for misuse to the extent caused by your own breach or wrongful conduct; this does not excuse failures in our own security or service.`,
   },
   {
-    title: 'Bookings and Sessions',
-    content: `Session bookings are confirmed upon receipt of payment unless otherwise agreed. Sessions must be rescheduled with a minimum of 24 hours notice. Cancellations made less than 24 hours before a scheduled session may not be eligible for a refund.
+    title: '4. Nature and Limits of Spiritual Services',
+    content: `Our spiritual and complementary wellness services are intended for personal reflection, learning and relaxation. They are not medical or veterinary diagnosis or treatment, psychotherapy, or legal, financial or investment advice. Do not stop medication, delay professional care or make a major decision solely because of a reading, product recommendation or session. Seek a qualified professional for the relevant concern.
 
-Online sessions are conducted via video call. A stable internet connection is your responsibility. If technical difficulties prevent the session from being conducted, we will reschedule at no additional charge.
+Words such as "healing", "energy", "cleansing", "protection" and "scanning" describe spiritual practices and beliefs. They do not establish that a disease, curse, harmful force or supernatural influence exists, identify a person as causing harm, or amount to a scientific test. We do not promise to cure illness, remove a verified supernatural threat, control another person, reunite a relationship, produce wealth or predict a certain future.
 
-In-person sessions are conducted at our New Delhi studio at GG1/5A PVR Road, Vikaspuri. Please arrive on time. Late arrivals may result in a shorter session.`,
+Past life or regression experiences may be imaginative, symbolic or subjective. They are not verified memories or evidence about historical events or another person's conduct. Readings and dowsing are interpretive practices and must not be used to make medical diagnoses or substitute for factual investigation.
+
+Results and experiences vary. Testimonials describe individual experiences and are not guarantees. Course completion does not guarantee employment, income, professional success or an ability to produce healing outcomes. An honorary title, including an honorary doctorate, does not establish medical registration or a licence to provide clinical care.
+
+These explanations do not excuse misleading statements, unsafe practices, defective goods or a failure to provide what was agreed. We remain responsible for delivering the purchased service with reasonable care and skill and in accordance with applicable law.`,
   },
   {
-    title: 'Courses',
-    content: `Course enrollments are confirmed upon payment. Course materials and recordings are for personal use only and may not be shared, distributed, or resold.
+    title: '5. Consent and Participation',
+    content: `Participation is voluntary. The practitioner will explain the activity, relevant preparation and foreseeable practical risks. You may decline touch, a technique, an optional product recommendation or recording, and may pause or stop a session. We will obtain specific permission before physical contact. Purchasing a product or additional session is never required to avoid an alleged spiritual threat.
 
-Certificates issued by The Cosmic Connect certify completion of our specific course curriculum and do not represent accreditation by any government or regulatory body.
+Tell us about relevant accessibility requirements, sound or scent sensitivities and any information reasonably needed for safe participation. Share only what is necessary. Where suitability is uncertain, consult an appropriate healthcare professional. We may postpone or decline a session for safety reasons and refund the undelivered portion if no suitable alternative is agreed. Stopping because a promised result did not occur does not by itself create a refund right; deficient or unsafe service remains subject to section 9.
 
-We reserve the right to remove a student from a course for behaviour that disrupts other students or violates our community standards, without refund.`,
+For animal sessions, the booking person must be the owner or an authorised carer. Veterinary care must continue when needed, and handling must protect the animal's welfare. Remote sessions do not establish a clinical assessment of a person or animal.
+
+Our channels are not an emergency service. If you or someone else faces immediate danger or a medical emergency, contact local emergency services or an appropriate healthcare provider.`,
   },
   {
-    title: 'Shop and Products',
-    content: `All products sold through our shop are subject to our Shipping and Returns Policy, available at thecosmicconnect.com/shipping-returns.
+    title: '6. Orders and Payments',
+    content: `Your order or booking is accepted when we send a confirmation expressly accepting it. An automated acknowledgement of receipt alone is not acceptance. The confirmation will identify the item or service, price and relevant delivery or appointment details. Contact us promptly if it contains an error.
 
-Crystal and gemstone products are natural materials and may have minor variations in colour, size, and appearance. These variations are natural and do not constitute defects.
+The amount payable, applicable taxes, shipping and any optional charges will be displayed before payment. Prices are in Indian rupees unless clearly stated otherwise. Optional extras require your choice; we will not add undisclosed charges or preselect paid additions. Promotional conditions and expiry dates will be disclosed with the offer.
 
-Product descriptions and the energetic properties attributed to crystals are based on traditional healing and spiritual practice. These are not scientifically verified claims.`,
+If an item is unavailable, a material pricing error occurs or a transaction reasonably appears unauthorised, we will explain the issue and offer an appropriate resolution. We will not charge an increased price without your agreement. If we cannot fulfil an accepted order, you may choose an agreed substitute or receive a full refund.
+
+Payments are processed through the payment options identified at checkout. Do not send passwords, card security codes or one-time passwords to staff. Contact us and your payment provider promptly about duplicate or unauthorised payments. Use of a payment processor does not remove our responsibility for an accepted order or a refund we owe.`,
   },
   {
-    title: 'Intellectual Property',
-    content: `All content on this website — including text, images, course materials, blog articles, and branding — is the intellectual property of The Cosmic Connect and Dr. Usha Bhatt unless otherwise stated.
+    title: '7. Appointments and Delivery of Sessions',
+    content: `Your confirmation will specify the session format, duration, practitioner where relevant, time zone, location or joining instructions and included deliverables. Times are in India Standard Time unless another zone is expressly shown. A named-practitioner booking will not be transferred to someone else without your agreement; if the practitioner becomes unavailable, you may reschedule or receive a refund.
 
-You may not reproduce, distribute, or use any of our content for commercial purposes without explicit written permission.
+For remote sessions, arrange a suitable device, connection and private setting. For in-person sessions, use the location in your confirmation. Late arrival may reduce the available time to protect the next appointment. Tell us promptly about delays or connection problems; we will try to arrange a workable solution.
 
-You may share links to our content and quote brief excerpts for non-commercial purposes provided you give clear attribution to The Cosmic Connect.`,
+If our technical or operational failure prevents delivery, you may choose a replacement session or a refund for the undelivered service. A lost connection on your side will be considered fairly under the cancellation terms, rather than automatically treated as fully delivered service.`,
   },
   {
-    title: 'Confidentiality',
-    content: `Information shared with Dr. Usha Bhatt during sessions is treated with complete confidentiality and will not be shared with third parties without your explicit consent, except where required by law.
+    title: '8. Cancellations and Rescheduling',
+    content: `Request cancellation or a change by email or through the booking channel and retain your acknowledgement. Please give at least 24 hours' notice for an appointment and 48 hours for a live course or workshop. With that notice, you may choose a full refund for the unprovided service or a new available date.
 
-We ask that you similarly respect the privacy of other clients and students. Information shared in group settings (such as courses or workshops) should not be disclosed outside that group.`,
-  },
-  {
-    title: 'Limitation of Liability',
-    content: `To the maximum extent permitted by law, The Cosmic Connect and Dr. Usha Bhatt shall not be liable for any indirect, incidental, consequential, or punitive damages arising from your use of our services or website.
+We do not impose automatic forfeiture for a late cancellation or missed appointment as a blanket rule. For a session that never begins, the prepaid fee will be refunded unless you choose to reschedule. For a partly delivered course or package, only the transparently priced portion actually supplied may be retained. Repeated missed bookings may lead us to decline future appointments, without taking away an existing refund entitlement.
 
-Our total liability to you for any claim arising from our services shall not exceed the amount you paid for the specific service that gave rise to the claim.`,
+If we cancel or materially reschedule a session or course, you may accept an alternative or receive a refund for what we will not deliver. We will not force you to accept credit. Amounts paid for services already properly delivered are not normally refundable merely because you change your mind. Sections 9 and 11 preserve remedies where delivery is deficient or not as described. See our Return, Exchange, Cancellation & Refund Policy for the detailed timing rules that apply to one-to-one appointments, courses and workshops.`,
   },
   {
-    title: 'Governing Law',
-    content: `These Terms of Use are governed by the laws of India. Any disputes arising from these terms or your use of our services shall be subject to the exclusive jurisdiction of the courts of New Delhi, India.`,
-  },
-  {
-    title: 'Changes to Terms',
-    content: `We reserve the right to modify these Terms of Use at any time. Changes will be posted on this page with an updated date. Continued use of our services after any such changes constitutes your acceptance of the new terms.`,
-  },
-  {
-    title: 'Contact',
-    content: `Questions about these Terms of Use may be directed to:
+    title: '9. Service Quality and Refund Processing',
+    content: `If a service was not supplied, materially differed from its description or was deficient, contact us with the booking reference and a short explanation. We will investigate and provide the remedy required by law, which may include completing or repeating the service, a price reduction or a refund. Statutory remedies are not discretionary goodwill and are not excluded because a session has ended or a course has begun.
 
-The Cosmic Connect
-GG1/5A PVR Road, Vikaspuri, New Delhi 110018
-Email: hello@thecosmicconnect.com
-Phone: +91 95994 74758`,
+We will process accepted refunds to the original payment method within 7 to 10 business days, or sooner where applicable law or payment rules require. We will notify you when initiated and provide a reference where available. Bank posting times can vary; tell us if the credit does not arrive. We will not unreasonably delay deciding a request or deduct undisclosed administrative or gateway fees. A different refund method or store credit requires your agreement.`,
+  },
+  {
+    title: '10. Physical Goods and Shipping',
+    content: `The product listing should identify the material, size or quantity, relevant finish or treatment, inclusions, care instructions and any certification actually included. Natural variation in colour, pattern and shape is not a defect where consistent with the description; it does not excuse delivery of a different, damaged, synthetic or misdescribed item. A certificate is included only if expressly promised. Spiritual energising or cleansing is not a laboratory test, safety certification or guarantee of a physical benefit.
+
+Follow product-specific care and safety instructions. Keep small items away from young children and animals. Do not ingest crystals or use them to prepare drinking water unless the particular product is expressly supplied as suitable for that use with appropriate safety instructions. The phrase "energized water" does not establish drinking-water safety or therapeutic benefit. Use incense, candles and electrical items only as directed, with suitable ventilation and precautions.
+
+Standard domestic shipping is free under our published shipping offer. Domestic delivery is generally estimated at 2 to 7 business days from dispatch unless a different timeline is clearly agreed before purchase. International delivery is available only for destinations we accept, with costs and estimates disclosed before payment. Full details, including customs, duties and delivery risk, are set out in our Shipping Policy.`,
+  },
+  {
+    title: '11. Product Returns and Digital Resources',
+    content: `For a damaged, defective, incorrect or materially misdescribed product, contact us promptly, normally within 30 days of delivery, with your order details. This reporting period helps investigation and does not extinguish rights concerning latent defects or other claims permitted by law.
+
+Photos, packaging and an unboxing video can help us investigate, but a video is not a mandatory condition of a remedy. We will consider other reasonable evidence. For valid defect, damage or wrong-item claims, we will arrange return at our cost and provide the replacement, refund or other remedy required by law, including the original delivery charge for the affected purchase.
+
+Change-of-mind returns are separate and discretionary unless the listing promises a return right; customised goods, opened consumables and used personal items are normally excluded but remain covered for defects or misdescription. For digital content, once the agreed content is delivered or accessed, a change-of-mind refund is not normally available, but missing, inaccessible, corrupted or misdescribed content remains eligible for an appropriate remedy. Full detail is set out in our Return, Exchange, Cancellation & Refund Policy.`,
+  },
+  {
+    title: '12. Courses, Packages and Optional Memberships',
+    content: `Course listings will state the curriculum, delivery format, prerequisites, schedule, materials, access period and any assessment or attendance requirements for a certificate. A certificate records the training or completion described; it is not a government qualification, medical licence, franchise or permission to represent us unless a specific, verifiable authorisation is expressly given.
+
+Packages must state the number of sessions, price allocation, validity period and any transfer conditions before purchase. There is no automatic renewal or undisclosed expiry. If we cannot provide remaining sessions within the agreed period, we will offer an extension you accept or a refund for the undelivered portion.
+
+If we offer a recurring plan, its price, benefits, billing interval, trial end date, renewal date and cancellation method will be disclosed before enrolment. You can cancel renewal through the disclosed account option or by contacting support before the next charge; we will confirm cancellation and stop future billing without charging a cancellation penalty. Price changes require at least 30 days' advance notice. If we discontinue a plan, we will refund its unused prepaid portion.`,
+  },
+  {
+    title: '13. Privacy, Confidentiality and Recording',
+    content: `Our Privacy Policy at www.thecosmicconnect.com/privacy-policy explains the information we collect, purposes, recipients, retention and available choices. We handle personal information under applicable Indian data protection law, including the Information Technology Act and applicable rules, and the Digital Personal Data Protection Act 2023 and its rules as their relevant provisions come into force. Acceptance of these terms is not blanket consent to every use of your data.
+
+Private session information is shared only where needed to deliver or administer the service, with your permission, or where lawfully necessary, including a genuine safety emergency. Group participants must respect one another's privacy; we cannot guarantee other participants' conduct. Share sensitive information privately rather than in a group.
+
+We will not record a session without prior specific consent explaining purpose, access and retention. Marketing use of your name, image, voice, session story or testimonial requires separate permission. You may decline recording or promotional use without losing access to the underlying service, unless recording is an essential, clearly disclosed deliverable you specifically purchase.`,
+  },
+  {
+    title: '14. Content and Conduct',
+    content: `We or our licensors own our original website and course materials. Your purchase permits personal study and use of the supplied resources within the stated access period. You may apply skills you learn subject to law, but may not redistribute our paid materials, share logins, sell copies, reproduce our curriculum for teaching or use our branding without permission.
+
+You retain ownership of your contributions. You give us only the permission reasonably needed to receive, store and display content in the context you submit it, such as publishing a review you choose to post publicly. We do not acquire a blanket perpetual marketing licence to private communications.
+
+Do not harass others, impersonate someone, upload unlawful material, infringe rights or interfere with our systems. Honest negative reviews and good-faith complaints are permitted. We may remove unlawful content or restrict access for a material breach, with an explanation and opportunity to resolve it where practicable. Restrictions do not automatically forfeit prepaid undelivered services or lawful refunds.`,
+  },
+  {
+    title: '15. Third Parties and Responsibility',
+    content: `Where checkout takes place on an independent marketplace, check the identity of the seller and that platform's order terms. If we are the seller or supply your booked service through a partner, we remain responsible for our own legal and contractual obligations. Merely using a courier, booking tool or payment processor does not transfer those obligations away from us.
+
+External links do not make us responsible for an independent site's content, but we remain accountable for our own representations and any duties imposed by law. We do not guarantee uninterrupted website availability and will take reasonable steps to address service-affecting faults.
+
+Nothing in these terms excludes or limits liability for fraud, wilful misconduct, death or personal injury caused by our negligence, defective products, deficient services, or any other liability or remedy that cannot lawfully be excluded or limited. Consumer compensation and statutory rights are preserved. No fixed monetary cap overrides those rights.`,
+  },
+  {
+    title: '16. Events Beyond Reasonable Control',
+    content: `If an event beyond reasonable control disrupts delivery, we will explain the impact and take reasonable steps to reduce delay. We may offer a revised date, but you need not accept a materially different arrangement. Where the paid service or goods cannot be supplied, the applicable cancellation and refund rights remain available. This clause does not permit indefinite retention of money for undelivered purchases.`,
+  },
+  {
+    title: '17. Applicable Law and Changes',
+    content: `Indian law governs these terms, subject to mandatory protections that apply to you. Courts in New Delhi may hear disputes where they have lawful jurisdiction. Nothing requires you to waive another competent consumer commission, court, regulator or statutory complaint route available where you reside or work under applicable consumer law.
+
+Please contact us so that we can try to resolve a concern. Doing so is not a mandatory waiting period or a condition of seeking urgent relief or exercising legal rights.
+
+We will date and publish updates and give appropriate notice of material changes. The version accepted at purchase continues to govern that transaction unless a lawful change is agreed or required. If a provision is unenforceable, the remaining provisions continue to the extent lawful. A failure to enforce a term is not a permanent waiver. No course or purchase creates employment, partnership or agency.`,
+  },
+  {
+    title: '18. Contact and Grievance Redressal',
+    content: `Business: Cosmic Connect India LLP, trading as The Cosmic Connect.
+
+Registered office & correspondence address: KG1/298, KG1 Road, near Coffeegram, Vikaspuri, New Delhi – 110018, India. Please attend in person only at the location stated in your appointment confirmation.
+
+Email: info@thecosmicconnect.com. Telephone: +91 95994 74758.
+
+Grievance Officer: Puneet Mehta, Co-Founder. Email: info@thecosmicconnect.com, with subject "Attn: Grievance Officer".
+
+Include your order or booking reference, contact details, issue and requested resolution. We will acknowledge consumer complaints within 48 hours and redress them within one month of receipt, in accordance with applicable e-commerce requirements. You may use available statutory remedies without waiting for our internal process to end.`,
   },
 ]
 
 export default function TermsPage() {
   return (
     <Layout
-      title="Terms of Use | The Cosmic Connect"
-      description="Terms of Use for The Cosmic Connect — governing your use of our website, services, courses, and products."
+      title="Terms & Conditions | The Cosmic Connect"
+      description="Terms and Conditions for The Cosmic Connect — governing purchases, bookings, courses and use of our website and services."
       canonical="/terms-of-use"
     >
       <section className="pt-36 pb-16 px-4 bg-cosmic-gradient">
         <div className="container-cosmic max-w-3xl">
           <p className="ornament text-xs tracking-[0.5em] mb-4">✦ ✦ ✦</p>
           <h1 className="font-cinzel font-bold text-cosmic-cream mb-3 text-3xl md:text-4xl">
-            Terms of <span className="text-gradient-gold">Use</span>
+            Terms &amp; <span className="text-gradient-gold">Conditions</span>
           </h1>
           <div className="gold-divider mb-4" />
           <p className="font-cormorant text-cosmic-cream/50 italic">
             Last updated: {LAST_UPDATED}
           </p>
           <p className="font-cormorant text-cosmic-cream/70 text-lg leading-relaxed mt-6">
-            Please read these Terms of Use carefully before using our website or engaging
-            any of our services. By proceeding, you agree to be bound by them.
+            Please read these Terms and Conditions carefully before using our website, booking a
+            session or course, or purchasing a product. By proceeding, you agree to be bound by them.
           </p>
         </div>
       </section>
 
       <section className="py-16 px-4 bg-cosmic-section">
         <div className="container-cosmic max-w-3xl space-y-10">
-          {sections.map((sec, i) => (
+          {sections.map((sec) => (
             <div key={sec.title}>
-              <h2 className="font-cinzel text-cosmic-cream text-lg font-bold mb-3 flex items-center gap-3">
-                <span className="font-cinzel text-cosmic-gold/40 text-sm">{String(i + 1).padStart(2, '0')}</span>
+              <h2 className="font-cinzel text-cosmic-cream text-lg font-bold mb-3">
                 {sec.title}
               </h2>
               <div className="border-l-2 border-cosmic-gold/15 pl-5">

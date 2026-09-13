@@ -64,8 +64,10 @@ export default function HomeCarousel() {
 
   return (
     <section
-      className="relative overflow-hidden"
-      style={{ minHeight: 'min(78vh, 640px)' }}
+      // Fixed aspect-ratio (not viewport-height) so bg-cover crops the same
+      // relative portion of each image on every screen — a vh-based height
+      // made phones (tall viewport) crop far more aggressively than desktop.
+      className="relative overflow-hidden home-carousel-frame"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"

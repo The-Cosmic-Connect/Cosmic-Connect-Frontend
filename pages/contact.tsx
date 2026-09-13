@@ -16,9 +16,7 @@ const SUBJECTS = [
 ]
 
 const HOURS = [
-  { day: 'Monday – Friday', time: '10:00 AM – 7:00 PM' },
-  { day: 'Saturday',        time: '10:00 AM – 5:00 PM' },
-  { day: 'Sunday',          time: 'Closed' },
+  { day: 'Monday – Sunday', time: '11:00 AM – 8:30 PM' },
 ]
 
 export default function ContactPage() {
@@ -126,7 +124,7 @@ export default function ContactPage() {
                   ))}
                 </div>
                 <p className="font-cormorant text-cosmic-cream/30 italic text-sm mt-4">
-                  Online sessions available outside these hours by arrangement.
+                  Sessions beyond these hours are purely at our discretion.
                 </p>
               </div>
 

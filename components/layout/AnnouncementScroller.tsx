@@ -34,12 +34,19 @@ export default function AnnouncementScroller() {
 
   if (!loaded || announcements.length === 0) return null
 
-  // Duplicate the track so the CSS marquee can loop seamlessly at -50%.
-  const track = [...announcements, ...announcements]
+  // Repeat the list enough times that each half of the track (pre-loop) is
+  // wide enough to outrun the viewport — with only 1-2 announcements, a
+  // plain double-up left a blank gap before the loop restarted. REPEAT scales
+  // up as the list gets shorter so the bar always reads as truly infinite.
+  const REPEAT = Math.max(4, Math.ceil(14 / announcements.length))
+  const half   = Array.from({ length: REPEAT }, () => announcements).flat()
+  const track  = [...half, ...half]
+  // Constant scroll speed regardless of REPEAT/content length.
+  const durationSec = Math.max(18, announcements.length * REPEAT * 3.5)
 
   return (
     <div className="announcement-scroller" role="marquee" aria-label="Announcements">
-      <div className="announcement-scroller-track">
+      <div className="announcement-scroller-track" style={{ animationDuration: `${durationSec}s` }}>
         {track.map((a, i) => (
           <span className="announcement-item" key={`${a.id}-${i}`}>
             {a.link ? (

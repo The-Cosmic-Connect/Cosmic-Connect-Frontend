@@ -213,6 +213,20 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; letter-spacing: -0.01em;
 .nav-link.active { color: rgb(var(--cosmic-gold)); }
 .nav-link.active::after { width: 100%; }
 
+/* ─── Homepage Carousel ─────────────────────────────────── */
+/* Fixed aspect-ratio, not vh-based — a vh height made bg-cover crop very
+   differently on a tall phone screen vs a wide desktop screen for the same
+   image. Aspect-ratio keeps the visible crop fraction identical everywhere;
+   only the ratio itself steps down for narrow screens. */
+.home-carousel-frame {
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  max-height: 640px;
+}
+@media (max-width: 767px) {
+  .home-carousel-frame { aspect-ratio: 4 / 3; }
+}
+
 /* ─── Announcement Scroller ─────────────────────────────── */
 .announcement-scroller {
   position: fixed;

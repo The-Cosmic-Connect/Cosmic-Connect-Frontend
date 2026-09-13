@@ -162,7 +162,7 @@ export default function Footer() {
                 { label: 'Terms & Conditions',    href: '/terms-of-use' },
                 { label: 'Privacy Policy',        href: '/privacy-policy' },
                 { label: 'Disclaimer',            href: '/disclaimer' },
-                { label: 'Shipping & Returns',    href: '/shipping-returns' },
+                { label: 'Shipping, Returns & Refunds', href: '/shipping-returns' },
               ].map((l) => (
                 <Link
                   key={l.href}
