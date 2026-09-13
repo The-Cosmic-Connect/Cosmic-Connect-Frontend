@@ -51,12 +51,22 @@ export default function Navbar() {
       <nav
         // top follows --announcement-height (set by AnnouncementScroller) so
         // the nav sits right below the scroller when it's showing, and flush
-        // with the viewport top when it isn't.
-        style={{ top: 'var(--announcement-height, 0px)' }}
+        // with the viewport top when it isn't. When unscrolled, background
+        // follows --navbar-idle-bg (set by HomeCarousel only while slides are
+        // showing) so nav content stays legible over carousel imagery; it
+        // defaults to fully transparent everywhere else.
+        style={{
+          top: 'var(--announcement-height, 0px)',
+          ...(scrolled ? {} : {
+            backgroundColor: 'var(--navbar-idle-bg, transparent)',
+            backdropFilter: 'var(--navbar-idle-blur, none)',
+            WebkitBackdropFilter: 'var(--navbar-idle-blur, none)',
+          }),
+        }}
         className={`fixed left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
             ? 'bg-cosmic-black/95 backdrop-blur-md border-b border-cosmic-gold/20 py-3'
-            : 'bg-transparent py-5'
+            : 'py-5'
         }`}
       >
         <div className="container-cosmic flex items-center justify-between">

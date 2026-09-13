@@ -49,6 +49,21 @@ export default function HomeCarousel() {
       .finally(() => setLoaded(true))
   }, [])
 
+  // Signal Navbar (not a parent/child of this component) that a carousel is
+  // showing, so it can go slightly translucent instead of fully transparent
+  // while unscrolled — same cross-component pattern as --announcement-height.
+  useEffect(() => {
+    const root = document.documentElement
+    if (loaded && slides.length > 0) {
+      root.style.setProperty('--navbar-idle-bg', 'rgba(10, 7, 8, 0.35)')
+      root.style.setProperty('--navbar-idle-blur', 'blur(6px)')
+    }
+    return () => {
+      root.style.removeProperty('--navbar-idle-bg')
+      root.style.removeProperty('--navbar-idle-blur')
+    }
+  }, [loaded, slides.length])
+
   const next = useCallback(() => setActive(a => (a + 1) % Math.max(slides.length, 1)), [slides.length])
   const prev = useCallback(() => setActive(a => (a - 1 + slides.length) % Math.max(slides.length, 1)), [slides.length])
 
