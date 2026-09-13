@@ -152,25 +152,31 @@ export default function Footer() {
         <div className="gold-divider-full mb-6" />
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-raleway text-cosmic-cream/40 text-xs text-center md:text-left">
-            © {year} The Cosmic Connect. All rights reserved.
-          </p>
-          <div className="flex gap-6">
-            {[
-              { label: 'Privacy Policy', href: '/privacy-policy' },
-              { label: 'Terms of Use',   href: '/terms-of-use' },
-              { label: 'Shipping & Returns',  href: '/shipping-returns' },
-            ].map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="font-raleway text-cosmic-cream/40 text-xs hover:text-cosmic-gold transition-colors duration-300"
-              >
-                {l.label}
-              </Link>
-            ))}
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="font-raleway text-cosmic-cream/40 text-xs text-center md:text-left">
+              © {year} Cosmic Connect India LLP, trading as The Cosmic Connect. All rights reserved.
+            </p>
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+              {[
+                { label: 'Terms & Conditions',    href: '/terms-of-use' },
+                { label: 'Privacy Policy',        href: '/privacy-policy' },
+                { label: 'Disclaimer',            href: '/disclaimer' },
+                { label: 'Shipping & Returns',    href: '/shipping-returns' },
+              ].map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="font-raleway text-cosmic-cream/40 text-xs hover:text-cosmic-gold transition-colors duration-300"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
           </div>
+          <p className="font-raleway text-cosmic-cream/30 text-[11px] text-center md:text-left">
+            Grievance Officer: Puneet Mehta — info@thecosmicconnect.com
+          </p>
         </div>
       </div>
     </footer>

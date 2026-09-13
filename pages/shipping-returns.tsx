@@ -46,7 +46,7 @@ If your tracking information has not updated for more than 5 business days, plea
 - In its original packaging with all accessories included
 - Accompanied by the original invoice
 
-To initiate a return, please email us at hello@thecosmicconnect.com with your order number and reason for return. We will provide return shipping instructions within 24 hours.
+To initiate a return, please email us at info@thecosmicconnect.com with your order number and reason for return. We will provide return shipping instructions within 24 hours.
 
 Return shipping costs are borne by the customer unless the return is due to our error (wrong item sent, item damaged in transit).`,
   },
@@ -64,7 +64,7 @@ Digital products and downloadable content.`,
   },
   {
     title: 'Damaged or Incorrect Items',
-    content: `If you receive a damaged or incorrect item, please contact us within 48 hours of delivery at hello@thecosmicconnect.com with:
+    content: `If you receive a damaged or incorrect item, please contact us within 48 hours of delivery at info@thecosmicconnect.com with:
 
 Your order number, a photograph of the damaged or incorrect item, and a photograph of the packaging.
 
@@ -96,7 +96,7 @@ Sessions must be rescheduled with a minimum of 24 hours notice. Late cancellatio
     title: 'Contact Us',
     content: `For any shipping or returns enquiries, please contact us:
 
-Email: hello@thecosmicconnect.com
+Email: info@thecosmicconnect.com
 WhatsApp: +91 95994 74758
 Hours: Monday–Saturday, 10 AM – 7 PM IST
 
