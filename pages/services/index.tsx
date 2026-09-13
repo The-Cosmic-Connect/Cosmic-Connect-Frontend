@@ -36,6 +36,13 @@ export default function ServicesPage() {
   }, [])
 
   function selectAgent(agent: Agent) {
+    // Usha Bhatt's services are grouped into categories with their own
+    // landing page (see pages/booking-usha-bhatt.tsx); other healers still
+    // use the inline agent → service → slot wizard below.
+    if (agent.name.toLowerCase().includes('usha')) {
+      router.push('/booking-usha-bhatt')
+      return
+    }
     setSelected(s => ({ ...s, agent }))
     setStep('service')
   }
