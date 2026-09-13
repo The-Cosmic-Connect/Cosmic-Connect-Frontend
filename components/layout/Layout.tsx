@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import Head from 'next/head'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import AnnouncementScroller from './AnnouncementScroller'
 import StarField from '../ui/StarField'
 
 interface LayoutProps {
@@ -87,7 +88,14 @@ export default function Layout({
 
       <StarField />
 
-      <div className="relative z-10 min-h-screen flex flex-col">
+      <AnnouncementScroller />
+
+      {/* paddingTop mirrors --announcement-height (set by AnnouncementScroller)
+          so page content clears the fixed nav + scroller stack. */}
+      <div
+        className="relative z-10 min-h-screen flex flex-col"
+        style={{ paddingTop: 'var(--announcement-height, 0px)' }}
+      >
         <Navbar />
         <main className="flex-grow">
           {children}

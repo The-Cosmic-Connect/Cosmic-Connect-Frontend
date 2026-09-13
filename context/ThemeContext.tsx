@@ -9,15 +9,17 @@ interface ThemeState {
 }
 
 const ThemeContext = createContext<ThemeState>({
-  theme: 'light',
+  theme: 'dark',
   toggleTheme: () => {},
   setTheme: () => {},
 })
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // 'light' is the default ("Sandstone"). The no-flash script in _document.tsx
-  // applies the saved theme before paint; here we read it again to sync state.
-  const [theme, setThemeState] = useState<Theme>('light')
+  // 'dark' (original cosmic theme) is now the default. The no-flash script in
+  // _document.tsx applies the saved theme before paint; here we read it again
+  // to sync state. Absence of data-theme on <html> means dark (the default);
+  // data-theme="light" is the opt-in "Sandstone" theme.
+  const [theme, setThemeState] = useState<Theme>('dark')
 
   useEffect(() => {
     try {
@@ -28,7 +30,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement
-    if (theme === 'dark') root.setAttribute('data-theme', 'dark')
+    if (theme === 'light') root.setAttribute('data-theme', 'light')
     else root.removeAttribute('data-theme')
     try { localStorage.setItem('cosmic-theme', theme) } catch {}
   }, [theme])

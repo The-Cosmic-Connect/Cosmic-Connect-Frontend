@@ -8,10 +8,35 @@
    Colors are stored as raw "R G B" channels so Tailwind's
    opacity utilities (text-cosmic-cream/40, etc.) keep working.
 
-   :root            → DEFAULT theme (light "Sandstone")
-   [data-theme=dark] → original cosmic dark theme
+   :root                → DEFAULT theme (original cosmic dark theme)
+   [data-theme='light'] → opt-in light theme ("Sandstone")
    ──────────────────────────────────────────────────────────── */
 :root {
+  --cosmic-black:       10 7 8;       /* #0A0708 */
+  --cosmic-deep-purple: 26 10 46;     /* #1A0A2E */
+  --cosmic-purple:      45 27 94;     /* #2D1B5E */
+  --cosmic-violet:      74 44 138;    /* #4A2C8A */
+  --cosmic-gold:        201 168 76;   /* #C9A84C */
+  --cosmic-light-gold:  232 201 122;  /* #E8C97A */
+  --cosmic-cream:       245 237 214;  /* #F5EDD6 */
+  --cosmic-off-white:   250 246 238;  /* #FAF6EE */
+  --cosmic-rose:        139 58 82;    /* #8B3A52 */
+  --cosmic-teal:        26 92 107;    /* #1A5C6B */
+  --cosmic-ink:         26 27 58;     /* #1A1B3A (dark text on gold) */
+
+  --cosmic-card-bg:     linear-gradient(135deg, rgba(45, 27, 94, 0.4), rgba(26, 10, 46, 0.6));
+  --cosmic-card-border: rgba(201, 168, 76, 0.2);
+  --cosmic-card-shadow: none;
+  --star-color:         #ffffff;
+
+  /* Set by AnnouncementScroller.tsx at runtime; 0px until it knows whether
+     there's anything to show, so nothing shifts on pages without JS. */
+  --announcement-height: 0px;
+}
+
+
+
+[data-theme='light'] {
   /* Surface palette — warm parchment with white cards and a faint lilac wash */
   --cosmic-black:       250 247 244;  /* #FAF7F4  warm off-white bg     */
   --cosmic-deep-purple: 255 255 255;  /* #FFFFFF  pure white cards      */
@@ -52,24 +77,7 @@
     linear-gradient(180deg, #FAF7F4 0%, #F6F2FA 50%, #FAF7F4 100%);
 }
 
-[data-theme='dark'] {
-  --cosmic-black:       10 7 8;       /* #0A0708 */
-  --cosmic-deep-purple: 26 10 46;     /* #1A0A2E */
-  --cosmic-purple:      45 27 94;     /* #2D1B5E */
-  --cosmic-violet:      74 44 138;    /* #4A2C8A */
-  --cosmic-gold:        201 168 76;   /* #C9A84C */
-  --cosmic-light-gold:  232 201 122;  /* #E8C97A */
-  --cosmic-cream:       245 237 214;  /* #F5EDD6 */
-  --cosmic-off-white:   250 246 238;  /* #FAF6EE */
-  --cosmic-rose:        139 58 82;    /* #8B3A52 */
-  --cosmic-teal:        26 92 107;    /* #1A5C6B */
-  --cosmic-ink:         26 27 58;     /* #1A1B3A (dark text on gold) */
 
-  --cosmic-card-bg:     linear-gradient(135deg, rgba(45, 27, 94, 0.4), rgba(26, 10, 46, 0.6));
-  --cosmic-card-border: rgba(201, 168, 76, 0.2);
-  --cosmic-card-shadow: none;
-  --star-color:         #ffffff;
-}
 
 * {
   box-sizing: border-box;
@@ -205,6 +213,43 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; letter-spacing: -0.01em;
 .nav-link.active { color: rgb(var(--cosmic-gold)); }
 .nav-link.active::after { width: 100%; }
 
+/* ─── Announcement Scroller ─────────────────────────────── */
+.announcement-scroller {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 60;
+  height: 34px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: rgb(var(--cosmic-deep-purple));
+  border-bottom: 1px solid rgb(var(--cosmic-gold) / 0.15);
+}
+.announcement-scroller-track {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+.announcement-scroller:hover .announcement-scroller-track,
+.announcement-scroller:focus-within .announcement-scroller-track {
+  animation-play-state: paused;
+}
+.announcement-item {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 1.5rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: rgb(var(--cosmic-cream) / 0.85);
+}
+.announcement-item a { color: inherit; text-decoration: underline; text-decoration-color: rgb(var(--cosmic-gold) / 0.4); }
+.announcement-item a:hover { color: rgb(var(--cosmic-gold)); }
+.announcement-sep { margin-left: 1.5rem; color: rgb(var(--cosmic-gold) / 0.5); font-size: 0.6rem; }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
 /* ─── Section Spacing ───────────────────────────────────── */
 .section { @apply relative py-20 px-4; }
 .container-cosmic { @apply max-w-6xl mx-auto px-4; }
@@ -292,21 +337,21 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; letter-spacing: -0.01em;
    and nav — readable, on-brand, and consistent with the light
    theme. Dark mode unaffected (keeps rich gold).
    ──────────────────────────────────────────────────────────── */
-html:not([data-theme='dark']) .text-cosmic-gold {
+html[data-theme='light'] .text-cosmic-gold {
   color: rgb(var(--cosmic-plum));
 }
-html:not([data-theme='dark']) .text-cosmic-gold\/60,
-html:not([data-theme='dark']) .text-cosmic-gold\/70,
-html:not([data-theme='dark']) .text-cosmic-gold\/80 {
+html[data-theme='light'] .text-cosmic-gold\/60,
+html[data-theme='light'] .text-cosmic-gold\/70,
+html[data-theme='light'] .text-cosmic-gold\/80 {
   color: rgb(var(--cosmic-plum) / 0.75);
 }
-html:not([data-theme='dark']) .text-cosmic-gold\/30,
-html:not([data-theme='dark']) .text-cosmic-gold\/40,
-html:not([data-theme='dark']) .text-cosmic-gold\/50 {
+html[data-theme='light'] .text-cosmic-gold\/30,
+html[data-theme='light'] .text-cosmic-gold\/40,
+html[data-theme='light'] .text-cosmic-gold\/50 {
   color: rgb(var(--cosmic-plum) / 0.45);
 }
 /* fill-cosmic-gold (star icons, etc.) */
-html:not([data-theme='dark']) .fill-cosmic-gold {
+html[data-theme='light'] .fill-cosmic-gold {
   fill: rgb(var(--cosmic-plum));
 }
 
@@ -315,30 +360,30 @@ html:not([data-theme='dark']) .fill-cosmic-gold {
    dark theme but nearly vanish on cream. Strengthen them ONLY
    when not in dark mode, so the dark theme is left untouched.
    ──────────────────────────────────────────────────────────── */
-html:not([data-theme='dark']) .border-cosmic-gold\/5,
-html:not([data-theme='dark']) .border-cosmic-gold\/10,
-html:not([data-theme='dark']) .border-cosmic-gold\/15,
-html:not([data-theme='dark']) .border-cosmic-gold\/20 {
+html[data-theme='light'] .border-cosmic-gold\/5,
+html[data-theme='light'] .border-cosmic-gold\/10,
+html[data-theme='light'] .border-cosmic-gold\/15,
+html[data-theme='light'] .border-cosmic-gold\/20 {
   border-color: rgb(var(--cosmic-gold) / 0.45);
 }
 
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/10,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/20,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/30,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/40,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/50 {
+html[data-theme='light'] .bg-cosmic-deepPurple\/10,
+html[data-theme='light'] .bg-cosmic-deepPurple\/20,
+html[data-theme='light'] .bg-cosmic-deepPurple\/30,
+html[data-theme='light'] .bg-cosmic-deepPurple\/40,
+html[data-theme='light'] .bg-cosmic-deepPurple\/50 {
   background-color: rgb(var(--cosmic-deep-purple));
 }
 
-html:not([data-theme='dark']) .bg-cosmic-purple\/10,
-html:not([data-theme='dark']) .bg-cosmic-purple\/20,
-html:not([data-theme='dark']) .bg-cosmic-purple\/30 {
+html[data-theme='light'] .bg-cosmic-purple\/10,
+html[data-theme='light'] .bg-cosmic-purple\/20,
+html[data-theme='light'] .bg-cosmic-purple\/30 {
   background-color: rgb(var(--cosmic-purple));
 }
 
 /* Thin gold divider lines */
-html:not([data-theme='dark']) .bg-cosmic-gold\/10,
-html:not([data-theme='dark']) .bg-cosmic-gold\/20 {
+html[data-theme='light'] .bg-cosmic-gold\/10,
+html[data-theme='light'] .bg-cosmic-gold\/20 {
   background-color: rgb(var(--cosmic-gold) / 0.4);
 }
 
@@ -350,56 +395,56 @@ html:not([data-theme='dark']) .bg-cosmic-gold\/20 {
    ────────────────────────────────────────────────────────────────── */
 
 /* Cards: pure white surfaces with real shadows, replacing the cream wash */
-html:not([data-theme='dark']) .bg-cosmic-deepPurple,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/10,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/20,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/30,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/40,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/50,
-html:not([data-theme='dark']) .bg-cosmic-deepPurple\/60 {
+html[data-theme='light'] .bg-cosmic-deepPurple,
+html[data-theme='light'] .bg-cosmic-deepPurple\/10,
+html[data-theme='light'] .bg-cosmic-deepPurple\/20,
+html[data-theme='light'] .bg-cosmic-deepPurple\/30,
+html[data-theme='light'] .bg-cosmic-deepPurple\/40,
+html[data-theme='light'] .bg-cosmic-deepPurple\/50,
+html[data-theme='light'] .bg-cosmic-deepPurple\/60 {
   background-color: #FFFFFF;
   box-shadow: var(--surface-shadow);
 }
 
 /* Slightly less faint gold borders so card edges read */
-html:not([data-theme='dark']) .border-cosmic-gold\/5,
-html:not([data-theme='dark']) .border-cosmic-gold\/10,
-html:not([data-theme='dark']) .border-cosmic-gold\/15 {
+html[data-theme='light'] .border-cosmic-gold\/5,
+html[data-theme='light'] .border-cosmic-gold\/10,
+html[data-theme='light'] .border-cosmic-gold\/15 {
   border-color: rgb(var(--cosmic-gold) / 0.22);
 }
 
 /* Hero gradient: section[style] inline background overridden to warm radial */
-html:not([data-theme='dark']) section[style*="linear-gradient(180deg, rgb(var(--cosmic-deep-purple)) 0%, rgb(var(--cosmic-black)) 100%)"] {
+html[data-theme='light'] section[style*="linear-gradient(180deg, rgb(var(--cosmic-deep-purple)) 0%, rgb(var(--cosmic-black)) 100%)"] {
   background: var(--hero-gradient) !important;
 }
-html:not([data-theme='dark']) section[style*="linear-gradient(180deg, rgb(var(--cosmic-black)) 0%, rgb(var(--cosmic-deep-purple)) 100%)"] {
+html[data-theme='light'] section[style*="linear-gradient(180deg, rgb(var(--cosmic-black)) 0%, rgb(var(--cosmic-deep-purple)) 100%)"] {
   background: var(--section-gradient) !important;
 }
 
 /* Sticky toolbar: a slightly warmer translucent strip with a gold underline */
-html:not([data-theme='dark']) .bg-cosmic-black\/95 {
+html[data-theme='light'] .bg-cosmic-black\/95 {
   background-color: rgb(var(--cosmic-black) / 0.96);
 }
 
 /* Outline button: heavier border on parchment so it doesn't read as a label */
-html:not([data-theme='dark']) .btn-outline {
+html[data-theme='light'] .btn-outline {
   border-width: 1.5px;
 }
-html:not([data-theme='dark']) .btn-outline:hover {
+html[data-theme='light'] .btn-outline:hover {
   background: rgb(var(--cosmic-gold) / 0.08);
   box-shadow: 0 4px 14px rgba(163, 119, 33, 0.18);
 }
 
 /* Cosmic card uses the richer multi-layer shadow */
-html:not([data-theme='dark']) .cosmic-card {
+html[data-theme='light'] .cosmic-card {
   box-shadow: var(--cosmic-card-shadow);
 }
-html:not([data-theme='dark']) .cosmic-card:hover {
+html[data-theme='light'] .cosmic-card:hover {
   box-shadow: var(--surface-shadow-lg);
 }
 
 /* Decorative star field: dial down on parchment so it doesn't look dusty */
-html:not([data-theme='dark']) .star {
+html[data-theme='light'] .star {
   opacity: 0.45;
 }
 
@@ -412,14 +457,14 @@ html:not([data-theme='dark']) .star {
 
 /* Primary button: deep aubergine plum fill with white text. The faint
    champagne inset on hover keeps a hint of the brand's gold thread. */
-html:not([data-theme='dark']) .btn-primary {
+html[data-theme='light'] .btn-primary {
   background: rgb(var(--cosmic-plum));
   background-size: auto;
   color: #FFFFFF;
   border: 1px solid rgb(var(--cosmic-plum));
   box-shadow: 0 1px 2px rgba(40, 30, 70, 0.10), 0 4px 12px rgba(40, 30, 70, 0.08);
 }
-html:not([data-theme='dark']) .btn-primary:hover {
+html[data-theme='light'] .btn-primary:hover {
   background: rgb(var(--cosmic-plum-soft));
   background-position: 0 0;
   box-shadow:
@@ -429,31 +474,31 @@ html:not([data-theme='dark']) .btn-primary:hover {
 }
 
 /* Outline button: plum border/text in light mode (gold version preserved in dark) */
-html:not([data-theme='dark']) .btn-outline {
+html[data-theme='light'] .btn-outline {
   color: rgb(var(--cosmic-plum));
   border-color: rgb(var(--cosmic-plum));
 }
-html:not([data-theme='dark']) .btn-outline:hover {
+html[data-theme='light'] .btn-outline:hover {
   background: rgb(var(--cosmic-plum));
   color: #FFFFFF;
   box-shadow: 0 4px 14px rgba(40, 30, 70, 0.15);
 }
 
 /* Nav links: plum hover + underline (replaces gold) */
-html:not([data-theme='dark']) .nav-link::after {
+html[data-theme='light'] .nav-link::after {
   background: rgb(var(--cosmic-plum));
 }
-html:not([data-theme='dark']) .nav-link:hover { color: rgb(var(--cosmic-plum)); }
-html:not([data-theme='dark']) .nav-link.active { color: rgb(var(--cosmic-plum)); }
+html[data-theme='light'] .nav-link:hover { color: rgb(var(--cosmic-plum)); }
+html[data-theme='light'] .nav-link.active { color: rgb(var(--cosmic-plum)); }
 
 /* Card hover: plum tint instead of gold glow */
-html:not([data-theme='dark']) .cosmic-card:hover {
+html[data-theme='light'] .cosmic-card:hover {
   border-color: rgb(var(--cosmic-plum-soft) / 0.45);
   box-shadow: 0 8px 32px rgba(59, 43, 95, 0.10);
 }
 
 /* Accent gradient for heading words like "shop today?" — plum in light mode */
-html:not([data-theme='dark']) .text-gradient-gold {
+html[data-theme='light'] .text-gradient-gold {
   background: linear-gradient(135deg, rgb(var(--cosmic-plum)), rgb(var(--cosmic-plum-soft)));
   background-clip: text;
   -webkit-background-clip: text;

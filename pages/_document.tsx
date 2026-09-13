@@ -6,10 +6,11 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* Apply saved theme before paint to avoid a flash. Default is light. */}
+        {/* Apply saved theme before paint to avoid a flash. Default is dark
+            (no data-theme attribute = dark); 'light' is the opt-in theme. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('cosmic-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('cosmic-theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();`,
           }}
         />
 

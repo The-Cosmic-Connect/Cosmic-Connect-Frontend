@@ -1,4 +1,5 @@
 import Layout from '@/components/layout/Layout'
+import HomeCarousel from '@/components/sections/HomeCarousel'
 import HeroSection from '@/components/sections/HeroSection'
 import ServicesSection from '@/components/sections/ServicesSection'
 import ShopTeaserSection from '@/components/sections/ShopTeaserSection'
@@ -11,6 +12,7 @@ export default function Home() {
       description="Connect with Dr. Usha Bhatt — renowned psychic healer, tarot reader, and spiritual guide with 20+ years of experience. Book Akashic readings, healing sessions, past life therapy, and more."
       canonical="/"
     >
+      <HomeCarousel />
       <HeroSection />
       <ServicesSection />
       <ShopTeaserSection />
