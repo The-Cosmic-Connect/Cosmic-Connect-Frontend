@@ -346,6 +346,7 @@ export default function AboutPage() {
                   <div className="cosmic-card p-4 bg-cosmic-deepPurple/20">
                     <p className="font-cinzel text-cosmic-gold text-xs tracking-widest uppercase mb-2">Puneet Mehta</p>
                     <p className="font-cormorant text-cosmic-cream/60 text-sm">Business strategy, operational discipline, customer-experience management and organisational development.</p>
+                  
                   </div>
                 </div>
               </div>
