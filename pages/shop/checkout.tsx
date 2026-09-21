@@ -163,11 +163,14 @@ export default function CheckoutPage() {
       // Step 3: Initialise using the CDN global Cashfree() function
       // NOTE: When loaded via <script> tag, the SDK exposes a global Cashfree()
       // constructor — NOT a load() function. load() is only for the npm package.
-      const cashfreeEnv = (process.env.NEXT_PUBLIC_CASHFREE_ENV || 'production') as 'production' | 'sandbox'
-      // TEMP DEBUG — remove once sandbox checkout is confirmed working.
-      console.log('[cashfree debug] NEXT_PUBLIC_CASHFREE_ENV raw:', JSON.stringify(process.env.NEXT_PUBLIC_CASHFREE_ENV))
-      console.log('[cashfree debug] mode passed to SDK:', JSON.stringify(cashfreeEnv))
-      console.log('[cashfree debug] paymentSessionId:', paymentSessionId)
+      // HARDCODED SANDBOX — process.env.NEXT_PUBLIC_CASHFREE_ENV was never
+      // reaching the Vercel build (confirmed absent from build logs despite
+      // being set correctly in Project Settings — unresolved Vercel-side
+      // issue). Bypassing it entirely rather than depending on a pipeline
+      // that silently defaulted to 'production' on failure — the wrong
+      // fail-safe direction for a payment gateway. Flip this literal to
+      // 'production' manually + redeploy when going live for real.
+      const cashfreeEnv: 'production' | 'sandbox' = 'sandbox'
       const cashfree = (window as any).Cashfree({ mode: cashfreeEnv })
 
       await cashfree.checkout({
