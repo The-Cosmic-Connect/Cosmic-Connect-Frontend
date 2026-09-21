@@ -14,7 +14,13 @@ export function middleware(req: NextRequest) {
 
   const isBypassed =
     pathname.startsWith('/site-password') ||
-    pathname.startsWith('/api/site-password') ||
+    // All API routes bypass the gate — they're POST/JSON endpoints (payment
+    // initiation, coupon checks, etc), not pages. A missing site_access
+    // cookie must never redirect an API call to the (page-only, GET)
+    // /site-password route — that redirect breaks the API call outright
+    // (Vercel returns a bare 400 for a POST to a page route, before the
+    // route's own handler ever runs).
+    pathname.startsWith('/api/') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/favicon')
 
