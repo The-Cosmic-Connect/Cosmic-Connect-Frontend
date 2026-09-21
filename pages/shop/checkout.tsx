@@ -164,6 +164,10 @@ export default function CheckoutPage() {
       // NOTE: When loaded via <script> tag, the SDK exposes a global Cashfree()
       // constructor — NOT a load() function. load() is only for the npm package.
       const cashfreeEnv = (process.env.NEXT_PUBLIC_CASHFREE_ENV || 'production') as 'production' | 'sandbox'
+      // TEMP DEBUG — remove once sandbox checkout is confirmed working.
+      console.log('[cashfree debug] NEXT_PUBLIC_CASHFREE_ENV raw:', JSON.stringify(process.env.NEXT_PUBLIC_CASHFREE_ENV))
+      console.log('[cashfree debug] mode passed to SDK:', JSON.stringify(cashfreeEnv))
+      console.log('[cashfree debug] paymentSessionId:', paymentSessionId)
       const cashfree = (window as any).Cashfree({ mode: cashfreeEnv })
 
       await cashfree.checkout({
