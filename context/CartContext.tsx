@@ -10,18 +10,29 @@ export interface CartItem {
   collections: string[]
 }
 
+type CouponScope = 'all' | 'products' | 'collections'
+
 interface CartState {
   items: CartItem[]
   coupon: string | null
   discountPct: number
   discountINRFixed: number  // fixed INR discount from coupon (e.g. ₹50 off)
+  // What the active coupon is restricted to — 'all' (default/legacy coupons)
+  // discounts every cart item; 'products'/'collections' restrict the
+  // discount to only the matching cart items (see eligibleItems below).
+  couponScope: CouponScope
+  couponProductIds: string[]
+  couponCollections: string[]
 }
 
 type CartAction =
   | { type: 'ADD'; item: Omit<CartItem, 'quantity'>; qty?: number }
   | { type: 'REMOVE'; id: string }
   | { type: 'UPDATE_QTY'; id: string; qty: number }
-  | { type: 'APPLY_COUPON'; code: string; discountPct: number; discountINRFixed?: number }
+  | {
+      type: 'APPLY_COUPON'; code: string; discountPct: number; discountINRFixed?: number
+      scope?: CouponScope; productIds?: string[]; collections?: string[]
+    }
   | { type: 'REMOVE_COUPON' }
   | { type: 'CLEAR' }
   | { type: 'HYDRATE'; state: CartState }
@@ -59,13 +70,27 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         coupon: action.code,
         discountPct: action.discountPct,
         discountINRFixed: action.discountINRFixed || 0,
+        couponScope: action.scope || 'all',
+        couponProductIds: action.productIds || [],
+        couponCollections: action.collections || [],
       }
     case 'REMOVE_COUPON':
-      return { ...state, coupon: null, discountPct: 0, discountINRFixed: 0 }
+      return {
+        ...state, coupon: null, discountPct: 0, discountINRFixed: 0,
+        couponScope: 'all', couponProductIds: [], couponCollections: [],
+      }
     case 'CLEAR':
-      return { items: [], coupon: null, discountPct: 0, discountINRFixed: 0 }
+      return {
+        items: [], coupon: null, discountPct: 0, discountINRFixed: 0,
+        couponScope: 'all', couponProductIds: [], couponCollections: [],
+      }
     case 'HYDRATE':
-      return action.state
+      // Older persisted carts won't have the coupon-scope fields — default
+      // them in so downstream logic never sees `undefined`.
+      return {
+        couponScope: 'all', couponProductIds: [], couponCollections: [],
+        ...action.state,
+      }
     default:
       return state
   }
@@ -73,6 +98,16 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
 const initialState: CartState = {
   items: [], coupon: null, discountPct: 0, discountINRFixed: 0,
+  couponScope: 'all', couponProductIds: [], couponCollections: [],
+}
+
+/** Whether a cart line is discountable under the active coupon's scope. */
+function isItemCouponEligible(item: CartItem, state: CartState): boolean {
+  if (state.couponScope === 'products') return state.couponProductIds.includes(item.id)
+  if (state.couponScope === 'collections') {
+    return (item.collections || []).some((c) => state.couponCollections.includes(c))
+  }
+  return true // 'all' — every item qualifies (legacy/unscoped coupon behaviour)
 }
 
 interface CartContextValue extends CartState {
@@ -94,6 +129,10 @@ interface CartContextValue extends CartState {
   discountUSD: number
   totalINR: number
   totalUSD: number
+  // Count of cart lines the active coupon actually discounts — equal to
+  // totalItems' line count when couponScope is 'all' (or no coupon is
+  // applied), smaller when the coupon is restricted.
+  couponEligibleLineCount: number
 }
 
 const CartContext = createContext<CartContextValue>({
@@ -110,6 +149,7 @@ const CartContext = createContext<CartContextValue>({
   discountUSD: 0,
   totalINR: 0,
   totalUSD: 0,
+  couponEligibleLineCount: 0,
 })
 
 const STORAGE_KEY = 'cosmic_cart_v2'
@@ -169,13 +209,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const subtotalINR  = state.items.reduce((s, i) => s + i.priceINR * i.quantity, 0)
   const subtotalUSD  = state.items.reduce((s, i) => s + i.priceUSD * i.quantity, 0)
 
-  // Coupon discount — either fixed INR amount or percentage
+  // A product/product-type-restricted coupon only discounts the matching
+  // cart lines — the discount base is those lines' subtotal, not the whole
+  // cart's. An unscoped ('all') coupon behaves exactly as before.
+  const eligibleItems           = state.coupon
+    ? state.items.filter((i) => isItemCouponEligible(i, state))
+    : state.items
+  const couponEligibleLineCount = eligibleItems.length
+  const eligibleSubtotalINR     = eligibleItems.reduce((s, i) => s + i.priceINR * i.quantity, 0)
+  const eligibleSubtotalUSD     = eligibleItems.reduce((s, i) => s + i.priceUSD * i.quantity, 0)
+
+  // Coupon discount — either fixed INR amount or percentage, applied only
+  // against the eligible subset of the cart (== the whole cart for an
+  // unrestricted coupon), and never more than that subset is worth.
   const discountINR  = state.discountINRFixed > 0
-    ? state.discountINRFixed
-    : Math.round((subtotalINR * state.discountPct) / 100)
+    ? Math.min(state.discountINRFixed, eligibleSubtotalINR)
+    : Math.round((eligibleSubtotalINR * state.discountPct) / 100)
   const discountUSD  = state.discountINRFixed > 0
-    ? parseFloat((state.discountINRFixed / 83).toFixed(2))
-    : parseFloat(((subtotalUSD * state.discountPct) / 100).toFixed(2))
+    ? parseFloat(Math.min(state.discountINRFixed / 83, eligibleSubtotalUSD).toFixed(2))
+    : parseFloat(((eligibleSubtotalUSD * state.discountPct) / 100).toFixed(2))
 
   const totalINR = Math.max(0, subtotalINR - discountINR)
   const totalUSD = Math.max(0, parseFloat((subtotalUSD - discountUSD).toFixed(2)))
@@ -195,6 +247,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       discountUSD,
       totalINR,
       totalUSD,
+      couponEligibleLineCount,
     }}>
       {children}
     </CartContext.Provider>

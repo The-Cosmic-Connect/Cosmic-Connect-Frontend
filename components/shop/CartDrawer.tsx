@@ -14,7 +14,7 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
     items, dispatch, removeFromCart, updateQty,
     totalItems, subtotalINR, subtotalUSD,
     discountINR, discountUSD, totalINR, totalUSD,
-    coupon, discountPct,
+    coupon, discountPct, couponScope, couponEligibleLineCount,
   } = useCart()
   const { symbol, isIndia } = useGeo()
   const [couponInput,  setCouponInput]  = useState('')
@@ -32,16 +32,37 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
       const r = await fetch('/api/validate-coupon', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: couponInput }),
+        // Send what's in the cart (id + product type) so the backend can
+        // enforce/resolve a coupon that's restricted to specific products
+        // or product types, and tell us which lines actually qualify.
+        body: JSON.stringify({
+          code: couponInput,
+          items: items.map(i => ({ id: i.id, collections: i.collections })),
+        }),
       })
       const data = await r.json()
       if (r.ok && data.discountPct) {
-        dispatch({ type: 'APPLY_COUPON', code: data.code, discountPct: data.discountPct })
+        dispatch({
+          type: 'APPLY_COUPON',
+          code: data.code,
+          discountPct: data.discountPct,
+          scope: data.applicableScope,
+          productIds: data.applicableProductIds,
+          collections: data.applicableCollections,
+        })
         setCouponStatus('ok')
-        setCouponMsg(`${data.discountPct}% discount applied!`)
+        const restricted = data.applicableScope && data.applicableScope !== 'all'
+        const eligibleCount = Array.isArray(data.eligibleItemIds) ? data.eligibleItemIds.length : null
+        setCouponMsg(
+          `${data.discountPct}% discount applied!` +
+          (restricted && eligibleCount !== null
+            ? ` Applies to ${eligibleCount} of ${items.length} item(s) in your cart.`
+            : '')
+        )
       } else {
         setCouponStatus('error')
-        setCouponMsg(data.error || 'Invalid coupon code')
+        // FastAPI's HTTPException serializes the message under `detail`.
+        setCouponMsg(data.detail || data.error || 'Invalid coupon code')
       }
     } catch {
       setCouponStatus('error')
@@ -151,16 +172,23 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Tag size={13} className="text-cosmic-gold" />
-                  <span className="font-raleway text-xs text-cosmic-gold tracking-widest uppercase font-semibold">
-                    {coupon} — {discountPct}% off
-                  </span>
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Tag size={13} className="text-cosmic-gold" />
+                    <span className="font-raleway text-xs text-cosmic-gold tracking-widest uppercase font-semibold">
+                      {coupon} — {discountPct}% off
+                    </span>
+                  </div>
+                  <button onClick={() => dispatch({ type: 'REMOVE_COUPON' })} className="text-cosmic-cream/30 hover:text-red-400 transition-colors">
+                    <X size={13} />
+                  </button>
                 </div>
-                <button onClick={() => dispatch({ type: 'REMOVE_COUPON' })} className="text-cosmic-cream/30 hover:text-red-400 transition-colors">
-                  <X size={13} />
-                </button>
+                {couponScope !== 'all' && (
+                  <p className="font-raleway text-cosmic-cream/40 text-[11px] mt-1">
+                    Applies to {couponEligibleLineCount} of {items.length} item(s) in your cart
+                  </p>
+                )}
               </div>
             )}
 

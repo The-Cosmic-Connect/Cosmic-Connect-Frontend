@@ -50,3 +50,6 @@ yarn-debug.log*
 yarn-error.log*
 .vercel
 .env*.local
+
+# Claude-generated context/scratch files — not part of the app
+Claude outputs/
