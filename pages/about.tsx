@@ -321,8 +321,13 @@ export default function AboutPage() {
               <div className="max-w-4xl mx-auto cosmic-card p-8 md:p-10">
                 <div className="flex flex-col md:flex-row gap-8 items-start">
                   <div className="shrink-0 mx-auto md:mx-0">
-                    <div className="w-32 h-32 rounded-full border-2 border-cosmic-gold/30 bg-cosmic-deepPurple/40 flex items-center justify-center">
-                      <span className="font-cinzel text-cosmic-gold text-4xl">PM</span>
+                    <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-cosmic-gold/30">
+                      <Image
+                        src="/images/puneet-mehta.jpg"
+                        alt="Puneet Mehta — Co-Founder & Managing Director"
+                        fill
+                        className="object-cover"
+                      />
                     </div>
                   </div>
                   <div className="flex-1">
