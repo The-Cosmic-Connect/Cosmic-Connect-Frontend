@@ -1,0 +1,119 @@
+import { useState } from 'react'
+import Link from 'next/link'
+import { ArrowLeft, Sparkles } from 'lucide-react'
+import Layout from '@/components/layout/Layout'
+import CalendlyPopup from '@/components/ui/CalendlyPopup'
+import { getCategoryBySlug } from '@/lib/serviceCategories'
+
+export interface CmsPage {
+  id: string
+  slug: string
+  title: string
+  seoTitle: string
+  seoDesc: string
+  tagline: string
+  heroImage: string
+  icon: string
+  accentColor: string
+  bodyHtml: string
+  boundCategorySlug: string | null
+  isPublished: boolean
+}
+
+// Renders an admin-authored CMS page (see admin's CMS tab) — the target of
+// a category card's "Know More" button on /booking-usha-bhatt. Visually
+// modelled on ServicePageTemplate, but content-driven from the CMS row
+// instead of the hardcoded frontend/lib/servicesData.ts.
+export default function CmsPageTemplate({ page }: { page: CmsPage }) {
+  const [calendlyOpen, setCalendlyOpen] = useState(false)
+  const category = page.boundCategorySlug ? getCategoryBySlug(page.boundCategorySlug) : undefined
+  const accent = page.accentColor || '#C9A84C'
+
+  return (
+    <>
+      <Layout
+        title={page.seoTitle || `${page.title} | The Cosmic Connect`}
+        description={page.seoDesc || page.tagline || page.title}
+        canonical={`/learn/${page.slug}`}
+      >
+        {/* ── HERO ──────────────────────────────────────────────────────── */}
+        <section
+          className="relative pt-36 pb-16 px-4 overflow-hidden"
+          style={{ background: 'linear-gradient(180deg, rgb(var(--cosmic-deep-purple)) 0%, rgb(var(--cosmic-black)) 100%)' }}
+        >
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: `radial-gradient(ellipse 60% 50% at 50% 40%, ${accent}18, transparent 70%)` }}
+          />
+          <div className="container-cosmic relative z-10 text-center max-w-2xl mx-auto">
+            <Link
+              href="/booking-usha-bhatt"
+              className="inline-flex items-center gap-1 font-raleway text-cosmic-cream/40 hover:text-cosmic-gold text-xs tracking-widest uppercase mb-6 transition-colors"
+            >
+              <ArrowLeft size={14} /> All Categories
+            </Link>
+
+            {page.icon && <p className="text-5xl mb-4">{page.icon}</p>}
+
+            <h1 className="font-cinzel font-bold text-cosmic-cream mb-4" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>
+              {page.title}
+            </h1>
+
+            {page.tagline && (
+              <p className="font-cormorant italic text-cosmic-cream/60 text-xl">{page.tagline}</p>
+            )}
+          </div>
+        </section>
+
+        {/* ── HERO IMAGE (optional) ────────────────────────────────────── */}
+        {page.heroImage && (
+          <section className="px-4 -mt-6 relative z-10">
+            <div className="container-cosmic max-w-4xl">
+              <img
+                src={page.heroImage}
+                alt={page.title}
+                className="w-full aspect-video object-cover rounded-sm border border-cosmic-gold/20"
+              />
+            </div>
+          </section>
+        )}
+
+        {/* ── BODY ──────────────────────────────────────────────────────── */}
+        <section className="section bg-cosmic-section">
+          <div className="container-cosmic max-w-3xl">
+            <div
+              className="cms-body font-cormorant text-cosmic-cream/75 text-lg leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
+            />
+          </div>
+        </section>
+
+        {/* ── CTA ───────────────────────────────────────────────────────── */}
+        <section
+          className="py-16 px-4 relative overflow-hidden"
+          style={{ background: `linear-gradient(135deg, ${accent}33, rgb(var(--cosmic-deep-purple)), ${accent}22)` }}
+        >
+          <div className="container-cosmic text-center relative z-10">
+            <p className="ornament text-xs tracking-[0.5em] mb-4">✦ ✦ ✦</p>
+            <h2 className="font-cinzel text-2xl md:text-3xl text-cosmic-cream font-bold mb-3">
+              Ready to Begin Your <span className="text-gradient-gold">Journey?</span>
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+              <button onClick={() => setCalendlyOpen(true)} className="btn-primary">
+                <Sparkles size={15} />
+                Book a Session
+              </button>
+              {category && (
+                <Link href={`/${category.slug}`} className="btn-outline">
+                  View {category.title} Sessions
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+      </Layout>
+
+      <CalendlyPopup isOpen={calendlyOpen} onClose={() => setCalendlyOpen(false)} />
+    </>
+  )
+}

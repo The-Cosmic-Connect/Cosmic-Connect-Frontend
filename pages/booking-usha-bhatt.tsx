@@ -11,10 +11,16 @@ const ICONS: Record<string, LucideIcon> = {
 }
 
 interface Agent { id: string; name: string; bio: string; photo: string; isActive: boolean }
+interface CmsPageSummary { slug: string; boundCategorySlug: string | null }
 
 export default function BookingUshaBhattPage() {
   const [agent,   setAgent]   = useState<Agent | null>(null)
   const [loading, setLoading] = useState(true)
+  // category slug -> bound + published CMS page slug. Populates each card's
+  // "Know More" button; a category with no entry here shows no button (see
+  // admin's CMS tab — a page must be both bound to the category and
+  // published for it to appear).
+  const [knowMoreSlugs, setKnowMoreSlugs] = useState<Record<string, string>>({})
 
   useEffect(() => {
     fetch(`${API}/agents?active_only=true`)
@@ -25,6 +31,17 @@ export default function BookingUshaBhattPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
+
+    fetch(`${API}/cms-pages?published_only=true`)
+      .then(r => r.json())
+      .then(d => {
+        const map: Record<string, string> = {}
+        for (const p of (d.pages || []) as CmsPageSummary[]) {
+          if (p.boundCategorySlug) map[p.boundCategorySlug] = p.slug
+        }
+        setKnowMoreSlugs(map)
+      })
+      .catch(() => {})
   }, [])
 
   return (
@@ -65,12 +82,13 @@ export default function BookingUshaBhattPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {SERVICE_CATEGORIES.map(cat => {
               const Icon = ICONS[cat.icon] || Sparkles
+              const knowMoreSlug = knowMoreSlugs[cat.slug]
               return (
-                <Link key={cat.slug} href={`/${cat.slug}`}
+                <div key={cat.slug}
                   className="group text-left p-6 border border-cosmic-gold/20 bg-cosmic-deepPurple/30
                     hover:border-cosmic-gold/50 hover:bg-cosmic-deepPurple/60 hover:-translate-y-1
                     transition-all duration-300 rounded-sm">
-                  <div className="flex items-start gap-4">
+                  <Link href={`/${cat.slug}`} className="flex items-start gap-4">
                     <div className="w-11 h-11 shrink-0 rounded-full border border-cosmic-gold/30 flex items-center justify-center text-cosmic-gold">
                       <Icon size={18} />
                     </div>
@@ -83,8 +101,18 @@ export default function BookingUshaBhattPage() {
                         {cat.tagline}
                       </p>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+
+                  {knowMoreSlug && (
+                    <Link
+                      href={`/learn/${knowMoreSlug}`}
+                      className="inline-block mt-3 ml-[60px] font-raleway text-xs tracking-widest uppercase
+                        text-cosmic-gold/70 hover:text-cosmic-gold underline underline-offset-4 transition-colors"
+                    >
+                      Know More →
+                    </Link>
+                  )}
+                </div>
               )
             })}
           </div>
