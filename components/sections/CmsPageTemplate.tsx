@@ -4,6 +4,7 @@ import { ArrowLeft, Sparkles } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import CalendlyPopup from '@/components/ui/CalendlyPopup'
 import EnrollModal from '@/components/courses/EnrollModal'
+import BlockRenderer, { type CmsBlock } from '@/components/cms/BlockRenderer'
 import { getCategoryBySlug } from '@/lib/serviceCategories'
 import { getCourseBySlug } from '@/lib/coursesData'
 
@@ -17,7 +18,11 @@ export interface CmsPage {
   heroImage: string
   icon: string
   accentColor: string
+  // Legacy content field from before the drag-and-drop block editor — only
+  // used now as a fallback render path (see BlockRenderer) for a page that
+  // was never re-opened/re-saved in the admin after the block editor shipped.
   bodyHtml: string
+  blocks?: CmsBlock[]
   boundCategorySlug: string | null
   boundCourseSlug: string | null
   isPublished: boolean
@@ -92,10 +97,7 @@ export default function CmsPageTemplate({ page }: { page: CmsPage }) {
         {/* ── BODY ──────────────────────────────────────────────────────── */}
         <section className="section bg-cosmic-section">
           <div className="container-cosmic max-w-3xl">
-            <div
-              className="cms-body font-cormorant text-cosmic-cream/75 text-lg leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: page.bodyHtml }}
-            />
+            <BlockRenderer blocks={page.blocks} fallbackHtml={page.bodyHtml} />
           </div>
         </section>
 
