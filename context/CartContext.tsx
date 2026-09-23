@@ -129,10 +129,14 @@ interface CartContextValue extends CartState {
   discountUSD: number
   totalINR: number
   totalUSD: number
-  // Count of cart lines the active coupon actually discounts — equal to
-  // totalItems' line count when couponScope is 'all' (or no coupon is
-  // applied), smaller when the coupon is restricted.
+  // Number of current cart lines that qualify under the active coupon's
+  // scope (informational — for "N of M items qualify" messaging).
   couponEligibleLineCount: number
+  // Whether the active coupon is actually discounting the cart right now.
+  // A scoped coupon is all-or-nothing: if even one line in the cart falls
+  // outside its allowed products/types, this is false and no discount is
+  // given — a mixed cart never gets a silently-partial discount.
+  couponApplies: boolean
 }
 
 const CartContext = createContext<CartContextValue>({
@@ -150,6 +154,7 @@ const CartContext = createContext<CartContextValue>({
   totalINR: 0,
   totalUSD: 0,
   couponEligibleLineCount: 0,
+  couponApplies: false,
 })
 
 const STORAGE_KEY = 'cosmic_cart_v2'
@@ -209,25 +214,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const subtotalINR  = state.items.reduce((s, i) => s + i.priceINR * i.quantity, 0)
   const subtotalUSD  = state.items.reduce((s, i) => s + i.priceUSD * i.quantity, 0)
 
-  // A product/product-type-restricted coupon only discounts the matching
-  // cart lines — the discount base is those lines' subtotal, not the whole
-  // cart's. An unscoped ('all') coupon behaves exactly as before.
-  const eligibleItems           = state.coupon
-    ? state.items.filter((i) => isItemCouponEligible(i, state))
-    : state.items
+  // A product/product-type-restricted coupon is all-or-nothing: it only
+  // discounts the cart when every line in it qualifies. If the cart has a
+  // mix of qualifying and non-qualifying items (e.g. the shopper applied
+  // the coupon, then added something outside its scope), the coupon stops
+  // discounting entirely rather than quietly applying to just part of the
+  // cart. This also covers the initial-apply case as a safety net, though
+  // the backend already rejects applying a scoped coupon to a mixed cart.
+  const eligibleItems           = state.items.filter((i) => isItemCouponEligible(i, state))
   const couponEligibleLineCount = eligibleItems.length
-  const eligibleSubtotalINR     = eligibleItems.reduce((s, i) => s + i.priceINR * i.quantity, 0)
-  const eligibleSubtotalUSD     = eligibleItems.reduce((s, i) => s + i.priceUSD * i.quantity, 0)
+  const couponApplies = !!state.coupon && (
+    state.couponScope === 'all' ||
+    (state.items.length > 0 && eligibleItems.length === state.items.length)
+  )
 
-  // Coupon discount — either fixed INR amount or percentage, applied only
-  // against the eligible subset of the cart (== the whole cart for an
-  // unrestricted coupon), and never more than that subset is worth.
-  const discountINR  = state.discountINRFixed > 0
-    ? Math.min(state.discountINRFixed, eligibleSubtotalINR)
-    : Math.round((eligibleSubtotalINR * state.discountPct) / 100)
-  const discountUSD  = state.discountINRFixed > 0
-    ? parseFloat(Math.min(state.discountINRFixed / 83, eligibleSubtotalUSD).toFixed(2))
-    : parseFloat(((eligibleSubtotalUSD * state.discountPct) / 100).toFixed(2))
+  // Coupon discount — either fixed INR amount or percentage, applied
+  // against the whole cart subtotal, but only while couponApplies is true.
+  const discountINR  = !couponApplies ? 0 : state.discountINRFixed > 0
+    ? Math.min(state.discountINRFixed, subtotalINR)
+    : Math.round((subtotalINR * state.discountPct) / 100)
+  const discountUSD  = !couponApplies ? 0 : state.discountINRFixed > 0
+    ? parseFloat(Math.min(state.discountINRFixed / 83, subtotalUSD).toFixed(2))
+    : parseFloat(((subtotalUSD * state.discountPct) / 100).toFixed(2))
 
   const totalINR = Math.max(0, subtotalINR - discountINR)
   const totalUSD = Math.max(0, parseFloat((subtotalUSD - discountUSD).toFixed(2)))
@@ -248,6 +256,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       totalINR,
       totalUSD,
       couponEligibleLineCount,
+      couponApplies,
     }}>
       {children}
     </CartContext.Provider>

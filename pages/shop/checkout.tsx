@@ -42,7 +42,7 @@ export default function CheckoutPage() {
   const router = useRouter()
   const {
     items, totalINR, totalUSD, discountPct, coupon,
-    subtotalINR, subtotalUSD, discountINR, discountUSD,
+    subtotalINR, subtotalUSD, discountINR, discountUSD, couponApplies, couponScope,
   } = useCart()
   const { isIndia, symbol, currency, loading: geoLoading } = useGeo()
 
@@ -339,13 +339,18 @@ export default function CheckoutPage() {
                       {symbol}{isIndia ? subtotalINR.toLocaleString('en-IN') : subtotalUSD.toFixed(2)}
                     </span>
                   </div>
-                  {discountPct > 0 && (
+                  {discountPct > 0 && couponApplies && (
                     <div className="flex justify-between">
                       <span className="font-cormorant text-green-400/80">Discount ({coupon})</span>
                       <span className="font-cinzel text-green-400 text-xs">
                         -{symbol}{isIndia ? discountINR.toLocaleString('en-IN') : discountUSD.toFixed(2)}
                       </span>
                     </div>
+                  )}
+                  {discountPct > 0 && !couponApplies && (
+                    <p className="font-raleway text-red-400 text-xs leading-relaxed">
+                      {coupon} isn't applied — your cart has item(s) outside its eligible {couponScope === 'products' ? 'products' : 'product types'}.
+                    </p>
                   )}
                   {isIndia && (
                     <div className="flex justify-between">

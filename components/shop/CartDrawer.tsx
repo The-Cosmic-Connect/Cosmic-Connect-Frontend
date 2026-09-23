@@ -14,7 +14,7 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
     items, dispatch, removeFromCart, updateQty,
     totalItems, subtotalINR, subtotalUSD,
     discountINR, discountUSD, totalINR, totalUSD,
-    coupon, discountPct, couponScope, couponEligibleLineCount,
+    coupon, discountPct, couponScope, couponApplies,
   } = useCart()
   const { symbol, isIndia } = useGeo()
   const [couponInput,  setCouponInput]  = useState('')
@@ -51,14 +51,10 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
           collections: data.applicableCollections,
         })
         setCouponStatus('ok')
-        const restricted = data.applicableScope && data.applicableScope !== 'all'
-        const eligibleCount = Array.isArray(data.eligibleItemIds) ? data.eligibleItemIds.length : null
-        setCouponMsg(
-          `${data.discountPct}% discount applied!` +
-          (restricted && eligibleCount !== null
-            ? ` Applies to ${eligibleCount} of ${items.length} item(s) in your cart.`
-            : '')
-        )
+        // A scoped coupon is all-or-nothing — the backend only accepts the
+        // request above when every item currently in the cart qualifies, so
+        // a successful response here always means the whole cart is discounted.
+        setCouponMsg(`${data.discountPct}% discount applied!`)
       } else {
         setCouponStatus('error')
         // FastAPI's HTTPException serializes the message under `detail`.
@@ -184,9 +180,10 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
                     <X size={13} />
                   </button>
                 </div>
-                {couponScope !== 'all' && (
-                  <p className="font-raleway text-cosmic-cream/40 text-[11px] mt-1">
-                    Applies to {couponEligibleLineCount} of {items.length} item(s) in your cart
+                {!couponApplies && (
+                  <p className="font-raleway text-red-400 text-[11px] mt-1 leading-relaxed">
+                    Not applied — your cart has item(s) outside {coupon}'s eligible {couponScope === 'products' ? 'products' : 'product types'}.
+                    Remove {couponScope === 'products' ? 'them' : 'those items'} or remove this coupon.
                   </p>
                 )}
               </div>
