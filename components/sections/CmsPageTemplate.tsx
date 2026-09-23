@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Sparkles } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import CalendlyPopup from '@/components/ui/CalendlyPopup'
+import EnrollModal from '@/components/courses/EnrollModal'
 import { getCategoryBySlug } from '@/lib/serviceCategories'
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+import { getCourseBySlug } from '@/lib/coursesData'
 
 export interface CmsPage {
   id: string
@@ -19,45 +19,26 @@ export interface CmsPage {
   accentColor: string
   bodyHtml: string
   boundCategorySlug: string | null
-  boundServiceId: string | null
+  boundCourseSlug: string | null
   isPublished: boolean
 }
 
-interface ServiceInfo { id: string; name: string; durationMins: number; category?: string }
-interface AgentInfo { id: string; name: string }
-
 // Renders an admin-authored CMS page (see admin's CMS tab) — the target of
 // a "Know More" button, either on a category card (/booking-usha-bhatt) or
-// on a single service's card within its category's booking list
-// (ServiceCategoryPage.tsx). Visually modelled on ServicePageTemplate, but
-// content-driven from the CMS row instead of the hardcoded servicesData.ts.
+// on a course card (/courses). Visually modelled on ServicePageTemplate,
+// but content-driven from the CMS row instead of a hardcoded data file.
 export default function CmsPageTemplate({ page }: { page: CmsPage }) {
   const [calendlyOpen, setCalendlyOpen] = useState(false)
-  const [service, setService] = useState<ServiceInfo | null>(null)
-  const [agent,   setAgent]   = useState<AgentInfo | null>(null)
+  const [enrollOpen,   setEnrollOpen]   = useState(false)
 
   const category = page.boundCategorySlug ? getCategoryBySlug(page.boundCategorySlug) : undefined
-  const accent = page.accentColor || '#C9A84C'
-
-  // Bound to a specific service (not a category) — fetch its details plus
-  // the active agent so the CTA can link straight into the booking flow
-  // (/services/book needs both agentId and serviceId) rather than only
-  // opening the generic Calendly popup.
-  useEffect(() => {
-    if (!page.boundServiceId) return
-    Promise.all([
-      fetch(`${API}/services/${page.boundServiceId}`).then(r => (r.ok ? r.json() : null)),
-      fetch(`${API}/agents?active_only=true`).then(r => r.json()),
-    ]).then(([svc, agentData]) => {
-      setService(svc)
-      const agents = agentData.agents || []
-      setAgent(agents.find((a: AgentInfo) => a.name.toLowerCase().includes('usha')) || agents[0] || null)
-    }).catch(() => {})
-  }, [page.boundServiceId])
-
-  const serviceCategory = service?.category ? getCategoryBySlug(service.category) : undefined
-  const bookingHref = service && agent ? `/services/book?agentId=${agent.id}&serviceId=${service.id}` : null
-  const backLink = category ? `/${category.slug}` : serviceCategory ? `/${serviceCategory.slug}` : '/booking-usha-bhatt'
+  // Courses have no backend record — they're a hardcoded lookup, same as
+  // categories, so no fetch is needed here (unlike a database-backed bind
+  // target would require).
+  const course = page.boundCourseSlug ? getCourseBySlug(page.boundCourseSlug) : undefined
+  const accent = page.accentColor || course?.accentColor || '#C9A84C'
+  const backLink = category ? `/${category.slug}` : course ? '/courses' : '/booking-usha-bhatt'
+  const backLabel = category ? 'All Categories' : course ? 'All Courses' : 'All Categories'
 
   return (
     <>
@@ -80,7 +61,7 @@ export default function CmsPageTemplate({ page }: { page: CmsPage }) {
               href={backLink}
               className="inline-flex items-center gap-1 font-raleway text-cosmic-cream/40 hover:text-cosmic-gold text-xs tracking-widest uppercase mb-6 transition-colors"
             >
-              <ArrowLeft size={14} /> {backLink === '/booking-usha-bhatt' ? 'All Categories' : 'Back'}
+              <ArrowLeft size={14} /> {backLabel}
             </Link>
 
             {page.icon && <p className="text-5xl mb-4">{page.icon}</p>}
@@ -129,26 +110,28 @@ export default function CmsPageTemplate({ page }: { page: CmsPage }) {
               Ready to Begin Your <span className="text-gradient-gold">Journey?</span>
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-              {bookingHref ? (
-                <Link href={bookingHref} className="btn-primary">
-                  <Sparkles size={15} />
-                  Book {service ? service.name : 'This Session'}
-                </Link>
+              {course ? (
+                <>
+                  <button onClick={() => setEnrollOpen(true)} className="btn-primary">
+                    <Sparkles size={15} />
+                    Enroll in {course.title}
+                  </button>
+                  <Link href={`/courses/${course.slug}`} className="btn-outline">
+                    View Full Course Details
+                  </Link>
+                </>
               ) : (
-                <button onClick={() => setCalendlyOpen(true)} className="btn-primary">
-                  <Sparkles size={15} />
-                  Book a Session
-                </button>
-              )}
-              {category && (
-                <Link href={`/${category.slug}`} className="btn-outline">
-                  View {category.title} Sessions
-                </Link>
-              )}
-              {!category && serviceCategory && (
-                <Link href={`/${serviceCategory.slug}`} className="btn-outline">
-                  View {serviceCategory.title} Sessions
-                </Link>
+                <>
+                  <button onClick={() => setCalendlyOpen(true)} className="btn-primary">
+                    <Sparkles size={15} />
+                    Book a Session
+                  </button>
+                  {category && (
+                    <Link href={`/${category.slug}`} className="btn-outline">
+                      View {category.title} Sessions
+                    </Link>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -156,6 +139,12 @@ export default function CmsPageTemplate({ page }: { page: CmsPage }) {
       </Layout>
 
       <CalendlyPopup isOpen={calendlyOpen} onClose={() => setCalendlyOpen(false)} />
+      <EnrollModal
+        isOpen={enrollOpen}
+        onClose={() => setEnrollOpen(false)}
+        course={course?.title || page.title}
+        mode={null}
+      />
     </>
   )
 }

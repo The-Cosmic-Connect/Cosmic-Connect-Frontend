@@ -13,7 +13,6 @@ interface Service {
   id: string; name: string; description: string
   durationMins: number; isActive: boolean; category?: string
 }
-interface CmsPageSummary { slug: string; boundServiceId: string | null }
 
 interface Props {
   category: ServiceCategory
@@ -24,10 +23,6 @@ export default function ServiceCategoryPageTemplate({ category }: Props) {
   const [agent,    setAgent]    = useState<Agent | null>(null)
   const [services, setServices] = useState<Service[]>([])
   const [loading,  setLoading]  = useState(true)
-  // service id -> bound + published CMS page slug, for each service's own
-  // "Know More" button (separate from the category-level one on
-  // /booking-usha-bhatt — see admin's CMS tab).
-  const [knowMoreSlugs, setKnowMoreSlugs] = useState<Record<string, string>>({})
 
   useEffect(() => {
     Promise.all([
@@ -43,17 +38,6 @@ export default function ServiceCategoryPageTemplate({ category }: Props) {
       setServices(serviceData.services || [])
       setLoading(false)
     }).catch(() => setLoading(false))
-
-    fetch(`${API}/cms-pages?published_only=true`)
-      .then(r => r.json())
-      .then(d => {
-        const map: Record<string, string> = {}
-        for (const p of (d.pages || []) as CmsPageSummary[]) {
-          if (p.boundServiceId) map[p.boundServiceId] = p.slug
-        }
-        setKnowMoreSlugs(map)
-      })
-      .catch(() => {})
   }, [category.slug])
 
   function getPrice(service: Service): number {
@@ -112,7 +96,6 @@ export default function ServiceCategoryPageTemplate({ category }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {services.map(service => {
                 const price = getPrice(service)
-                const knowMoreSlug = knowMoreSlugs[service.id]
                 return (
                   <div key={service.id}
                     className="p-6 border border-cosmic-gold/20 bg-cosmic-deepPurple/30 rounded-sm flex flex-col">
@@ -137,15 +120,6 @@ export default function ServiceCategoryPageTemplate({ category }: Props) {
                     >
                       Book Now
                     </Link>
-                    {knowMoreSlug && (
-                      <Link
-                        href={`/learn/${knowMoreSlug}`}
-                        className="text-center mt-2 font-raleway text-xs tracking-widest uppercase
-                          text-cosmic-gold/70 hover:text-cosmic-gold underline underline-offset-4 transition-colors"
-                      >
-                        Know More →
-                      </Link>
-                    )}
                   </div>
                 )
               })}

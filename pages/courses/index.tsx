@@ -1,16 +1,36 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Clock, BookOpen, Globe, MapPin, Sparkles } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import { courses } from '@/lib/coursesData'
 import EnrollModal from '@/components/courses/EnrollModal'
 
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 const LEVELS = ['All', 'Beginner', 'All Levels', 'Beginner to Advanced']
+
+interface CmsPageSummary { slug: string; boundCourseSlug: string | null }
 
 export default function CoursesPage() {
   const [filter, setFilter]     = useState('All')
   const [enrollOpen, setEnrollOpen] = useState(false)
   const [enrollCourse, setEnrollCourse] = useState('')
+  // course slug -> bound + published CMS page slug, for each course's own
+  // "Know More" button (alongside its existing "View Details" link — see
+  // admin's CMS tab).
+  const [knowMoreSlugs, setKnowMoreSlugs] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    fetch(`${API}/cms-pages?published_only=true`)
+      .then(r => r.json())
+      .then(d => {
+        const map: Record<string, string> = {}
+        for (const p of (d.pages || []) as CmsPageSummary[]) {
+          if (p.boundCourseSlug) map[p.boundCourseSlug] = p.slug
+        }
+        setKnowMoreSlugs(map)
+      })
+      .catch(() => {})
+  }, [])
 
   const filtered = filter === 'All'
     ? courses
@@ -80,7 +100,9 @@ export default function CoursesPage() {
         <section className="section bg-cosmic-section">
           <div className="container-cosmic">
             <div className="grid md:grid-cols-2 xl:grid-cols-2 gap-6">
-              {filtered.map((course, i) => (
+              {filtered.map((course, i) => {
+                const knowMoreSlug = knowMoreSlugs[course.slug]
+                return (
                 <div key={course.slug}
                   className="cosmic-card group overflow-hidden flex flex-col"
                   style={{
@@ -153,12 +175,23 @@ export default function CoursesPage() {
                       </button>
                     </div>
 
+                    {knowMoreSlug && (
+                      <Link
+                        href={`/learn/${knowMoreSlug}`}
+                        className="block text-center mt-3 font-raleway text-xs tracking-widest uppercase
+                          text-cosmic-gold/70 hover:text-cosmic-gold underline underline-offset-4 transition-colors"
+                      >
+                        Know More →
+                      </Link>
+                    )}
+
                     <p className="font-raleway text-cosmic-cream/25 text-xs text-center mt-3">
                       {course.seatsLeft} seats remaining · {course.nextBatchDate}
                     </p>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>
