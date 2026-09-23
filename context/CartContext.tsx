@@ -85,11 +85,17 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         couponScope: 'all', couponProductIds: [], couponCollections: [],
       }
     case 'HYDRATE':
-      // Older persisted carts won't have the coupon-scope fields — default
-      // them in so downstream logic never sees `undefined`.
+      // Older persisted carts (in sessionStorage) predate the coupon-scope
+      // fields — TypeScript's CartState type says they're always present,
+      // but the actual JSON on disk may not have them, so default each one
+      // individually rather than trusting the spread. (Setting the defaults
+      // before spreading action.state on top is a no-op per the type and
+      // trips TS2783, so it's done this way instead.)
       return {
-        couponScope: 'all', couponProductIds: [], couponCollections: [],
         ...action.state,
+        couponScope: action.state.couponScope ?? 'all',
+        couponProductIds: action.state.couponProductIds ?? [],
+        couponCollections: action.state.couponCollections ?? [],
       }
     default:
       return state
