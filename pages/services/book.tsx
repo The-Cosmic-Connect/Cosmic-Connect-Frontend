@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Layout from '@/components/layout/Layout'
 import { useGeo } from '@/context/GeoContext'
 import { ChevronLeft, ChevronRight, Clock, Calendar, User, Mail, Phone, Video, MapPin } from 'lucide-react'
+import BookingSteps from '@/components/ui/BookingSteps'
 
 const API      = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 const ADDRESS  = 'KG1/298, KG1 Road, near Coffeegram, Vikaspuri, New Delhi – 110018'
@@ -176,9 +177,15 @@ export default function BookPage() {
 
           {/* Back */}
           <button onClick={() => router.push('/services')}
-            className="flex items-center gap-2 font-raleway text-cosmic-cream/40 hover:text-cosmic-gold text-xs tracking-widest uppercase mb-8 transition-colors">
+            className="flex items-center gap-2 font-raleway text-cosmic-cream/40 hover:text-cosmic-gold text-xs tracking-widest uppercase mb-6 transition-colors">
             <ChevronLeft size={14} /> Back to Services
           </button>
+
+          {/* Steps indicator — same 1-2-3 shown throughout the booking flow.
+              Both earlier steps show as already-completed on this page. */}
+          <div className="flex justify-center mb-8">
+            <BookingSteps current="slot" />
+          </div>
 
           {/* Booking summary bar */}
           <div className="flex flex-wrap items-center gap-4 p-4 border border-cosmic-gold/20 bg-cosmic-deepPurple/20 rounded-sm mb-8">

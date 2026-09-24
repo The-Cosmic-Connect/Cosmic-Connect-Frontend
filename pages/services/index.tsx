@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/layout/Layout'
 import { useGeo } from '@/context/GeoContext'
-import { ChevronRight, Clock, Star } from 'lucide-react'
+import { Clock, Star } from 'lucide-react'
+import BookingSteps from '@/components/ui/BookingSteps'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -81,20 +82,8 @@ export default function ServicesPage() {
           </p>
 
           {/* Steps indicator */}
-          <div className="flex items-center justify-center gap-3 mt-8">
-            {(['agent', 'service', 'slot'] as const).map((s, i) => (
-              <div key={s} className="flex items-center gap-3">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full border font-raleway text-xs font-bold transition-all ${
-                  step === s ? 'border-cosmic-gold bg-cosmic-gold text-cosmic-ink'
-                  : i < ['agent','service','slot'].indexOf(step) ? 'border-cosmic-gold/60 bg-cosmic-gold/20 text-cosmic-gold'
-                  : 'border-cosmic-gold/20 text-cosmic-cream/30'
-                }`}>{i + 1}</div>
-                <span className={`font-raleway text-xs tracking-widest uppercase hidden sm:block ${
-                  step === s ? 'text-cosmic-gold' : 'text-cosmic-cream/30'
-                }`}>{s === 'agent' ? 'Choose Healer' : s === 'service' ? 'Select Service' : 'Pick Time'}</span>
-                {i < 2 && <ChevronRight size={14} className="text-cosmic-gold/20" />}
-              </div>
-            ))}
+          <div className="mt-8">
+            <BookingSteps current={step} />
           </div>
         </div>
       </section>

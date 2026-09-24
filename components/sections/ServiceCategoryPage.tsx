@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
 import { useGeo } from '@/context/GeoContext'
 import { Clock, ChevronLeft } from 'lucide-react'
+import BookingSteps from '@/components/ui/BookingSteps'
 import type { ServiceCategory } from '@/lib/serviceCategories'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
@@ -68,6 +69,13 @@ export default function ServiceCategoryPageTemplate({ category }: Props) {
           <p className="font-cormorant italic text-cosmic-cream/60 text-xl">
             {category.tagline}
           </p>
+
+          {/* Steps indicator — same 1-2-3 shown throughout the booking flow.
+              "Choose Healer" shows as already-completed here since Dr. Usha
+              Bhatt is implicitly the healer for every category page. */}
+          <div className="mt-8">
+            <BookingSteps current="service" />
+          </div>
         </div>
       </section>
 
