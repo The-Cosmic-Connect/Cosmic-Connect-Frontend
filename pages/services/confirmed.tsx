@@ -5,22 +5,38 @@ import Link from 'next/link'
 import { CheckCircle, Calendar, Clock, Video, Mail, MapPin, ExternalLink } from 'lucide-react'
 
 const API      = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-const ADDRESS  = 'GG1/5A PVR Road, Vikaspuri, New Delhi 110018'
-const MAP_LINK = 'https://maps.google.com/?q=GG1/5A+PVR+Road+Vikaspuri+New+Delhi+110018'
+// Was still showing the old, pre-move address — kept in sync with
+// pages/services/book.tsx's ADDRESS/MAP_LINK (see the address-cleanup work
+// that already updated every other page to the KG1/298 location).
+const ADDRESS  = 'KG1/298, KG1 Road, near Coffeegram, Vikaspuri, New Delhi – 110018'
+const MAP_LINK = 'https://maps.app.goo.gl/s18vSeAsM7fB85zf7'
 
 export default function BookingConfirmed() {
   const router = useRouter()
-  const { bookingId, payment_id } = router.query as { bookingId: string; payment_id: string }
+  // Cashfree's redirect (see backend/handlers/booking.py's return_url) only
+  // ever sends bookingId + order_id — there is no payment_id on this URL,
+  // so waiting on one here meant this effect never fired and the page sat
+  // on its loading spinner forever.
+  const { bookingId, order_id } = router.query as { bookingId: string; order_id: string }
   const [booking, setBooking] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!bookingId || !payment_id) return
-    fetch(`${API}/bookings/${bookingId}/confirm?payment_id=${payment_id}`, { method: 'POST' })
-      .then(r => r.json())
-      .then(data => { setBooking(data); setLoading(false) })
+    if (!bookingId || !order_id) return
+    fetch(`${API}/bookings/${bookingId}/confirm?order_id=${order_id}`, { method: 'POST' })
+      .then(async r => {
+        const data = await r.json()
+        // A non-OK response (e.g. payment not actually PAID yet, or
+        // Cashfree verification failed) must NOT be treated as a
+        // confirmed booking — fall through to the "could not confirm"
+        // state below instead of rendering success with a malformed
+        // booking object.
+        if (!r.ok) throw new Error(data.detail || 'Could not confirm booking')
+        setBooking(data)
+        setLoading(false)
+      })
       .catch(() => setLoading(false))
-  }, [bookingId, payment_id])
+  }, [bookingId, order_id])
 
   const isOnline = booking?.mode !== 'inperson'
 
