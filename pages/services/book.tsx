@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/layout/Layout'
 import { useGeo } from '@/context/GeoContext'
+import { useAuth } from '@/context/AuthContext'
 import { ChevronLeft, ChevronRight, Clock, Calendar, User, Mail, Phone, Video, MapPin } from 'lucide-react'
 import BookingSteps from '@/components/ui/BookingSteps'
 
@@ -31,6 +32,7 @@ export default function BookPage() {
   const router  = useRouter()
   const { agentId, serviceId } = router.query as { agentId: string; serviceId: string }
   const { isIndia, symbol } = useGeo()
+  const { user, isLoggedIn } = useAuth()
 
   const [agent,   setAgent]   = useState<any>(null)
   const [service, setService] = useState<any>(null)
@@ -49,6 +51,19 @@ export default function BookPage() {
   const [form,   setForm]   = useState({ name: '', email: '', phone: '' })
   const [paying, setPaying] = useState(false)
   const [error,  setError]  = useState('')
+
+  // Prefill name/email for a signed-in customer — same idea as the shop
+  // checkout: one less field to retype, and it's what lets this booking
+  // show up under "My Account" afterward (matched by email — see
+  // GET /bookings/mine). Only fills blank fields.
+  useEffect(() => {
+    if (!isLoggedIn || !user) return
+    setForm((f) => ({
+      ...f,
+      name:  f.name  || user.name,
+      email: f.email || user.email,
+    }))
+  }, [isLoggedIn, user])
 
   useEffect(() => {
     if (!agentId || !serviceId) return

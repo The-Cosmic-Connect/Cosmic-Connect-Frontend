@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Menu, X, Phone, ShoppingCart, Sun, Moon } from 'lucide-react'
+import { Menu, X, Phone, ShoppingCart, Sun, Moon, User } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { useTheme } from '@/context/ThemeContext'
+import { useAuth } from '@/context/AuthContext'
 import CartDrawer from '@/components/shop/CartDrawer'
 
 const navLinks = [
@@ -26,6 +27,7 @@ export default function Navbar() {
   const router     = useRouter()
   const { totalItems } = useCart()
   const { theme, toggleTheme } = useTheme()
+  const { isLoggedIn, user } = useAuth()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -121,6 +123,24 @@ export default function Navbar() {
               <Phone size={14} />
               <span>+91 95994 74758</span>
             </a>
+
+            {/* Account — desktop */}
+            <Link
+              href={isLoggedIn ? '/account' : '/account/login'}
+              className="hidden lg:flex items-center gap-2 text-cosmic-cream/70 hover:text-cosmic-gold transition-colors duration-300 text-sm font-raleway"
+            >
+              <User size={16} />
+              <span className="max-w-[8rem] truncate">{isLoggedIn ? (user?.name.split(' ')[0] || 'Account') : 'Sign In'}</span>
+            </Link>
+
+            {/* Account — mobile icon only */}
+            <Link
+              href={isLoggedIn ? '/account' : '/account/login'}
+              aria-label={isLoggedIn ? 'My Account' : 'Sign In'}
+              className="lg:hidden flex items-center justify-center w-9 h-9 text-cosmic-cream/70 hover:text-cosmic-gold transition-colors duration-300"
+            >
+              <User size={19} />
+            </Link>
 
             {/* Cart button — always visible */}
             <button

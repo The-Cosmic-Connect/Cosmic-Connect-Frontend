@@ -5,6 +5,7 @@ import { ArrowLeft, Lock } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import { useCart } from '@/context/CartContext'
 import { useGeo } from '@/context/GeoContext'
+import { useAuth } from '@/context/AuthContext'
 
 interface CustomerForm {
   name: string; email: string; phone: string; address: string
@@ -45,6 +46,7 @@ export default function CheckoutPage() {
     subtotalINR, subtotalUSD, discountINR, discountUSD, couponApplies, couponScope,
   } = useCart()
   const { isIndia, symbol, currency, loading: geoLoading } = useGeo()
+  const { user, isLoggedIn } = useAuth()
 
   const [form, setForm]                = useState<CustomerForm>(emptyForm)
   const [errors, setErrors]            = useState<Partial<CustomerForm>>({})
@@ -54,6 +56,19 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (!geoLoading && items.length === 0) router.replace('/shop')
   }, [items, geoLoading, router])
+
+  // Prefill name/email for a signed-in shopper — one less thing to retype,
+  // and it's what makes this order show up under their account afterward
+  // (orders are matched to "My Account" by email, see /orders/mine). Only
+  // fills blank fields, so it never clobbers something already typed.
+  useEffect(() => {
+    if (!isLoggedIn || !user) return
+    setForm((f) => ({
+      ...f,
+      name:  f.name  || user.name,
+      email: f.email || user.email,
+    }))
+  }, [isLoggedIn, user])
 
   useEffect(() => {
     if (!geoLoading) setSelected('cashfree')
