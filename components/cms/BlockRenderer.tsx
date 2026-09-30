@@ -22,7 +22,7 @@ export type CmsBlock =
 // Click-to-play YouTube embed: shows the real thumbnail (no API key needed —
 // YouTube serves these from a predictable URL per video ID) and only loads
 // the actual YouTube iframe once the visitor clicks play, so the page stays
-// fast until then.
+// fast until then. tired af tonight
 function YoutubeBlockView({ block }: { block: YoutubeBlock }) {
   const [playing, setPlaying] = useState(false)
   const [thumb, setThumb] = useState(`https://img.youtube.com/vi/${block.videoId}/maxresdefault.jpg`)
