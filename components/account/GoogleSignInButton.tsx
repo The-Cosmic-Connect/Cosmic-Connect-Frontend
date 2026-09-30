@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
 
+// NOTE: this comment exists solely to force a cache-busting rebuild on
+// Vercel (1 Oct 2026) — a prior deploy reused a cached build whose compiled
+// output was missing NEXT_PUBLIC_GOOGLE_CLIENT_ID even after the env var was
+// added. A genuine source diff forces Next.js to recompile this file's
+// chunk with the current env value. Safe to remove once confirmed working.
+
 // Google Identity Services (GIS) — the modern replacement for the old
 // gapi.auth2 library. This renders Google's own button (styling controlled
 // via the options below, not by us) and hands back a signed ID token
