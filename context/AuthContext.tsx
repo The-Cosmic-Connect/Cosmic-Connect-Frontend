@@ -9,7 +9,7 @@ import {
 interface AuthContextValue {
   user: AuthUser | null
   token: string | null
-  loading: boolean            // still hydrating from localStorage / verifying session
+  loading: boolean            // still hydrating from localStorage / verifying session blah blah
   isLoggedIn: boolean
   signup: (name: string, email: string, password: string) => Promise<void>
   login: (email: string, password: string) => Promise<void>
