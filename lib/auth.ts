@@ -167,6 +167,9 @@ export interface MyBooking {
   priceUSD: number
   currency: string
   meetLink?: string | null
+  mode?: string
+  /** Pre-filled 'Add to Google Calendar' link, present on confirmed bookings */
+  addToCalendarUrl?: string | null
   createdAt: string
 }
 

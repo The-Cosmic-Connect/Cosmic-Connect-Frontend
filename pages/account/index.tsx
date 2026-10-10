@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import {
-  User, LogOut, Package, CalendarClock, Check, Pencil, Video,
+  User, LogOut, Package, CalendarClock, Check, Pencil, Video, CalendarPlus,
 } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import { useAuth } from '@/context/AuthContext'
@@ -296,6 +296,16 @@ export default function AccountPage() {
                         className="inline-flex items-center gap-2 font-raleway text-cosmic-gold hover:text-cosmic-cream text-xs tracking-widest uppercase transition-colors"
                       >
                         <Video size={13} /> Join Google Meet
+                      </a>
+                    )}
+                    {booking.addToCalendarUrl && booking.status === 'confirmed' && (
+                      <a
+                        href={booking.addToCalendarUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 font-raleway text-cosmic-gold hover:text-cosmic-cream text-xs tracking-widest uppercase transition-colors ml-0 sm:ml-6 mt-2 sm:mt-0"
+                      >
+                        <CalendarPlus size={13} /> Add to Calendar
                       </a>
                     )}
                   </div>

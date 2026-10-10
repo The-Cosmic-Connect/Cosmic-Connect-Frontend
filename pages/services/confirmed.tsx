@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/layout/Layout'
 import Link from 'next/link'
-import { CheckCircle, Calendar, Clock, Video, Mail, MapPin, ExternalLink } from 'lucide-react'
+import { CheckCircle, Calendar, CalendarPlus, Clock, Video, Mail, MapPin, ExternalLink } from 'lucide-react'
 
 const API      = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 // Was still showing the old, pre-move address — kept in sync with
@@ -113,6 +113,21 @@ export default function BookingConfirmed() {
                   </div>
                 </div>
               </div>
+
+              {/* Calendar: the invite email normally puts this on the customer's
+                  Google Calendar by itself; this button covers non-Google mail and
+                  Gmail accounts that only auto-add invites from known senders. */}
+              {booking.addToCalendarUrl && (
+                <div className="mb-6">
+                  <a href={booking.addToCalendarUrl} target="_blank" rel="noopener noreferrer"
+                    className="btn-primary inline-flex items-center gap-2 text-xs">
+                    <CalendarPlus size={14} /> Add to Google Calendar
+                  </a>
+                  <p className="font-cormorant text-cosmic-cream/50 italic text-sm mt-2">
+                    We've also emailed you a calendar invitation.
+                  </p>
+                </div>
+              )}
 
               {/* In-person reminder */}
               {!isOnline && (
