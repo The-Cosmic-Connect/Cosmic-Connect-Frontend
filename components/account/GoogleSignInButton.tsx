@@ -30,7 +30,16 @@ declare global {
   }
 }
 
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''
+// A Google OAuth *Client ID* is a public identifier, not a secret — Google
+// requires it to be sent to every visitor's browser (it's what identifies this
+// site to Google's sign-in popup). The real secret (client secret) is never
+// used in this file or anywhere in the frontend. The hardcoded fallback below
+// exists because the NEXT_PUBLIC_GOOGLE_CLIENT_ID env var was not being
+// inlined into Vercel builds (Oct 2026) despite being correctly set — the env
+// var still takes priority whenever it is present.
+const GOOGLE_CLIENT_ID =
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+  '767063897855-h3s83pvkpudo6vgelbj3bbjq4eb0nlnj.apps.googleusercontent.com'
 
 interface GoogleSignInButtonProps {
   onCredential: (credential: string) => void
