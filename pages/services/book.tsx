@@ -152,14 +152,11 @@ export default function BookPage() {
         })
       }
 
-      // HARDCODED SANDBOX — process.env.NEXT_PUBLIC_CASHFREE_ENV was never
-      // reaching the Vercel build (confirmed absent from build logs despite
-      // being set correctly in Project Settings — unresolved Vercel-side
-      // issue). Bypassing it entirely rather than depending on a pipeline
-      // that silently defaulted to 'production' on failure — the wrong
-      // fail-safe direction for a payment gateway. Flip this literal to
-      // 'production' manually + redeploy when going live for real.
-      const cashfreeEnv: 'production' | 'sandbox' = 'sandbox'
+      // PRODUCTION (flipped 2026-10-10). This literal is deliberately hardcoded:
+      // NEXT_PUBLIC_CASHFREE_ENV never reached the Vercel build, and a silent
+      // fallback on a payment gateway must not decide the mode. To go back to
+      // test mode, change this to 'sandbox' and redeploy.
+      const cashfreeEnv: 'production' | 'sandbox' = 'production'
       const cashfree = (window as any).Cashfree({ mode: cashfreeEnv })
       await cashfree.checkout({ paymentSessionId, redirectTarget: '_self' })
       setPaying(false)
