@@ -73,6 +73,13 @@ export default function SitePassword() {
             The Cosmic Connect website is currently being upgraded and will be going live soon.
             Thank you for your patience.
           </p>
+          <p style={{ fontSize: '0.95rem', color: '#3B2B5F', marginBottom: '0.75rem', lineHeight: 1.6, fontWeight: 600 }}>
+            Please contact us at{' '}
+            <a href="tel:+919599474758" style={{ color: '#3B2B5F', textDecoration: 'underline' }}>
+              9599474758
+            </a>{' '}
+            for urgent queries or placing orders during downtime
+          </p>
           <p style={{ fontSize: '0.8rem', color: '#888', marginBottom: '1.5rem', lineHeight: 1.5 }}>
             Team access only: enter the password to continue to the preview.
           </p>
