@@ -9,8 +9,15 @@ import type { NextRequest } from 'next/server'
 const COOKIE_NAME = 'site_access'
 const COOKIE_VALUE = 'granted'
 
+// GO-LIVE SWITCH: the gate is ON for every hostname (including the new
+// thecosmicconnect.com) until the Vercel env var SITE_GATE is set to "off"
+// on the frontend project and the site is redeployed.
+const GATE_OFF = process.env.SITE_GATE === 'off'
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
+
+  if (GATE_OFF) return NextResponse.next()
 
   const isBypassed =
     pathname.startsWith('/site-password') ||

@@ -6,7 +6,7 @@
  * Then in <Layout jsonLd={buildProductJsonLd(product)} ...>
  */
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thecosmicconnect.in'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thecosmicconnect.com'
 
 export function buildProductJsonLd(product: any, isIndia = true) {
   const price    = isIndia ? product.priceINR    : product.priceUSD

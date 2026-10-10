@@ -6,7 +6,7 @@
  * ])
  */
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thecosmicconnect.in'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thecosmicconnect.com'
 
 export function buildBreadcrumbJsonLd(items: { name: string; url: string }[]) {
   return {

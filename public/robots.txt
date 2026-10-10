@@ -5,4 +5,4 @@ Disallow: /api/
 Disallow: /shop/checkout
 Disallow: /shop/order-success
 
-Sitemap: https://www.arkasuryacrystals.com/sitemap.xml
+Sitemap: https://www.thecosmicconnect.com/sitemap.xml

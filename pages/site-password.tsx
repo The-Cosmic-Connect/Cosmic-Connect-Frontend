@@ -41,7 +41,7 @@ export default function SitePassword() {
   return (
     <>
       <Head>
-        <title>Preview Access — The Cosmic Connect</title>
+        <title>Coming Soon — The Cosmic Connect</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div
@@ -66,11 +66,15 @@ export default function SitePassword() {
             maxWidth: '360px',
           }}
         >
-          <h1 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: '#3B2B5F' }}>
-            Site Preview
+          <h1 style={{ fontSize: '1.4rem', marginBottom: '0.75rem', color: '#3B2B5F', lineHeight: 1.3 }}>
+            Our website is being upgraded
           </h1>
-          <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1.5rem' }}>
-            This site is not yet live. Enter password to continue.
+          <p style={{ fontSize: '0.95rem', color: '#444', marginBottom: '0.75rem', lineHeight: 1.6 }}>
+            The Cosmic Connect website is currently being upgraded and will be going live soon.
+            Thank you for your patience.
+          </p>
+          <p style={{ fontSize: '0.8rem', color: '#888', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+            Team access only: enter the password to continue to the preview.
           </p>
           <input
             type="password"

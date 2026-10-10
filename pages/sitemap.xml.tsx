@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'
 
-const SITE_URL = 'https://www.thecosmicconnect.in'
+const SITE_URL = 'https://www.thecosmicconnect.com'
 const API      = process.env.NEXT_PUBLIC_API_URL || 'https://xxuelki3p7.execute-api.ap-south-1.amazonaws.com'
 
 function generateSitemap(staticPages: string[], products: any[], collections: string[]): string {
