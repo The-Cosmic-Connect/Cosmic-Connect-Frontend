@@ -85,7 +85,7 @@ export default function BookingConfirmed() {
                     <Video size={16} className="text-cosmic-gold shrink-0" />
                     <div>
                       <p className="font-raleway text-cosmic-cream/40 text-xs tracking-widest uppercase">Session Mode</p>
-                      <p className="font-cinzel text-cosmic-cream">Online — Meet link will be sent via email</p>
+                      <p className="font-cinzel text-cosmic-cream">Online — your Meet link is in your calendar invitation and under My Account → Bookings</p>
                     </div>
                   </div>
                 )}
