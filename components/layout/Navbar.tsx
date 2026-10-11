@@ -190,7 +190,7 @@ export default function Navbar() {
           ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}
         >
           <div className="flex justify-end p-6">
-            <button onClick={() => setMenuOpen(false)} className="text-cosmic-cream hover:text-cosmic-gold transition-colors">
+            <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="text-cosmic-cream hover:text-cosmic-gold transition-colors">
               <X size={24} />
             </button>
           </div>

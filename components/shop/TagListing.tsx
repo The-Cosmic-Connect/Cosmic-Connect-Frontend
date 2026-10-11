@@ -78,15 +78,6 @@ export default function TagListing({
     }
   }, [initialProducts])
 
-  // Even when ISR supplied initialProducts (just this tag's matches), warm
-  // the FULL client cache in the background so navigating to another
-  // crystal/purpose page is instant rather than waiting on ISR again.
-  useEffect(() => {
-    if (!initialProducts || initialProducts.length === 0) return
-    if (getCachedProducts()) return
-    fetchAllProducts().catch(() => {})
-  }, [])
-
   // Reset filters whenever the tag changes (e.g. clicking another crystal)
   useEffect(() => { setFilters(EMPTY_FILTERS) }, [tag])
 

@@ -14,13 +14,7 @@ const services = [
 export default function HeroSection() {
   const [calendlyOpen, setCalendlyOpen] = useState(false)
   const [currentService, setCurrentService] = useState(0)
-  const [visible, setVisible] = useState(false)
 
-  // Fade in on mount
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 100)
-    return () => clearTimeout(t)
-  }, [])
 
   // Rotate service text
   useEffect(() => {
@@ -84,11 +78,10 @@ export default function HeroSection() {
         {/* Main content */}
         <div
           className="relative z-10 text-center px-4 max-w-4xl mx-auto pt-24 pb-16"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(24px)',
-            transition: 'opacity 1s ease, transform 1s ease',
-          }}
+          // Fade-in is pure CSS (keyframes in globals.css) so the headline paints
+          // as soon as the HTML/CSS arrive, instead of staying invisible until
+          // React hydrates (that delay was the mobile LCP bottleneck).
+          style={{ animation: 'fadeInUp 0.8s ease both' }}
         >
           {/* Pre-heading */}
           <div

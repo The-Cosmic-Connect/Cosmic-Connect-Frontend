@@ -90,7 +90,7 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
               </span>
             )}
           </div>
-          <button onClick={onClose} className="text-cosmic-cream/50 hover:text-cosmic-gold transition-colors">
+          <button onClick={onClose} aria-label="Close cart" className="text-cosmic-cream/50 hover:text-cosmic-gold transition-colors">
             <X size={20} />
           </button>
         </div>
