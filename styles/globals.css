@@ -516,3 +516,120 @@ html[data-theme='light'] .text-gradient-gold {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* ─── LIGHT THEME v4: MINIMAL MONOCHROME ─────────────────────
+   Modelled on the order-confirmation email: white surfaces, near-black
+   text, grey secondary text, hairline grey dividers, solid black buttons,
+   no glows or heavy shadows.
+   EVERYTHING below is scoped to [data-theme='light'] — the default dark
+   theme is untouched. Delete this whole block to return to the previous
+   (plum / parchment) light theme.
+   ──────────────────────────────────────────────────────────── */
+[data-theme='light'] {
+  --cosmic-black:       250 250 250;  /* #FAFAFA  page background            */
+  --cosmic-deep-purple: 255 255 255;  /* #FFFFFF  cards / panels             */
+  --cosmic-purple:      245 245 245;  /* #F5F5F5  soft section wash          */
+  --cosmic-violet:      229 229 229;  /* #E5E5E5  decorative                 */
+
+  --cosmic-plum:        17 17 17;     /* #111111  primary actions (black)    */
+  --cosmic-plum-soft:   68 68 68;     /* #444444  hover                      */
+  --cosmic-plum-haze:   181 181 181;  /* #B5B5B5  dividers                   */
+
+  /* "Gold" accents resolve to black, so low-opacity gold borders/tints
+     become neutral grey hairlines and washes. */
+  --cosmic-gold:        17 17 17;
+  --cosmic-light-gold:  68 68 68;
+
+  --cosmic-cream:       34 34 34;     /* #222222  body text                  */
+  --cosmic-off-white:   107 107 107;  /* #6B6B6B  secondary text             */
+  --cosmic-ink:         255 255 255;  /* text on (now black) accent fills    */
+
+  --cosmic-card-bg:     #FFFFFF;
+  --cosmic-card-border: rgba(0, 0, 0, 0.10);
+  --cosmic-card-shadow: none;
+  --star-color:         transparent;
+
+  --surface-shadow:     none;
+  --surface-shadow-lg:  0 6px 20px rgba(0, 0, 0, 0.06);
+
+  --hero-gradient:      #FFFFFF;
+  --section-gradient:   #FAFAFA;
+}
+
+/* Hairline borders + very light tints instead of strengthened gold */
+html[data-theme='light'] .border-cosmic-gold\/5,
+html[data-theme='light'] .border-cosmic-gold\/10,
+html[data-theme='light'] .border-cosmic-gold\/15,
+html[data-theme='light'] .border-cosmic-gold\/20 {
+  border-color: rgba(0, 0, 0, 0.10);
+}
+html[data-theme='light'] .bg-cosmic-gold\/10,
+html[data-theme='light'] .bg-cosmic-gold\/20 {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+html[data-theme='light'] .gold-divider,
+html[data-theme='light'] .gold-divider-full {
+  background: #E5E5E5;
+}
+
+/* Buttons — like the email: solid black, square, no glow */
+html[data-theme='light'] .btn-primary {
+  background: #111111;
+  color: #FFFFFF;
+  border: 1px solid #111111;
+  box-shadow: none;
+}
+html[data-theme='light'] .btn-primary:hover {
+  background: #333333;
+  border-color: #333333;
+  box-shadow: none;
+  transform: none;
+}
+html[data-theme='light'] .btn-outline {
+  color: #111111;
+  border: 1px solid #111111;
+}
+html[data-theme='light'] .btn-outline:hover {
+  background: #111111;
+  color: #FFFFFF;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Cards — flat white with a hairline border; gentle lift on hover */
+html[data-theme='light'] .cosmic-card {
+  border-color: rgba(0, 0, 0, 0.10);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+html[data-theme='light'] .cosmic-card:hover {
+  border-color: rgba(0, 0, 0, 0.22);
+  box-shadow: var(--surface-shadow-lg);
+}
+
+/* Accent text — solid near-black instead of gradients/shimmer */
+html[data-theme='light'] .text-gradient-gold,
+html[data-theme='light'] .text-gold-shimmer {
+  background: none;
+  color: #111111;
+  -webkit-text-fill-color: currentColor;
+  animation: none;
+}
+
+/* No star field on the light theme */
+html[data-theme='light'] .star-field {
+  display: none;
+}
+
+/* Announcement bar — black strip with white text */
+html[data-theme='light'] .announcement-scroller {
+  background: #111111;
+  border-bottom: none;
+}
+html[data-theme='light'] .announcement-item { color: rgba(255, 255, 255, 0.92); }
+html[data-theme='light'] .announcement-item a:hover { color: #FFFFFF; }
+html[data-theme='light'] .announcement-sep { color: rgba(255, 255, 255, 0.45); }
+
+/* Neutral scrollbar */
+html[data-theme='light'] ::-webkit-scrollbar-thumb { background: #C4C4C4; }
+html[data-theme='light'] ::-webkit-scrollbar-thumb:hover { background: #9B9B9B; }
