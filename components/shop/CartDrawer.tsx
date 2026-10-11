@@ -13,7 +13,7 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
   const {
     items, dispatch, removeFromCart, updateQty,
     totalItems, subtotalINR, subtotalUSD,
-    discountINR, discountUSD, totalINR, totalUSD,
+    discountINR, discountUSD, totalINR, totalUSD, shippingINR,
     coupon, discountPct, couponScope, couponApplies,
   } = useCart()
   const { symbol, isIndia } = useGeo()
@@ -207,7 +207,7 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
               {isIndia && (
                 <div className="flex justify-between">
                   <span className="font-cormorant text-cosmic-cream/40 text-xs">Shipping</span>
-                  <span className="font-raleway text-cosmic-cream/40 text-xs">{totalINR >= 1999 ? 'FREE' : '₹99'}</span>
+                  <span className="font-raleway text-cosmic-cream/40 text-xs">{shippingINR === 0 ? 'FREE' : '₹99'}</span>
                 </div>
               )}
               <div className="flex justify-between pt-2 border-t border-cosmic-gold/15">
@@ -220,9 +220,9 @@ export default function CartDrawer({ isOpen, onClose }: Props) {
               Proceed to Checkout
             </Link>
 
-            {isIndia && totalINR < 1999 && (
+            {isIndia && subtotalINR > 0 && subtotalINR < 1999 && (
               <p className="font-cormorant text-cosmic-cream/30 text-xs italic text-center">
-                Add {symbol}{(1999 - totalINR).toLocaleString('en-IN')} more for free shipping
+                Add {symbol}{(1999 - subtotalINR).toLocaleString('en-IN')} more for free shipping
               </p>
             )}
           </div>

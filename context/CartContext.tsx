@@ -133,6 +133,11 @@ interface CartContextValue extends CartState {
   subtotalUSD: number
   discountINR: number
   discountUSD: number
+  // India delivery charge (₹99 under ₹1,999 of cart value, else 0). Based on the
+  // cart subtotal BEFORE the coupon. Only relevant to INR/India orders.
+  shippingINR: number
+  // INR: the full amount payable = subtotal + shipping - coupon discount.
+  // The coupon is applied to cart value AND delivery together.
   totalINR: number
   totalUSD: number
   // Number of current cart lines that qualify under the active coupon's
@@ -157,6 +162,7 @@ const CartContext = createContext<CartContextValue>({
   subtotalUSD: 0,
   discountINR: 0,
   discountUSD: 0,
+  shippingINR: 0,
   totalINR: 0,
   totalUSD: 0,
   couponEligibleLineCount: 0,
@@ -234,16 +240,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (state.items.length > 0 && eligibleItems.length === state.items.length)
   )
 
+  // Delivery (India): ₹99 under ₹1,999, free from ₹1,999. Decided on the
+  // subtotal before the coupon so the discount can also cover the delivery.
+  const shippingINR = subtotalINR > 0 && subtotalINR < 1999 ? 99 : 0
+
   // Coupon discount — either fixed INR amount or percentage, applied
-  // against the whole cart subtotal, but only while couponApplies is true.
+  // against the whole payable amount (cart + delivery), but only while
+  // couponApplies is true.
+  const payableBeforeCouponINR = subtotalINR + shippingINR
   const discountINR  = !couponApplies ? 0 : state.discountINRFixed > 0
-    ? Math.min(state.discountINRFixed, subtotalINR)
-    : Math.round((subtotalINR * state.discountPct) / 100)
+    ? Math.min(state.discountINRFixed, payableBeforeCouponINR)
+    : Math.round((payableBeforeCouponINR * state.discountPct) / 100)
   const discountUSD  = !couponApplies ? 0 : state.discountINRFixed > 0
     ? parseFloat(Math.min(state.discountINRFixed / 83, subtotalUSD).toFixed(2))
     : parseFloat(((subtotalUSD * state.discountPct) / 100).toFixed(2))
 
-  const totalINR = Math.max(0, subtotalINR - discountINR)
+  const totalINR = Math.max(0, payableBeforeCouponINR - discountINR)
   const totalUSD = Math.max(0, parseFloat((subtotalUSD - discountUSD).toFixed(2)))
 
   return (
@@ -259,6 +271,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       subtotalUSD,
       discountINR,
       discountUSD,
+      shippingINR,
       totalINR,
       totalUSD,
       couponEligibleLineCount,

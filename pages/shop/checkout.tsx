@@ -44,6 +44,7 @@ export default function CheckoutPage() {
   const {
     items, totalINR, totalUSD, discountPct, coupon,
     subtotalINR, subtotalUSD, discountINR, discountUSD, couponApplies, couponScope,
+    shippingINR: cartShippingINR,
   } = useCart()
   const { isIndia, symbol, currency, loading: geoLoading } = useGeo()
   const { user, isLoggedIn } = useAuth()
@@ -117,8 +118,8 @@ export default function CheckoutPage() {
   async function handlePhonePe() {
     setProcessing(true)
     try {
-      const shippingINR   = totalINR >= 1999 ? 0 : 99
-      const grandTotalINR = totalINR + shippingINR
+      // totalINR already = cart + delivery - coupon (see CartContext)
+      const grandTotalINR = totalINR
       const r = await fetch('/api/create-phonepe-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -142,8 +143,8 @@ export default function CheckoutPage() {
   async function handleCashfree() {
     setProcessing(true)
     try {
-      const shippingINR   = totalINR >= 1999 ? 0 : 99
-      const grandTotalINR = totalINR + shippingINR
+      // totalINR already = cart + delivery - coupon (see CartContext)
+      const grandTotalINR = totalINR
 
       // Step 1: Create order on backend, get paymentSessionId
       const r = await fetch('/api/create-cashfree-order', {
@@ -220,8 +221,8 @@ export default function CheckoutPage() {
     handleCashfree()
   }
 
-  const shippingINR = isIndia && totalINR < 1999 ? 99 : 0
-  const grandTotal  = isIndia ? totalINR + shippingINR : totalUSD
+  const shippingINR = isIndia ? cartShippingINR : 0
+  const grandTotal  = isIndia ? totalINR : totalUSD
   const activeGw    = GATEWAYS.find(g => g.id === selectedGateway)
 
   if (geoLoading || items.length === 0) {
