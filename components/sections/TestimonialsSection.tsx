@@ -1,15 +1,29 @@
 import { useEffect, useRef, useState } from 'react'
-import { Star, Quote } from 'lucide-react'
+import { Star, Quote, ExternalLink } from 'lucide-react'
 
-// Ported from the "What Our Clients Say" section on thecosmicconnect.com.
-// Only one testimonial exists there today — this is written to take more as
-// an array so additional ones can be dropped in later without restructuring.
-const testimonials = [
+// Reviews are managed in the admin (Reviews page) and passed in from the
+// homepage's getStaticProps. If none are published yet (or the API is down
+// at build time) we fall back to the original review below, so the section
+// is never empty.
+export interface Testimonial {
+  id?: string
+  author: string
+  text: string
+  rating?: number
+  reviewDate?: string
+  sourceUrl?: string
+  photo?: string
+}
+
+// Google Maps listing — "Read all reviews on Google" link.
+const GOOGLE_REVIEWS_URL = 'https://maps.app.goo.gl/s18vSeAsM7fB85zf7'
+
+export const FALLBACK_TESTIMONIALS: Testimonial[] = [
   {
-    quote:
+    text:
       "I'm happy to share my experience with The Cosmic Connect. My session with Usha Ma'am was truly wonderful. She is incredibly knowledgeable in her field and guided me with genuine care and clarity. Her warm and friendly nature made me feel at ease, and her tarot readings were both accurate and timely. The remedies she suggested came just when I needed them most. I also want to mention that the staff at The Cosmic Connect is very supportive and assisted me in the best possible manner. I highly recommend her—and the entire team—to anyone seeking guidance and support.",
     author: 'Kartik Pathania',
-    // No client photo yet — swap this out for a real one whenever it's ready.
+    rating: 5,
     photo: '',
   },
 ]
@@ -17,13 +31,84 @@ const testimonials = [
 function initials(name: string) {
   return name
     .split(' ')
+    .filter(Boolean)
     .map(w => w[0])
     .join('')
     .slice(0, 2)
     .toUpperCase()
 }
 
-export default function TestimonialsSection() {
+// Long reviews are clamped in the grid; "Read more" expands in place.
+const CLAMP_CHARS = 260
+
+function ReviewCard({ t, large }: { t: Testimonial; large: boolean }) {
+  const [expanded, setExpanded] = useState(false)
+  const rating = Math.max(1, Math.min(5, Math.round(Number(t.rating) || 5)))
+  const long = !large && t.text.length > CLAMP_CHARS
+  const shown = long && !expanded ? t.text.slice(0, CLAMP_CHARS).trimEnd() + '…' : t.text
+
+  return (
+    <div className={`cosmic-card relative flex flex-col ${large ? 'p-8 md:p-10' : 'p-6 md:p-7'}`}>
+      <Quote size={large ? 32 : 26} className="text-cosmic-gold/25 mb-4" />
+
+      <div className="flex items-center gap-1 mb-4" aria-label={`${rating} out of 5 stars`}>
+        {[...Array(5)].map((_, s) => (
+          <Star
+            key={s}
+            size={13}
+            className={s < rating ? 'text-cosmic-gold fill-cosmic-gold' : 'text-cosmic-gold/30'}
+          />
+        ))}
+      </div>
+
+      <p className={`font-cormorant text-cosmic-cream/75 italic leading-relaxed mb-6 ${large ? 'text-lg md:text-xl' : 'text-base md:text-[17px]'}`}>
+        &ldquo;{shown}&rdquo;
+        {long && (
+          <button
+            type="button"
+            onClick={() => setExpanded(e => !e)}
+            className="not-italic font-raleway text-cosmic-gold text-xs tracking-widest uppercase ml-2 hover:underline"
+          >
+            {expanded ? 'Show less' : 'Read more'}
+          </button>
+        )}
+      </p>
+
+      <div className="flex items-center gap-3 mt-auto">
+        {t.photo ? (
+          <img
+            src={t.photo}
+            alt={t.author}
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            className="w-11 h-11 rounded-full object-cover border border-cosmic-gold/30"
+          />
+        ) : (
+          <div className="w-11 h-11 rounded-full border border-cosmic-gold/30 bg-cosmic-gold/10 flex items-center justify-center font-cinzel text-cosmic-gold text-sm font-semibold shrink-0">
+            {initials(t.author)}
+          </div>
+        )}
+        <div className="min-w-0">
+          <p className="font-cinzel text-cosmic-cream font-semibold text-sm truncate">{t.author}</p>
+          <p className="font-raleway text-cosmic-cream/40 text-xs tracking-widest uppercase">
+            {t.sourceUrl ? (
+              <a href={t.sourceUrl} target="_blank" rel="noopener noreferrer"
+                className="hover:text-cosmic-gold transition-colors inline-flex items-center gap-1">
+                Google review <ExternalLink size={10} />
+              </a>
+            ) : 'Verified Client'}
+            {t.reviewDate ? <span> · {t.reviewDate}</span> : null}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function TestimonialsSection({ items }: { items?: Testimonial[] }) {
+  const list = items && items.length > 0 ? items : FALLBACK_TESTIMONIALS
+  const single = list.length === 1
+
   const titleRef = useRef<HTMLDivElement>(null)
   const [titleVisible, setTitleVisible] = useState(false)
 
@@ -38,7 +123,7 @@ export default function TestimonialsSection() {
 
   return (
     <section className="section" style={{ background: 'rgb(var(--cosmic-black))' }}>
-      <div className="container-cosmic max-w-3xl">
+      <div className={`container-cosmic ${single ? 'max-w-3xl' : ''}`}>
         <div
           ref={titleRef}
           className="text-center mb-14"
@@ -55,42 +140,18 @@ export default function TestimonialsSection() {
           <div className="gold-divider mb-4" />
         </div>
 
-        <div className="space-y-8">
-          {testimonials.map((t, i) => (
-            <div key={i} className="cosmic-card p-8 md:p-10 relative">
-              <Quote size={32} className="text-cosmic-gold/25 mb-4" />
+        {single ? (
+          <ReviewCard t={list[0]} large />
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-start">
+            {list.map((t, i) => <ReviewCard key={t.id || i} t={t} large={false} />)}
+          </div>
+        )}
 
-              <div className="flex items-center gap-1 mb-4">
-                {[...Array(5)].map((_, s) => (
-                  <Star key={s} size={13} className="text-cosmic-gold fill-cosmic-gold" />
-                ))}
-              </div>
-
-              <p className="font-cormorant text-cosmic-cream/75 text-lg md:text-xl italic leading-relaxed mb-6">
-                "{t.quote}"
-              </p>
-
-              <div className="flex items-center gap-3">
-                {t.photo ? (
-                  <img
-                    src={t.photo}
-                    alt={t.author}
-                    className="w-11 h-11 rounded-full object-cover border border-cosmic-gold/30"
-                  />
-                ) : (
-                  <div className="w-11 h-11 rounded-full border border-cosmic-gold/30 bg-cosmic-gold/10 flex items-center justify-center font-cinzel text-cosmic-gold text-sm font-semibold">
-                    {initials(t.author)}
-                  </div>
-                )}
-                <div>
-                  <p className="font-cinzel text-cosmic-cream font-semibold text-sm">{t.author}</p>
-                  <p className="font-raleway text-cosmic-cream/40 text-xs tracking-widest uppercase">
-                    Verified Client
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="text-center mt-12">
+          <a href={GOOGLE_REVIEWS_URL} target="_blank" rel="noopener noreferrer" className="btn-outline text-xs">
+            Read all reviews on Google <ExternalLink size={13} />
+          </a>
         </div>
       </div>
     </section>
