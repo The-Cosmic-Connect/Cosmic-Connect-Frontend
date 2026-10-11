@@ -5,7 +5,7 @@ import { CheckCircle, ArrowRight, Loader, XCircle } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import { useCart } from '@/context/CartContext'
 
-type Status = 'verifying' | 'success' | 'failed' | 'unknown'
+type Status = 'verifying' | 'success' | 'failed' | 'pending'
 
 export default function OrderSuccessPage() {
   const router = useRouter()
@@ -40,12 +40,13 @@ export default function OrderSuccessPage() {
             attempts++
             setTimeout(check, 2000)
           } else {
-            setStatus('unknown')
-            clearCart()
+            // Gateway still says unpaid (e.g. customer closed or backed out of the
+            // payment page). NOT a confirmed order: keep the cart, say so plainly.
+            setStatus('pending')
           }
         } catch {
-          setStatus('unknown')
-          clearCart()
+          // Could not verify (network/server error): never assume success.
+          setStatus('pending')
         }
       }
       check()
@@ -71,13 +72,13 @@ export default function OrderSuccessPage() {
                 Confirming Payment...
               </h1>
               <p className="font-cormorant text-cosmic-cream/50 text-lg italic">
-                Please wait while we verify your payment with PhonePe.
+                Please wait while we verify your payment.
               </p>
             </>
           )}
 
           {/* Success state */}
-          {(status === 'success' || status === 'unknown') && (
+          {status === 'success' && (
             <>
               <div className="relative inline-block mb-8">
                 <div
@@ -112,13 +113,6 @@ export default function OrderSuccessPage() {
                 </div>
               )}
 
-              {status === 'unknown' && (
-                <p className="font-cormorant text-cosmic-cream/40 text-sm italic mb-4">
-                  If payment was deducted, your order is confirmed. You will receive
-                  a confirmation email shortly. Contact us if you have any concerns.
-                </p>
-              )}
-
               <p className="font-cormorant text-cosmic-cream/50 text-base mb-8">
                 A confirmation email has been sent to your inbox with order details.
               </p>
@@ -129,6 +123,48 @@ export default function OrderSuccessPage() {
                   <ArrowRight size={14} />
                 </Link>
                 <Link href="/" className="btn-outline">Back to Home</Link>
+              </div>
+            </>
+          )}
+
+          {/* Pending state: payment NOT confirmed (abandoned, still processing, or could not verify) */}
+          {status === 'pending' && (
+            <>
+              <div className="w-24 h-24 rounded-full border-2 border-cosmic-gold/40 flex items-center justify-center mx-auto mb-8">
+                <Loader size={44} className="text-cosmic-gold" />
+              </div>
+              <h1 className="font-cinzel text-3xl font-bold text-cosmic-cream mb-3">
+                Payment <span className="text-gradient-gold">Not Confirmed</span>
+              </h1>
+              <p className="font-cormorant text-cosmic-cream/60 text-xl italic leading-relaxed mb-6">
+                We have not received a payment confirmation for this order, so it has
+                not been placed yet. If you left the payment page, you have not been charged.
+              </p>
+              {orderId && (
+                <div className="cosmic-card p-4 mb-6 inline-block">
+                  <p className="font-raleway text-cosmic-cream/40 text-xs tracking-widest uppercase mb-1">
+                    Reference
+                  </p>
+                  <p className="font-cinzel text-cosmic-gold text-sm font-bold">
+                    {String(orderId)}
+                  </p>
+                </div>
+              )}
+              <p className="font-cormorant text-cosmic-cream/50 text-base mb-8">
+                If money was deducted from your account, please contact us at{' '}
+                <a href="tel:+919599474758" className="text-cosmic-gold underline">9599474758</a>{' '}
+                with the reference above and we will confirm your order.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/shop/checkout" className="btn-primary">Back to Checkout</Link>
+                <a
+                  href="https://wa.me/919599474758"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline"
+                >
+                  WhatsApp Support
+                </a>
               </div>
             </>
           )}
