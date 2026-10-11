@@ -6,6 +6,7 @@ import TagListing from '@/components/shop/TagListing'
 import { PURPOSES } from '@/lib/crystalData'
 import { toSlug } from '@/lib/shopTaxonomy'
 import type { Product } from '@/types/product'
+import { toListingProduct } from '@/lib/listingProduct'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -82,7 +83,7 @@ export const getStaticProps: GetStaticProps<Props> = async (ctx) => {
   }
 
   return {
-    props: { purposeKey: match.key, purposeIcon: match.icon, slug, products },
+    props: { purposeKey: match.key, purposeIcon: match.icon, slug, products: products.map(toListingProduct) },
     revalidate: 600,
   }
 }
