@@ -75,11 +75,11 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-10 h-10">
-              <div className="absolute inset-0 rounded-full border border-cosmic-gold/40 group-hover:border-cosmic-gold/80 transition-all duration-300 group-hover:shadow-gold" />
-              <div className="absolute inset-1 rounded-full border border-cosmic-gold/20 group-hover:border-cosmic-gold/40 transition-all duration-300" />
-              <div className="absolute inset-0 flex items-center justify-center text-cosmic-gold text-lg font-cinzel">✦</div>
-            </div>
+            {/* Brand logo. .brand-logo (globals.css) adds a soft white underglow
+                on the dark theme so the purple lettering stays readable. */}
+            <span className="brand-logo w-11 h-11 transition-transform duration-300 group-hover:scale-105">
+              <img src="/logo-96.png" alt="The Cosmic Connect logo" width={44} height={44} />
+            </span>
             <div className="flex flex-col leading-tight">
               <span className="font-cinzel text-base font-semibold text-cosmic-cream tracking-wider">The Cosmic</span>
               <span className="font-cinzel text-xs font-normal text-cosmic-gold tracking-[0.25em] uppercase">Connect</span>

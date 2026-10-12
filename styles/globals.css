@@ -517,6 +517,35 @@ html[data-theme='light'] .text-gradient-gold {
   -webkit-text-fill-color: transparent;
 }
 
+/* ─── Brand logo (header + footer) ─────────────────────────
+   The logo is a transparent PNG with purple lettering, which disappears
+   on the dark theme. On dark (no data-theme attribute) a soft, faded
+   white underglow sits behind it; on the light theme it shows as-is.
+   ──────────────────────────────────────────────────────────── */
+.brand-logo {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.brand-logo img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+html:not([data-theme='light']) .brand-logo::before {
+  content: '';
+  position: absolute;
+  inset: -12.5%;
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.88) 78%,
+    rgba(255, 255, 255, 0.45) 88%,
+    rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
 /* ─── LIGHT THEME v4: MINIMAL MONOCHROME ─────────────────────
    Modelled on the order-confirmation email: white surfaces, near-black
    text, grey secondary text, hairline grey dividers, solid black buttons,

@@ -37,9 +37,9 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full border border-cosmic-gold/50 flex items-center justify-center text-cosmic-gold text-lg">
-                ✦
-              </div>
+              <span className="brand-logo w-12 h-12">
+                <img src="/logo-96.png" alt="The Cosmic Connect logo" width={48} height={48} loading="lazy" />
+              </span>
               <div>
                 <p className="font-cinzel text-cosmic-cream font-semibold tracking-wider">The Cosmic</p>
                 <p className="font-cinzel text-cosmic-gold text-xs tracking-[0.25em] uppercase">Connect</p>
