@@ -71,10 +71,14 @@ export default function Navbar() {
             : 'py-5'
         }`}
       >
-        <div className="container-cosmic flex items-center justify-between">
+        {/* Full-width bar: logo pinned left, account/cart pinned right, links
+            centred between them. The two side groups share the leftover space
+            equally (flex-1 + basis-0) so the links sit in the true centre. */}
+        <div className="w-full max-w-[1920px] mx-auto px-5 md:px-8 xl:px-12 flex items-center justify-between gap-6">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <div className="flex lg:flex-1 lg:basis-0">
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
             {/* Brand logo. .brand-logo (globals.css) adds a soft white underglow
                 on the dark theme so the purple lettering stays readable. */}
             <span className="brand-logo w-11 h-11 transition-transform duration-300 group-hover:scale-105">
@@ -85,9 +89,10 @@ export default function Navbar() {
               <span className="font-cinzel text-xs font-normal text-cosmic-gold tracking-[0.25em] uppercase">Connect</span>
             </div>
           </Link>
+          </div>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8 shrink-0">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -104,7 +109,7 @@ export default function Navbar() {
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-end gap-3 xl:gap-4 lg:flex-1 lg:basis-0">
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
@@ -118,7 +123,7 @@ export default function Navbar() {
             {/* Phone — desktop */}
             <a
               href="tel:+919599474758"
-              className="hidden lg:flex items-center gap-2 text-cosmic-gold/70 hover:text-cosmic-gold transition-colors duration-300 text-sm font-raleway"
+              className="hidden xl:flex items-center gap-2 whitespace-nowrap text-cosmic-gold/70 hover:text-cosmic-gold transition-colors duration-300 text-sm font-raleway"
             >
               <Phone size={14} />
               <span>+91 95994 74758</span>
@@ -127,7 +132,7 @@ export default function Navbar() {
             {/* Account — desktop */}
             <Link
               href={isLoggedIn ? '/account' : '/account/login'}
-              className="hidden lg:flex items-center gap-2 text-cosmic-cream/70 hover:text-cosmic-gold transition-colors duration-300 text-sm font-raleway"
+              className="hidden lg:flex items-center gap-2 whitespace-nowrap text-cosmic-cream/70 hover:text-cosmic-gold transition-colors duration-300 text-sm font-raleway"
             >
               <User size={16} />
               <span className="max-w-[8rem] truncate">{isLoggedIn ? (user?.name.split(' ')[0] || 'Account') : 'Sign In'}</span>
