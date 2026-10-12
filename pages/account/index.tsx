@@ -21,13 +21,25 @@ const STATUS_STYLES: Record<string, string> = {
   cancelled: 'text-red-400 border-red-400/30 bg-red-400/5',
   refunded:  'text-cosmic-cream/50 border-cosmic-cream/20 bg-cosmic-cream/5',
   failed:    'text-red-400 border-red-400/30 bg-red-400/5',
+  packed:           'text-cosmic-gold border-cosmic-gold/30 bg-cosmic-gold/5',
+  dispatched:       'text-sky-400 border-sky-400/30 bg-sky-400/5',
+  in_transit:       'text-sky-400 border-sky-400/30 bg-sky-400/5',
+  out_for_delivery: 'text-sky-400 border-sky-400/30 bg-sky-400/5',
+  delivered:        'text-green-400 border-green-400/30 bg-green-400/5',
+  returned:         'text-red-400 border-red-400/30 bg-red-400/5',
+}
+
+// Customer-facing wording for order statuses
+const STATUS_TEXT: Record<string, string> = {
+  paid: 'Confirmed', packed: 'Packed', dispatched: 'Dispatched', in_transit: 'In transit',
+  out_for_delivery: 'Out for delivery', delivered: 'Delivered', returned: 'Returned',
 }
 
 function StatusBadge({ status }: { status: string }) {
   const style = STATUS_STYLES[status] || 'text-cosmic-cream/50 border-cosmic-cream/20 bg-cosmic-cream/5'
   return (
     <span className={`font-raleway text-[10px] tracking-widest uppercase px-2 py-1 rounded-sm border ${style}`}>
-      {status}
+      {STATUS_TEXT[status] || status.replace(/_/g, ' ')}
     </span>
   )
 }
@@ -246,6 +258,20 @@ export default function AccountPage() {
                           </div>
                         ))}
                       </div>
+                      {order.shipment?.trackingId && (
+                        <div className="mb-4 p-3 border border-cosmic-gold/15 bg-cosmic-gold/5 rounded-sm flex flex-wrap items-center gap-x-4 gap-y-1">
+                          <span className="font-raleway text-cosmic-cream/60 text-xs">
+                            {order.shipment.carrierName || 'Courier'} · Tracking ID{' '}
+                            <span className="text-cosmic-cream font-semibold select-all">{order.shipment.trackingId}</span>
+                          </span>
+                          {order.shipment.trackingUrl && (
+                            <a href={order.shipment.trackingUrl} target="_blank" rel="noopener noreferrer"
+                              className="font-raleway text-cosmic-gold hover:text-cosmic-cream text-xs tracking-widest uppercase transition-colors">
+                              Track order →
+                            </a>
+                          )}
+                        </div>
+                      )}
                       <div className="flex items-center justify-between pt-3 border-t border-cosmic-gold/10">
                         <span className="font-raleway text-cosmic-cream/40 text-xs capitalize">
                           {order.gateway ? `via ${order.gateway}` : ''}

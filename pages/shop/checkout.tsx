@@ -126,6 +126,10 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           amountINR: grandTotalINR, items, coupon,
           customerEmail: form.email, customerName: form.name, customerPhone: form.phone,
+          shippingAddress: {
+            address: form.address, city: form.city, state: form.state, pincode: form.pincode,
+            country: form.country || (isIndia ? 'India' : ''),
+          },
         }),
       })
       const data = await r.json()
@@ -153,6 +157,10 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           amountINR: grandTotalINR, items, coupon,
           customerEmail: form.email, customerName: form.name, customerPhone: form.phone,
+          shippingAddress: {
+            address: form.address, city: form.city, state: form.state, pincode: form.pincode,
+            country: form.country || (isIndia ? 'India' : ''),
+          },
         }),
       })
       const data = await r.json()

@@ -146,6 +146,10 @@ export interface MyOrder {
   coupon?: string | null
   createdAt: string
   paidAt?: string
+  shipment?: {
+    carrier?: string; carrierName?: string; trackingId?: string; trackingUrl?: string
+    dispatchedAt?: string; deliveredAt?: string
+  } | null
 }
 
 export async function fetchMyOrders(token: string): Promise<MyOrder[]> {
