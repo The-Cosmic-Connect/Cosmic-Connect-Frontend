@@ -1,6 +1,6 @@
 import { Html, Head, Main, NextScript } from 'next/document'
 
-const GA_ID = 'G-HXFKKJN8X6'
+import { GA_ID } from '@/lib/ga'
 
 export default function Document() {
   return (
@@ -41,7 +41,7 @@ export default function Document() {
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${GA_ID}', { page_path: window.location.pathname });
+              gtag('config', '${GA_ID}');
             `,
           }}
         />
