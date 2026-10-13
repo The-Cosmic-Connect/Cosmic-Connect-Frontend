@@ -2,11 +2,12 @@ import Link from 'next/link'
 import { Phone, Mail, MapPin, Instagram, Youtube, Facebook } from 'lucide-react'
 
 const services = [
-  { label: 'Tarot Card Reading',   href: '/services/tarot-card-reading' },
-  { label: 'Akashic Reading',      href: '/services/akashic-reading' },
-  { label: 'Healing Sessions',     href: '/services/healing-sessions' },
-  { label: 'Past Life Healing',    href: '/services/past-life-healing' },
-  { label: 'Black Magic Removal',  href: '/services/black-magic-removal' },
+  { label: 'Tarot Reading',          href: '/tarot-reading-services' },
+  { label: 'Energy Healing',         href: '/reiki-crystal-photo-healing' },
+  { label: 'Akashic & Past Life',    href: '/akashic-mokshapat-pastlife' },
+  { label: 'Sound Healing',          href: '/sound-healing-services' },
+  { label: 'Spiritual Protection',   href: '/black-magic-evil-eye-removal' },
+  { label: 'All Sessions',           href: '/services' },
 ]
 
 const quickLinks = [

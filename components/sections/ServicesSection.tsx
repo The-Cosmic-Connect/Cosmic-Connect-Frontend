@@ -1,171 +1,100 @@
+// Home page "Find your path" — mirrors the /services flow:
+// a quick "what's on your mind" box (hands off to the session finder),
+// the 7 service paths linking straight to their category pages, and a
+// "not sure?" tile for anyone who wants help choosing.
+import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
+import { ArrowRight, ArrowUpRight, Sparkles } from 'lucide-react'
+import PathArt from '@/components/services/PathArt'
+import { HANDOFF_KEY } from '@/components/services/SessionFinder'
+import { PATHS } from '@/lib/servicePaths'
 
-const services = [
-  {
-    title: 'Tarot Card Reading',
-    slug: 'tarot-card-reading',
-    icon: '🃏',
-    description:
-      'Unlock insights into your love life, career, finances and future through the ancient art of Tarot.',
-    tags: ['Love', 'Career', 'Future'],
-  },
-  {
-    title: 'Akashic Records Reading',
-    slug: 'akashic-reading',
-    icon: '📖',
-    description:
-      "Access your soul's journey through the cosmic library of all universal knowledge and past experiences.",
-    tags: ['Soul', 'Past Lives', 'Purpose'],
-  },
-  {
-    title: 'Healing Sessions',
-    slug: 'healing-sessions',
-    icon: '✨',
-    description:
-      'Experience deep energy healing through Reiki and crystal therapy for emotional and physical well-being.',
-    tags: ['Reiki', 'Crystal', 'Energy'],
-  },
-  {
-    title: 'Past Life Healing',
-    slug: 'past-life-healing',
-    icon: '🌀',
-    description:
-      'Discover karmic connections from past lives and heal unresolved traumas that affect your present.',
-    tags: ['Karma', 'Healing', 'Trauma'],
-  },
-  {
-    title: 'Psychic Readings',
-    slug: 'psychic-readings',
-    icon: '🔮',
-    description:
-      'Gain powerful clarity and answers through Dr. Usha Bhatt\'s extraordinary psychic insights.',
-    tags: ['Clarity', 'Guidance', 'Intuition'],
-  },
-  {
-    title: 'Black Magic Removal',
-    slug: 'black-magic-removal',
-    icon: '🛡️',
-    description:
-      'Identify and remove negative energies, evil eye, and black magic affecting your life and business.',
-    tags: ['Protection', 'Cleansing', 'Aura'],
-  },
-]
-
-function ServiceCard({ service, index }: { service: typeof services[0]; index: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true) },
-      { threshold: 0.15 }
-    )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
-
-  return (
-    <div
-      ref={ref}
-      className="cosmic-card p-6 flex flex-col group cursor-pointer"
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(32px)',
-        transition: `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`,
-      }}
-    >
-      {/* Icon */}
-      <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-        {service.icon}
-      </div>
-
-      {/* Title */}
-      <h3 className="font-cinzel text-cosmic-cream font-semibold text-base mb-3 leading-snug group-hover:text-cosmic-gold transition-colors duration-300">
-        {service.title}
-      </h3>
-
-      {/* Description */}
-      <p className="font-cormorant text-cosmic-cream/60 text-base leading-relaxed mb-4 flex-grow">
-        {service.description}
-      </p>
-
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-5">
-        {service.tags.map(tag => (
-          <span
-            key={tag}
-            className="text-xs font-raleway tracking-widest uppercase text-cosmic-gold/50 border border-cosmic-gold/20 px-2.5 py-1 rounded-full group-hover:border-cosmic-gold/40 transition-colors"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      {/* Link */}
-      <Link
-        href={`/services/${service.slug}`}
-        className="font-raleway text-xs text-cosmic-gold/60 tracking-widest uppercase hover:text-cosmic-gold transition-colors flex items-center gap-2 mt-auto group/link"
-      >
-        Learn More
-        <span className="group-hover/link:translate-x-1 transition-transform">→</span>
-      </Link>
-    </div>
-  )
-}
+const PROMPTS = ['A decision I keep going back and forth on', 'Feeling drained and unsettled', 'The same patterns keep repeating']
 
 export default function ServicesSection() {
-  const titleRef = useRef<HTMLDivElement>(null)
-  const [titleVisible, setTitleVisible] = useState(false)
+  const router = useRouter()
+  const [text, setText] = useState('')
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setTitleVisible(true) },
-      { threshold: 0.3 }
-    )
-    if (titleRef.current) observer.observe(titleRef.current)
-    return () => observer.disconnect()
-  }, [])
+  function go(e?: FormEvent, preset?: string) {
+    e?.preventDefault()
+    const q = (preset ?? text).trim()
+    if (q.length >= 3) {
+      try { sessionStorage.setItem(HANDOFF_KEY, q.slice(0, 1000)) } catch { /* storage blocked: finder still opens */ }
+    }
+    router.push('/services#finder')
+  }
 
   return (
     <section id="services" className="section bg-cosmic-section">
       <div className="container-cosmic">
 
-        {/* Section header */}
-        <div
-          ref={titleRef}
-          className="text-center mb-14"
-          style={{
-            opacity: titleVisible ? 1 : 0,
-            transform: titleVisible ? 'translateY(0)' : 'translateY(24px)',
-            transition: 'opacity 0.7s ease, transform 0.7s ease',
-          }}
-        >
+        {/* Header */}
+        <div className="text-center mb-10">
           <p className="ornament text-xs tracking-[0.5em] mb-4">✦ ✦ ✦</p>
           <h2 className="font-cinzel text-3xl md:text-4xl text-cosmic-cream font-bold mb-4">
-            Services We <span className="text-gradient-gold">Offer</span>
+            Find Your <span className="text-gradient-gold">Path</span>
           </h2>
           <div className="gold-divider mb-4" />
           <p className="font-cormorant text-cosmic-cream/60 text-lg italic max-w-xl mx-auto leading-relaxed">
-            Explore the depths of your existence and unlock new paths to self-discovery
-            and empowerment with Dr. Bhatt.
+            Choose the kind of session that feels closest to what you&apos;re looking for,
+            or tell us what&apos;s on your mind and we&apos;ll suggest one.
           </p>
         </div>
 
-        {/* Cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-          {services.map((service, i) => (
-            <ServiceCard key={service.slug} service={service} index={i} />
-          ))}
-        </div>
+        {/* What's on your mind → session finder */}
+        <form onSubmit={go} className="max-w-2xl mx-auto mb-12">
+          <label htmlFor="home-finder" className="sr-only">Describe what you&apos;re going through</label>
+          <div className="cosmic-card rounded-md p-2 flex flex-col sm:flex-row gap-2">
+            <input id="home-finder" type="text" value={text} maxLength={1000}
+              onChange={e => setText(e.target.value)}
+              placeholder="What's on your mind? e.g. I feel stuck in my career…"
+              className="flex-1 bg-transparent px-4 py-3 font-raleway text-sm text-cosmic-cream placeholder:text-cosmic-cream/35 focus:outline-none" />
+            <button type="submit" className="btn-primary text-xs justify-center whitespace-nowrap">
+              <Sparkles size={14} /> Suggest a session
+            </button>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2 mt-3">
+            {PROMPTS.map(p => (
+              <button key={p} type="button" onClick={() => go(undefined, p)}
+                className="font-raleway text-[11px] text-cosmic-cream/55 border border-cosmic-gold/15 rounded-full px-3 py-1.5 hover:text-cosmic-gold hover:border-cosmic-gold/40 transition-colors">
+                {p}
+              </button>
+            ))}
+          </div>
+        </form>
 
-        {/* Bottom CTA */}
-        <div className="text-center">
-          <Link href="/services" className="btn-primary">
-            View All Services & Book
+        {/* Paths: 7 categories + "not sure" tile = clean 2 × 4 grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 mb-10">
+          {PATHS.map(p => (
+            <Link key={p.slug} href={`/${p.slug}`}
+              className="group cosmic-card flex flex-col overflow-hidden rounded-md">
+              <div className="h-24 md:h-28 flex items-center justify-center"
+                style={{ background: `linear-gradient(180deg, rgb(${p.tint} / 0.22), rgb(${p.tint} / 0.08))` }}>
+                <PathArt kind={p.art} className="w-24 h-16 md:w-28 md:h-20 text-cosmic-gold/80 transition-transform duration-500 group-hover:scale-105" />
+              </div>
+              <div className="flex flex-col flex-1 p-4 md:p-5">
+                <p className="font-raleway text-cosmic-gold/80 text-[9px] md:text-[10px] tracking-[0.2em] uppercase mb-1.5">{p.eyebrow}</p>
+                <h3 className="font-cinzel text-cosmic-cream text-sm md:text-base leading-snug mb-3 group-hover:text-cosmic-gold transition-colors">{p.title}</h3>
+                <span className="mt-auto inline-flex items-center gap-1 font-raleway text-[11px] text-cosmic-cream/60 group-hover:text-cosmic-gold transition-colors">
+                  View sessions <ArrowUpRight size={12} />
+                </span>
+              </div>
+            </Link>
+          ))}
+
+          <Link href="/services#finder"
+            className="group rounded-md border border-dashed border-cosmic-gold/30 flex flex-col items-center justify-center text-center p-5 hover:border-cosmic-gold/60 transition-colors">
+            <Sparkles size={26} strokeWidth={1.2} className="text-cosmic-gold mb-3" />
+            <h3 className="font-cinzel text-cosmic-cream text-sm md:text-base mb-2">Not sure where to start?</h3>
+            <p className="font-raleway text-cosmic-cream/50 text-[11px] leading-relaxed mb-3">Answer a few words and we&apos;ll point you to the right session.</p>
+            <span className="inline-flex items-center gap-1 font-raleway text-[11px] text-cosmic-gold">Help me choose <ArrowRight size={12} /></span>
           </Link>
         </div>
 
+        <div className="text-center">
+          <Link href="/services" className="btn-primary">Explore All Sessions &amp; Book</Link>
+        </div>
       </div>
     </section>
   )

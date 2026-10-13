@@ -2,7 +2,7 @@
 // feel; the backend (/recommend, Claude Haiku) suggests 1-3 sessions from the
 // live catalogue. Tap-through topics work without typing and are the fallback
 // whenever the AI is unavailable. Nothing typed here is stored.
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, ArrowUpRight, Loader2, Sparkles, MessageCircle, Phone, HeartHandshake } from 'lucide-react'
 import { TOPICS, pathBySlug } from '@/lib/servicePaths'
@@ -21,6 +21,8 @@ interface Result {
   message?: string; recommendations?: Rec[]
 }
 
+export const HANDOFF_KEY = 'cc_finder_q'
+
 export default function SessionFinder() {
   const { isIndia } = useGeo()
   const [text, setText]       = useState('')
@@ -29,8 +31,22 @@ export default function SessionFinder() {
   const [topic, setTopic]     = useState<number | null>(null)
   const [aiDown, setAiDown]   = useState(false)
 
-  async function ask() {
-    const msg = text.trim()
+  // Hand-off from the home page "Find your path" box: the text travels via
+  // sessionStorage (never the URL) and the search runs once on arrival.
+  useEffect(() => {
+    let q: string | null = null
+    try { q = sessionStorage.getItem(HANDOFF_KEY); sessionStorage.removeItem(HANDOFF_KEY) } catch { /* storage blocked */ }
+    if (q && q.trim().length >= 3) {
+      const msg = q.slice(0, MAX)
+      setText(msg)
+      document.getElementById('finder')?.scrollIntoView({ block: 'start' })
+      ask(msg)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  async function ask(override?: string) {
+    const msg = (override ?? text).trim()
     if (msg.length < 3 || busy) return
     setBusy(true); setResult(null); setTopic(null)
     try {
@@ -72,7 +88,7 @@ export default function SessionFinder() {
             className="w-full bg-transparent border border-cosmic-gold/20 focus:border-cosmic-gold/50 outline-none rounded-sm p-3 font-raleway text-sm text-cosmic-cream placeholder:text-cosmic-cream/30 resize-y" />
           <div className="flex flex-wrap items-center justify-between gap-3 mt-3">
             <span className="font-raleway text-[11px] text-cosmic-cream/35">{text.length}/{MAX} · Nothing you type is stored</span>
-            <button type="button" onClick={ask} disabled={busy || text.trim().length < 3} className="btn-primary text-xs disabled:opacity-50">
+            <button type="button" onClick={() => ask()} disabled={busy || text.trim().length < 3} className="btn-primary text-xs disabled:opacity-50">
               {busy ? <><Loader2 size={14} className="animate-spin" /> Finding…</> : <>Find my session <Sparkles size={14} /></>}
             </button>
           </div>
