@@ -10,7 +10,9 @@ import { useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowUpRight, ArrowRight, MessageCircle, Plus, Phone, Sparkles } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
-import PathArt, { type PathArtKind } from '@/components/services/PathArt'
+import PathArt from '@/components/services/PathArt'
+import SessionFinder from '@/components/services/SessionFinder'
+import { NEEDS, PATHS, type Need } from '@/lib/servicePaths'
 
 const PHONE_DISPLAY = '+91 95994 74758'
 const PHONE_TEL = '+919599474758'
@@ -18,51 +20,6 @@ const wa = (text: string) => `https://wa.me/919599474758?text=${encodeURICompone
 const WA_HELP = wa("Hi, I'd like some help choosing the right session.")
 const WA_FIRST = wa("Hi, I'm booking my first session and would like some guidance.")
 const WA_QUESTION = wa('Hi, I have a question before I book a session.')
-
-type Need = 'clarity' | 'calm' | 'discovery' | 'support'
-
-const NEEDS: { key: Need | 'all'; label: string }[] = [
-  { key: 'all', label: 'All sessions' },
-  { key: 'clarity', label: 'Clarity & direction' },
-  { key: 'calm', label: 'Calm & balance' },
-  { key: 'discovery', label: 'Self-discovery' },
-  { key: 'support', label: 'Spiritual support' },
-]
-
-interface Path {
-  slug: string            // existing category page (lib/serviceCategories.ts)
-  eyebrow: string
-  title: string
-  description: string
-  includes: string
-  art: PathArtKind
-  tint: string            // RGB channels for the soft card-header wash
-  needs: Need[]
-}
-
-const PATHS: Path[] = [
-  { slug: 'tarot-reading-services', eyebrow: 'For clarity & direction', title: 'Tarot reading',
-    description: "Explore a question, a decision, or what's on your mind through a guided Tarot reading.",
-    includes: 'Tarot reading services', art: 'tarot', tint: '168 132 214', needs: ['clarity'] },
-  { slug: 'reiki-crystal-photo-healing', eyebrow: 'For calm & balance', title: 'Energy healing',
-    description: 'Explore gentle energy-based practices, with Reiki, crystal and distance healing options.',
-    includes: 'Reiki · Crystal · Distance · Animal healing', art: 'lotus', tint: '134 180 120', needs: ['calm'] },
-  { slug: 'akashic-mokshapat-pastlife', eyebrow: 'For deeper self-discovery', title: 'Soul & past life exploration',
-    description: 'Explore recurring patterns and your spiritual story through reflective soul-focused practices.',
-    includes: 'Akashic reading · Mokshapat · Past life', art: 'mandala', tint: '214 182 120', needs: ['discovery'] },
-  { slug: 'sound-healing-services', eyebrow: 'For a moment of stillness', title: 'Sound healing',
-    description: 'Discover sound-based practices and explore a different way to pause and reconnect.',
-    includes: 'Sound healing sessions', art: 'bowl', tint: '120 150 200', needs: ['calm'] },
-  { slug: 'black-magic-evil-eye-removal', eyebrow: 'For spiritual support', title: 'Spiritual protection',
-    description: "Explore the practice's spiritual protection services and discuss your concerns with the team.",
-    includes: 'Black magic & evil eye · Scanning & negation', art: 'shield', tint: '176 150 214', needs: ['support'] },
-  { slug: 'crystal-grids', eyebrow: 'For intention & connection', title: 'Crystal grids',
-    description: 'Explore crystal arrangements used in spiritual practice for healing, protection and prosperity intentions.',
-    includes: 'Sacred crystal alchemy', art: 'crystals', tint: '120 190 170', needs: ['discovery', 'support'] },
-  { slug: 'pendulum-dowsing-gem-stone-counselling', eyebrow: 'For a personal starting point', title: 'Personal spiritual guidance',
-    description: 'Explore gemstone guidance, pendulum dowsing and a conversation about your spiritual interests.',
-    includes: 'Gemstones · Pendulum dowsing · Guidance', art: 'pendulum', tint: '214 150 150', needs: ['clarity', 'support'] },
-]
 
 const STEPS = [
   { n: '01', title: 'Find your fit', text: "Start with what's on your mind." },
@@ -121,7 +78,7 @@ export default function ServicesPage() {
             </p>
             <div className="flex flex-wrap items-center gap-4 mb-8">
               <a href="#paths" className="btn-primary text-xs">Find your session <ArrowUpRight size={14} /></a>
-              <a href={WA_HELP} target="_blank" rel="noopener noreferrer"
+              <a href="#finder"
                 className="inline-flex items-center gap-2 font-raleway text-sm text-cosmic-cream/80 hover:text-cosmic-gold border-b border-cosmic-gold/30 pb-0.5 transition-colors">
                 Help me choose <ArrowRight size={14} />
               </a>
@@ -174,6 +131,9 @@ export default function ServicesPage() {
         </div>
       </section>
 
+      {/* ── Session finder (AI + tap-through fallback) ─────────────────── */}
+      <SessionFinder />
+
       {/* ── Paths ────────────────────────────────────────────────────────── */}
       <section id="paths" className="px-4 py-16 md:py-24 scroll-mt-24" style={{ background: 'rgb(var(--cosmic-black))' }}>
         <div className="container-cosmic">
@@ -183,7 +143,7 @@ export default function ServicesPage() {
               <h2 className="font-cinzel text-cosmic-cream mb-3" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>What brings you here?</h2>
               <p className="font-raleway text-cosmic-cream/55 text-sm">Explore a path that feels right. There&apos;s no need to know the terminology.</p>
             </div>
-            <a href={WA_HELP} target="_blank" rel="noopener noreferrer"
+            <a href="#finder"
               className="inline-flex items-center gap-2 font-raleway text-xs text-cosmic-cream/70 hover:text-cosmic-gold transition-colors">
               <Sparkles size={13} className="text-cosmic-gold" /> Not sure? Let us guide you <ArrowUpRight size={13} />
             </a>
