@@ -58,9 +58,9 @@ export default function ServiceCategoryPageTemplate({ category }: Props) {
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgb(var(--cosmic-gold) / 0.07), transparent 70%)' }} />
         <div className="container-cosmic relative z-10 text-center max-w-2xl mx-auto">
-          <Link href="/booking-usha-bhatt"
+          <Link href="/services#paths"
             className="inline-flex items-center gap-1 font-raleway text-cosmic-cream/40 hover:text-cosmic-gold text-xs tracking-widest uppercase mb-6 transition-colors">
-            <ChevronLeft size={14} /> All Categories
+            <ChevronLeft size={14} /> All Paths
           </Link>
           <p className="font-raleway text-cosmic-gold/60 text-xs tracking-[0.5em] uppercase mb-4">✦ ✦ ✦</p>
           <h1 className="font-cinzel font-bold text-cosmic-cream mb-4" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>

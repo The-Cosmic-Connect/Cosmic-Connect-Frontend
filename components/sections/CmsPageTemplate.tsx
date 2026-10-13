@@ -42,7 +42,7 @@ export default function CmsPageTemplate({ page }: { page: CmsPage }) {
   // target would require).
   const course = page.boundCourseSlug ? getCourseBySlug(page.boundCourseSlug) : undefined
   const accent = page.accentColor || course?.accentColor || '#C9A84C'
-  const backLink = category ? `/${category.slug}` : course ? '/courses' : '/booking-usha-bhatt'
+  const backLink = category ? `/${category.slug}` : course ? '/courses' : '/services'
   const backLabel = category ? 'All Categories' : course ? 'All Courses' : 'All Categories'
 
   return (

@@ -64,7 +64,9 @@ const nextConfig = {
         '/videos': ['/free-videos'],
         '/terms-of-use': ['/terms-and-conditions'],
         '/shipping-returns': ['/shipping-policy', '/return-exchange-and-refund-policy'],
-        '/booking-usha-bhatt': ['/book-online', '/booking-services', '/booking-usha-bhatt-1',
+        // /services is now the single-healer booking start page; the old
+        // healer landing page and its Wix aliases all go there.
+        '/services': ['/booking-usha-bhatt', '/book-online', '/booking-services', '/booking-usha-bhatt-1',
                                 '/service-page/:path*', '/booking-service/:path*',
                                 '/energy-healing', '/angel-healing', '/psychic-healing',
                                 '/therapy-combinations'],

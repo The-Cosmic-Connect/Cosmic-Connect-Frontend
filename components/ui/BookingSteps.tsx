@@ -3,7 +3,7 @@ import { ChevronRight } from 'lucide-react'
 export type BookingStep = 'agent' | 'service' | 'slot'
 
 const STEPS: { key: BookingStep; label: string }[] = [
-  { key: 'agent',   label: 'Choose Healer' },
+  { key: 'agent',   label: 'Choose Path' },   // key kept for compatibility; step 1 is now the /services path picker
   { key: 'service', label: 'Select Service' },
   { key: 'slot',    label: 'Pick Time' },
 ]
